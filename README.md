@@ -11,11 +11,11 @@
 
 ## 软件技术栈
 
-后端：PHP+THINKPHP6
+后端：php+thinkphp6.0
 
-前端：VUE+ELEMENT-UI
+前端：vue-element-admin
 
-小程序端：UNIAPP
+小程序端：uniapp
 
 部署环境建议：Linux + Nginx + PHP7.1 + MySQL5.6，或者直接用宝塔集成环境。
 
