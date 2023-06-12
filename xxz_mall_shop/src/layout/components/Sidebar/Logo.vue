@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '小玄猪',
-      logo: 'https://img.dfhlyl.com/20230118094746abcd45283.jpg'
+      logo: 'https://img.pighack.com/20220123155756e81819541.png'
     }
   }
 }

@@ -19,7 +19,7 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img src="https://img.dfhlyl.com/20230118094746abcd45283.jpg" class="user-avatar">
+          <img src="https://img.pighack.com/20220123155756e81819541.png" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
