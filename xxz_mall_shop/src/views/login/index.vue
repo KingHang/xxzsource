@@ -310,8 +310,7 @@ export default {
                   })
                 }
               })
-              // eslint-disable-next-line handle-callback-err
-              .catch((error) => {
+              .catch(() => {
                 // 接口调用方法统一处理
                 this.logining = false
               })
@@ -389,8 +388,7 @@ export default {
                     })
                   }
                 })
-                // eslint-disable-next-line handle-callback-err
-                .catch((error) => {
+                .catch(() => {
                   // 接口调用方法统一处理
                   this.logining = false
                 })
@@ -424,8 +422,7 @@ export default {
             self.bgimg_url = res.data.settings.shop_bg_img
           }
         })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
+        .catch(() => {
           self.loading = false
         })
     },
@@ -433,42 +430,19 @@ export default {
     SubmitFunc(ev) {
       if (this.flag === 0) {
         this.$refs.ruleForm.validate((valid) => {
-          if (valid) {
-            this.logining = true
-            const Params = {
-              username: this.ruleForm.account,
-              password: this.ruleForm.checkPass
-            }
-            /* 调用登录接口*/
-            UserApi.login(Params, true)
-              .then((res) => {
-                this.logining = false
-                if (res.code === 1) {
-                  /* 保存个人信息*/
-                  setCookie('userinfo', res.data.username)
-                  /* 设置一个登录状态*/
-                  setCookie('isLogin', true)
-                  /* 跳转区分*/
-                  if (res.data.isTrade === 0) {
-                    /* 跳转到选择行业*/
-                    this.$router.push({ path: '/industry' })
-                  } else {
-                    /* 跳转到首页*/
-                    this.$router.push({ path: '/' })
-                  }
-                } else {
-                  this.$message({
-                    message: '登录失败',
-                    type: 'error'
-                  })
-                }
-              })
-              // eslint-disable-next-line handle-callback-err
-              .catch((error) => {
-                // 接口调用方法统一处理
-                this.logining = false
-              })
+          this.logining = true
+          const Params = {
+            username: this.ruleForm.account,
+            password: this.ruleForm.checkPass
           }
+          this.$store.dispatch('user/login', Params)
+            .then(() => {
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
         })
       }
     }

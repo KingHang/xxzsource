@@ -13,7 +13,7 @@
     background-color: $menuBg;
     height: 100%;
     position: fixed;
-    font-size: 0px;
+    font-size: 0;
     top: 0;
     bottom: 0;
     left: 0;
@@ -30,7 +30,7 @@
     }
 
     .el-scrollbar__bar.is-vertical {
-      right: 0px;
+      right: 0;
     }
 
     .el-scrollbar {
@@ -71,8 +71,14 @@
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      height: 36px;
+      line-height: 36px;
+      margin: 10px 6px;
+
       &:hover {
+        color: $subMenuActiveText !important;
         background-color: $menuHover !important;
+        border-radius: 2px;
       }
     }
 
@@ -82,11 +88,15 @@
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
-      min-width: $sideBarWidth !important;
-      background-color: $subMenuBg !important;
+      height: 36px;
+      line-height: 36px;
+      margin: 10px 6px;
+      min-width: auto;
 
       &:hover {
+        color: $subMenuActiveText !important;
         background-color: $subMenuHover !important;
+        border-radius: 2px;
       }
     }
   }
@@ -159,7 +169,7 @@
   // mobile responsive
   .mobile {
     .main-container {
-      margin-left: 0px;
+      margin-left: 0;
     }
 
     .sidebar-container {
@@ -201,6 +211,7 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
+      color: $subMenuActiveText !important;
       background-color: $menuHover !important;
     }
   }

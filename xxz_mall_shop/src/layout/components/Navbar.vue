@@ -15,6 +15,10 @@
         <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
+
+        <div class="right-menu-version">当前版本：2.6</div>
+
+        <div class="right-menu-username">{{ name }}</div>
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -62,6 +66,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'name',
       'sidebar',
       'avatar',
       'device'
@@ -134,6 +139,25 @@ export default {
           background: rgba(0, 0, 0, .025)
         }
       }
+    }
+
+    .right-menu-version {
+      display: inline-block;
+      padding: 0 15px;
+      height: auto;
+      line-height: 36px;
+      font-size: 14px;
+      color: #828282;
+      background: #F3F3F3;
+      border-radius: 24px;
+      vertical-align: top;
+      margin: 7px 10px;
+    }
+
+    .right-menu-username {
+      display: inline-block;
+      vertical-align: text-bottom;
+      margin: 0 10px;
     }
 
     .avatar-container {

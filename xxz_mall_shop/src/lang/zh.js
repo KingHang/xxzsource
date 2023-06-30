@@ -62,7 +62,20 @@ export default {
     clipboardDemo: 'Clipboard',
     i18n: '国际化',
     externalLink: '外链',
-    profile: '个人中心'
+    profile: '个人中心',
+    goods: '商品',
+    goodsManage: '商品管理',
+    goodsCategory: '商品分类',
+    goodsComment: '商品评价',
+    service: '服务',
+    serviceManage: '服务管理',
+    serviceList: '服务列表',
+    serviceCategory: '服务分类',
+    serviceTag: '服务标签',
+    serviceCardManage: '卡项管理',
+    serviceCardList: '卡项列表',
+    serviceCardClass: '卡项分类',
+    serviceSite: '服务设置'
   },
   navbar: {
     dashboard: '首页',
