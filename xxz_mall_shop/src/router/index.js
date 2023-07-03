@@ -8,7 +8,7 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import goodsRouter from './modules/goods'
-import serviceRouter from './modules/service'
+import orderRouter from './modules/order'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -104,7 +104,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   goodsRouter,
-  serviceRouter,
+  orderRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

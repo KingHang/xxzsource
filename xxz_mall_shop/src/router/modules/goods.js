@@ -7,7 +7,7 @@ const goodsRouter = {
   component: Layout,
   redirect: '/goods/goods/index',
   name: 'Goods',
-  meta: { title: 'goods', icon: 'el-icon-goods' },
+  meta: { title: 'goods', icon: 'el-icon-s-goods' },
   children: [
     {
       path: 'goods',

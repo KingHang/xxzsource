@@ -140,8 +140,8 @@ export default {
       border-right: 1px solid #F1F1F1;
 
       .fixed-sub-menu {
-        height: 50px;
-        line-height: 50px;
+        height: 51px;
+        line-height: 51px;
         border-bottom: 1px solid #F1F1F1;
         font-size: 14px;
         color: #333333;

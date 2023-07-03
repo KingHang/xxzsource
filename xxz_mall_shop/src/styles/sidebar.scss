@@ -68,15 +68,19 @@
       width: 100% !important;
     }
 
+    .el-menu>div {
+      margin: 10px 6px;
+    }
+
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
       height: 36px;
       line-height: 36px;
-      margin: 10px 6px;
+      padding-left: 14px !important;
 
       &:hover {
-        color: $subMenuActiveText !important;
+        color: $menuActiveText !important;
         background-color: $menuHover !important;
         border-radius: 2px;
       }
@@ -90,8 +94,7 @@
     & .el-submenu .el-menu-item {
       height: 36px;
       line-height: 36px;
-      margin: 10px 6px;
-      min-width: auto;
+      padding-left: 14px !important;
 
       &:hover {
         color: $subMenuActiveText !important;
@@ -211,7 +214,7 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
-      color: $subMenuActiveText !important;
+      color: $menuActiveText !important;
       background-color: $menuHover !important;
     }
   }
