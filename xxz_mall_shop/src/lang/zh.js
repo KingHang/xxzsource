@@ -70,7 +70,13 @@ export default {
     order: '订单',
     orderManage: '订单管理',
     orderRefund: '售后管理',
-    plateRefund: '平台售后'
+    plateRefund: '平台售后',
+    user: '会员',
+    userManage: '会员管理',
+    userGrade: '等级管理',
+    userTag: '标签管理',
+    userPoints: '积分管理',
+    userBalance: '余额明细'
   },
   navbar: {
     dashboard: '首页',

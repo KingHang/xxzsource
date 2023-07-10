@@ -3,26 +3,26 @@
 import Layout from '@/layout'
 
 const orderRouter = {
-  path: '/order',
+  path: '/',
   component: Layout,
   redirect: '/order/order/index',
   name: 'Order',
   meta: { title: 'order', icon: 'el-icon-s-order' },
   children: [
     {
-      path: 'order',
+      path: 'order/order/index',
       component: () => import('@/views/order/order/index'),
       name: 'OrderManage',
       meta: { title: 'orderManage' }
     },
     {
-      path: 'refund',
+      path: 'order/refund/index',
       component: () => import('@/views/order/refund/index'),
       name: 'OrderRefund',
       meta: { title: 'orderRefund' }
     },
     {
-      path: 'platerefund',
+      path: 'order/platerefund/index',
       component: () => import('@/views/order/platerefund/index'),
       name: 'PlateRefund',
       meta: { title: 'plateRefund' }

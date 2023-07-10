@@ -3,26 +3,26 @@
 import Layout from '@/layout'
 
 const goodsRouter = {
-  path: '/goods',
+  path: '/',
   component: Layout,
   redirect: '/goods/goods/index',
   name: 'Goods',
   meta: { title: 'goods', icon: 'el-icon-s-goods' },
   children: [
     {
-      path: 'goods',
+      path: 'goods/goods/index',
       component: () => import('@/views/goods/goods/index'),
       name: 'GoodsManage',
       meta: { title: 'goodsManage' }
     },
     {
-      path: 'category',
+      path: 'goods/category/index',
       component: () => import('@/views/goods/category/index'),
       name: 'GoodsCategory',
       meta: { title: 'goodsCategory' }
     },
     {
-      path: 'comment',
+      path: 'goods/comment/index',
       component: () => import('@/views/goods/comment/index'),
       name: 'GoodsComment',
       meta: { title: 'goodsComment' }

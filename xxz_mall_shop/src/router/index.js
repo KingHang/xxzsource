@@ -9,6 +9,7 @@ import Layout from '@/layout'
 /* Router Modules */
 import goodsRouter from './modules/goods'
 import orderRouter from './modules/order'
+import userRouter from './modules/user'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -51,6 +52,16 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/login/register'),
+    hidden: true
+  },
+  {
+    path: '/resetpassword',
+    component: () => import('@/views/login/resetpassword'),
     hidden: true
   },
   {
@@ -105,6 +116,7 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   goodsRouter,
   orderRouter,
+  userRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

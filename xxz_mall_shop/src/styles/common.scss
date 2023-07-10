@@ -1,0 +1,393 @@
+/*color*/
+.c_main {
+  color: #3a8ee6;
+}
+
+.orange {
+  color: #ff6f06;
+}
+
+.white {
+  color: #FFFFFF;
+}
+
+.red {
+  color: red;
+}
+
+.blue {
+  color: #3a8ee6;
+}
+
+.green {
+  color: #67C23A;
+}
+
+.gray {
+  color: #CCCCCC;
+}
+
+.gray3 {
+  color: #333333;
+}
+
+.gray6 {
+  color: #666666;
+}
+
+.gray9 {
+  color: #999999;
+}
+
+
+/*background*/
+.bg-blue {
+  background: #3a8ee6;
+}
+
+.bg-green {
+  background: #67C23A;
+}
+
+.bg-orange {
+  background: #E6A23C;
+}
+
+.bg-red {
+  background: #F56C6C;
+}
+
+.bg-gray {
+  background: #909399;
+}
+.bg-white {
+  background: #ffffff;
+}
+/*font*/
+.f14 {
+  font-size: 14px;
+}
+
+.f16 {
+  font-size: 16px;
+}
+
+.f18 {
+  font-size: 18px;
+}
+
+.f20 {
+  font-size: 20px;
+}
+
+.f24 {
+  font-size: 24px;
+}
+
+.f30 {
+  font-size: 30px;
+}
+
+.fb {
+  font-weight: bold;
+}
+
+.text-d-line {
+  text-decoration: line-through;
+}
+
+/*position*/
+.pr {
+  position: relative;
+}
+
+.pa {
+  position: absolute;
+}
+
+/*float*/
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+/*width*/
+.max-w460 {
+  max-width: 460px;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.percent-w50 {
+  width: 50%;
+}
+
+.percent-w100 {
+  width: 100%;
+}
+
+/*margin*/
+.mt10 {
+  margin-top: 10px;
+}
+
+.mt16 {
+  margin-top: 16px;
+}
+
+.mt30 {
+  margin-top: 30px;
+}
+
+.mt50 {
+  margin-top: 50px;
+}
+
+.mb16 {
+  margin-bottom: 16px;
+}
+
+.mb18 {
+  margin-bottom: 18px;
+}
+
+.ml4 {
+  margin-left: 4px;
+}
+
+.ml10 {
+  margin-left: 10px;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.ml30 {
+  margin-left: 30px;
+}
+
+.mr10 {
+  margin-right: 10px;
+}
+
+/*padding*/
+.p2 {
+  padding: 2px;
+}
+
+.p10 {
+  padding: 10px;
+}
+
+.p20 {
+  padding: 20px;
+}
+
+.p30 {
+  padding: 30px;
+}
+
+.p-4-0 {
+  padding: 4px 0;
+}
+
+.p-6-0 {
+  padding: 6px 0;
+}
+
+.p-10-0 {
+  padding: 10px 0;
+}
+
+.p-20-0 {
+  padding: 20px 0;
+}
+
+.p-30-0 {
+  padding: 30px 0;
+}
+
+.p-0-10 {
+  padding: 0 10px;
+}
+
+.p-0-20 {
+  padding: 0 20px;
+}
+
+.p-0-30 {
+  padding: 0 30px;
+}
+
+.pt16 {
+  padding-top: 16px;
+}
+
+.pt30 {
+  padding-top: 30px;
+}
+
+.pl10 {
+  padding-left: 10px;
+}
+
+.pl16 {
+  padding-left: 16px;
+}
+
+.pr16 {
+  padding-right: 16px;
+}
+
+.pb16 {
+  padding-bottom: 16px;
+}
+
+.pb50 {
+  padding-bottom: 50px;
+}
+
+/*line height*/
+.lh18 {
+  line-height: 18px;
+}
+
+.lh24 {
+  line-height: 24px;
+}
+
+.lh30 {
+  line-height: 30px;
+}
+
+/*text-align*/
+.tl {
+  text-align: left;
+}
+
+.tr {
+  text-align: right;
+}
+
+.tc {
+  text-align: center;
+}
+
+/*display*/
+.d-c-c {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.d-s-c {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.d-s-s {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.d-e-c {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.d-b-c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.d-b-s {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.d-a-c {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.d-s-stretch {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+.d-c {
+  flex-direction: column;
+}
+
+.d-r {
+  flex-direction: row;
+}
+
+.f-w {
+	flex-wrap: wrap;
+}
+
+
+.flex-1 {
+  flex: 1;
+}
+
+.text-d-line-through {
+  text-decoration: line-through;
+}
+
+/*width*/
+.ww100 {
+  width: 100%;
+}
+
+/*ellipsis*/
+.text-ellipsis {
+  word-wrap: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.text-ellipsis-2 {
+  display: -webkit-box;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/*border*/
+.border {
+  border: 1px solid #DDDDDD;
+}
+
+.border-b {
+  border-bottom: 1px solid #DDDDDD;
+}
+
+.border-b-d {
+  border-bottom: 1px dashed #DDDDDD;
+}
+
+.radius {
+  border-radius: 50%;
+}
+
+[v-cloak] {
+  display: none;
+}

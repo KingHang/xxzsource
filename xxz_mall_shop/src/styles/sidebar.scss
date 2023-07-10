@@ -86,8 +86,11 @@
       }
     }
 
+    .is-active.submenu-title-noDropdown,
     .is-active>.el-submenu__title {
-      color: $subMenuActiveText !important;
+      color: $subMenuShowText !important;
+      background-color: $subMenuActive !important;
+      border-radius: 2px;
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,

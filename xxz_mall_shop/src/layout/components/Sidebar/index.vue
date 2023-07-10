@@ -127,7 +127,13 @@ export default {
         }
       }
 
-      .menu-item:hover, .menu-active-item {
+      .menu-item:hover {
+        color: #FFFFFF;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+      }
+
+      .menu-active-item, .menu-active-item:hover {
         color: #FFFFFF;
         background: #339EFB;
         border-radius: 2px;
