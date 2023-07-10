@@ -76,7 +76,15 @@ export default {
     userGrade: '等级管理',
     userTag: '标签管理',
     userPoints: '积分管理',
-    userBalance: '余额明细'
+    userBalance: '余额明细',
+    data: '统计',
+    dataSales: '销售统计',
+    dataUser: '会员统计',
+    dataAccess: '访问统计',
+    finance: '财务',
+    financeInfo: '财务概况',
+    financeSettled: '店铺结算',
+    financeOrder: '订单结算'
   },
   navbar: {
     dashboard: '首页',

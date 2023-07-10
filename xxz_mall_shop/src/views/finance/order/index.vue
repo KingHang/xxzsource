@@ -1,0 +1,170 @@
+<template>
+  <div class="user clearfix">
+    <div class="common-seach-wrap fr">
+      <el-form size="small" :inline="true" :model="formInline" class="demo-form-inline">
+        <div class="date_section">
+          <div class="block mr10">
+            <el-date-picker v-model="value1" type="date" placeholder="开始时间" />
+          </div>
+          <div class="block mr10">
+            <el-date-picker v-model="value2" type="date" placeholder="结束时间" />
+          </div>
+        </div>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="onSubmit">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <!--内容-->
+    <div class="product-content">
+      <div class="table-wrap">
+        <el-table v-loading="loading" size="small" :data="tableData" border style="width: 100%">
+          <el-table-column prop="order_id" label="ID" width="90" />
+
+          <el-table-column prop="orderMaster.order_no" label="订单号" width="150" />
+
+          <el-table-column prop="pay_money" label="支付金额" width="90" />
+
+          <el-table-column prop="order_money" label="结算金额" width="90" />
+
+          <el-table-column prop="supplier_money" label="店铺结算金额" />
+
+          <el-table-column prop="sys_money" label="平台抽成金额" />
+
+          <el-table-column prop="refund_money" label="退款金额" />
+
+          <el-table-column prop="create_time" label="添加时间" width="150" />
+
+          <el-table-column prop="settled_id" fixed="right" label="操作" width="90">
+            <template slot-scope="scope">
+              <el-button v-auth="'/cash/order/detail'" type="text" size="small" @click="addClick(scope.row)">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <!--分页-->
+      <div class="pagination">
+        <el-pagination
+          background
+          :current-page="curPage"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="totalDataNumber"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import FinanceApi from '@/api/finance.js'
+
+export default {
+  data() {
+    return {
+      /* 是否加载完成 */
+      loading: true,
+      /* 列表数据 */
+      tableData: [],
+      /* 门店列表数据 */
+      storeList: [],
+      /* 一页多少条 */
+      pageSize: 20,
+      /* 一共多少条数据 */
+      totalDataNumber: 0,
+      /* 当前是第几页 */
+      curPage: 1,
+      /* 横向表单数据模型 */
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        }
+      },
+      value1: '',
+      value2: '',
+      formInline: {
+        pay_type: '',
+        pay_status: ''
+      },
+      is_settled: '全部',
+      /* 是否打开添加弹窗 */
+      open_add: false,
+      /* 是否打开编辑弹窗 */
+      open_edit: false,
+      /* 当前编辑的对象 */
+      userModel: {}
+    }
+  },
+  created() {
+    /* 获取列表 */
+    this.getTableList()
+  },
+  methods: {
+    /** 选择第几页 **/
+    handleCurrentChange(val) {
+      const self = this
+      self.curPage = val
+      self.loading = true
+      self.getTableList()
+    },
+    /** 每页多少条 **/
+    handleSizeChange(val) {
+      this.curPage = 1
+      this.pageSize = val
+      this.getTableList()
+    },
+    /** 获取列表 **/
+    getTableList() {
+      const self = this
+      const Params = this.formInline
+      Params.page = self.curPage
+      Params.list_rows = self.pageSize
+      self.loading = true
+      FinanceApi.order(Params, true)
+        .then(res => {
+          self.loading = false
+          self.tableData = res.data.list.data
+          self.totalDataNumber = res.data.list.total
+        })
+        .catch(() => {
+          self.loading = false
+        })
+    },
+    /** 搜索查询 **/
+    onSubmit() {
+      this.curPage = 1
+      this.formInline.start_day = this.value1
+      this.formInline.end_day = this.value2
+      this.getTableList()
+    },
+    /** 打开添加 **/
+    addClick(row) {
+      const self = this
+      const params = row.settled_id
+      self.$router.push({
+        path: '/cash/order/detail',
+        query: {
+          settled_id: params
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .date_section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .demo-form-inline {
+    display: flex;
+    align-items: center;
+  }
+</style>

@@ -10,6 +10,8 @@ import Layout from '@/layout'
 import goodsRouter from './modules/goods'
 import orderRouter from './modules/order'
 import userRouter from './modules/user'
+import dataRouter from './modules/data'
+import financeRouter from './modules/finance'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -117,6 +119,8 @@ export const asyncRoutes = [
   goodsRouter,
   orderRouter,
   userRouter,
+  dataRouter,
+  financeRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
