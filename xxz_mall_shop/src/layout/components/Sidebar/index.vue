@@ -76,7 +76,6 @@ export default {
     }
   },
   created() {
-    console.log(this.permission_routes)
     this.initRoutes()
   },
   methods: {

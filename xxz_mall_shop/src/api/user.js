@@ -19,17 +19,17 @@ const UserApi = {
   },
   /** 用户登录 **/
   login(data) {
-    return request({ url: '/vue-element-admin/user/login', method: 'post', data })
+    return request({ url: '/shop/passport/login', method: 'post', data })
   },
   saasLogin(data) {
     return request({ url: '/shop/passport/saasLogin', method: 'post', data })
   },
   getInfo(token) {
-    return request({ url: '/vue-element-admin/user/info', method: 'get', params: { token }})
+    return request({ url: '/shop/passport/info', method: 'get', params: { token }})
   },
   /** 退出登录 **/
   loginOut(data) {
-    return request({ url: '/vue-element-admin/user/logout', method: 'post', data })
+    return request({ url: '/shop/passport/logout', method: 'post', data })
   },
   /** 选择行业 **/
   bindTrade(data) {
