@@ -56,7 +56,12 @@ export default {
     settingClear: '清理缓存',
     settingPrinter: '打印机管理',
     settingPrinting: '打印设置',
-    settingAddress: '退货地址'
+    settingAddress: '退货地址',
+    authority: '权限',
+    authorityUser: '管理员列表',
+    authorityRole: '角色管理',
+    authorityLoginLog: '登录日志',
+    authorityOptLog: '操作日志'
   },
   navbar: {
     dashboard: '首页',

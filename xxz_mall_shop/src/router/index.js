@@ -14,6 +14,7 @@ import dataRouter from './modules/data'
 import financeRouter from './modules/finance'
 import appRouter from './modules/app'
 import settingRouter from './modules/setting'
+import authorityRouter from './modules/authority'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -125,6 +126,7 @@ export const asyncRoutes = [
   financeRouter,
   appRouter,
   settingRouter,
+  authorityRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
