@@ -1,5 +1,5 @@
 <template>
-  <div class="all-register">
+  <div v-if="!loading" class="all-register" :style="'background-image:url(' + bgimg_url + ');background-repeat: no-repeat;background-size: 100%;'">
     <div>
       <el-container class="login-container">
         <el-row class="h1" type="flex">
@@ -144,8 +144,8 @@
 </template>
 
 <script>
-import IndexApi from '@/api/index.js'
 import bgimg from '@/assets/img/login_bg.png'
+import IndexApi from '@/api/index.js'
 import UserApi from '@/api/user.js'
 import { setCookie } from '@/utils/base.js'
 import PicVerify from '@/components/verify/PicVerify.vue'
@@ -166,11 +166,11 @@ export default {
       /* 是否正在加载 */
       loading: true,
       /* 商城名称 */
-      shop_name: '',
+      shop_name: '小玄猪',
       /* 商城logo */
-      shop_logo: '',
+      shop_logo: 'https://img.pighack.com/20220123155756e81819541.png',
       /* 背景图片 */
-      bgimg_url: '',
+      bgimg_url: bgimg,
       /* 是否正在提交 */
       logining: false,
       /* 表单对象 */
@@ -370,13 +370,9 @@ export default {
           self.shop_name = res.data.settings.shop_name
           if (res.data.settings.shop_logo && res.data.settings.shop_logo !== '') {
             self.shop_logo = res.data.settings.shop_logo
-          } else {
-            self.shop_logo = 'http://img.exccn.net/interests.png'
           }
           if (res.data.settings.shop_bg_img !== '') {
             self.bgimg_url = res.data.settings.shop_bg_img
-          } else {
-            self.bgimg_url = bgimg
           }
         })
         .catch(() => {
@@ -572,6 +568,10 @@ export default {
   background: linear-gradient(320deg, #e6eef8 0%, #b7d1ef 100%);
   opacity: 1;
   border-radius: 16px 0 0 16px;
+  padding: 0 0;
+  margin-bottom: 0;
+  line-height: normal;
+  font-size: 12px;
 }
 .login-container-right {
   width: 433px;

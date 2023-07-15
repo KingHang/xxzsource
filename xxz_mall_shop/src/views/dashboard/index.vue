@@ -3,14 +3,6 @@
     <div class="operation-wrap" style="background-color: #FFFFFF;">
       <el-row>
         <el-col :span="6" class="d-c-c">
-          <div class="grid-content blue">
-            <div class="info">
-              <h3>{{ top_data.supplier_total }}</h3>
-              <p>店铺总量</p>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="6" class="d-c-c">
           <div class="grid-content yellow">
             <div class="info">
               <h3>{{ top_data.user_total }}</h3>
@@ -72,24 +64,6 @@
                 </div>
               </div>
             </el-col>
-            <el-col :span="4">
-              <div class="grid-content">
-                <div class="info">
-                  <p class="des">新增商户</p>
-                  <h3>{{ today_data.new_supplier_total.tday }}</h3>
-                  <p class="yesterday">昨日：{{ today_data.new_supplier_total.ytd }}</p>
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="4">
-              <div class="grid-content">
-                <div class="info">
-                  <p class="des">商户申请</p>
-                  <h3>{{ today_data.apply_supplier_total.tday }}</h3>
-                  <p class="yesterday">昨日：{{ today_data.apply_supplier_total.ytd }}</p>
-                </div>
-              </div>
-            </el-col>
           </el-row>
           <div>
             <Transaction v-if="!loading" />
@@ -111,33 +85,6 @@
                   <li><span class="fb">{{ wait_data.order.plate }}</span>平台维权数量</li>
                   <li><span class="fb">{{ wait_data.order.disposal }}</span>待处理订单</li>
                   <li><span class="fb">{{ wait_data.order.refund }}</span>待售后订单</li>
-                </ul>
-              </div>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="matters">
-              <div class="box">
-                <div class="title">商户</div>
-                <ul class="matters_item">
-                  <li><span class="fb">{{ wait_data.supplier.apply }}</span>入驻审核</li>
-                  <li><span class="fb">{{ wait_data.supplier.cash_apply }}</span>提现打款</li>
-                  <li><span class="fb">{{ wait_data.supplier.cash_money }}</span>提现审核</li>
-                  <li><span class="fb">{{ wait_data.supplier.refund }}</span>退出审核</li>
-                  <li><span class="fb">{{ wait_data.supplier.service }}</span>服务保障审核</li>
-                </ul>
-              </div>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="matters">
-              <div class="box">
-                <div class="title">活动待审核</div>
-                <ul class="matters_item">
-                  <li><span class="fb">{{ wait_data.activity.point }}</span>积分商城</li>
-                  <li><span class="fb">{{ wait_data.activity.seckill }}</span>秒杀活动</li>
-                  <li><span class="fb">{{ wait_data.activity.bargain }}</span>限时砍价</li>
-                  <li><span class="fb">{{ wait_data.activity.assemble }}</span>限时拼团</li>
                 </ul>
               </div>
             </div>

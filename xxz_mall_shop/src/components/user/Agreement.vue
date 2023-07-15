@@ -53,7 +53,7 @@
 export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
-    Agreement_open: Boolean
+    agreementOpen: Boolean
   },
   data() {
     return {
@@ -65,7 +65,7 @@ export default {
     }
   },
   watch: {
-    Agreement_open: function(n, o) {
+    agreementOpen: function(n, o) {
       if (n !== o) {
         this.dialogVisible = n
       }
