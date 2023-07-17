@@ -13,7 +13,7 @@ export const setCookie = (name, value, expiredays) => {
 export const getCookie = (name) => {
   const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
   const arr = document.cookie.match(reg)
-  if (arr.length > 2) {
+  if (arr && arr.length > 2) {
     return unescape(arr[2])
   } else {
     return null
