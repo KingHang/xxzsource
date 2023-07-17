@@ -12,6 +12,7 @@ import orderRouter from './modules/order'
 import userRouter from './modules/user'
 import dataRouter from './modules/data'
 import financeRouter from './modules/finance'
+import homeRouter from './modules/home'
 import appRouter from './modules/app'
 import settingRouter from './modules/setting'
 import authorityRouter from './modules/authority'
@@ -124,6 +125,7 @@ export const asyncRoutes = [
   userRouter,
   dataRouter,
   financeRouter,
+  homeRouter,
   appRouter,
   settingRouter,
   authorityRouter,

@@ -7,7 +7,7 @@ const authorityRouter = {
   component: Layout,
   redirect: '/authority/user/index',
   name: 'Authority',
-  meta: { title: 'authority', icon: 'lock' },
+  meta: { title: 'authority', icon: 'el-icon-lock' },
   children: [
     {
       path: 'authority/user/index',

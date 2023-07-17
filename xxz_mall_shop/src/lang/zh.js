@@ -61,7 +61,14 @@ export default {
     authorityUser: '管理员列表',
     authorityRole: '角色管理',
     authorityLoginLog: '登录日志',
-    authorityOptLog: '操作日志'
+    authorityOptLog: '操作日志',
+    home: '店铺',
+    homeEdit: '首页编辑',
+    homePage: '页面列表',
+    homeCategory: '分类模板',
+    homeNav: '底部导航',
+    homeMenu: '底部菜单',
+    homeMyMenu: '我的菜单'
   },
   navbar: {
     dashboard: '首页',
