@@ -4,10 +4,13 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
+@import './app.scss';
 @import './common.scss';
 
 body {
   height: 100%;
+  font-size: 12px;
+  line-height: 1.5;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

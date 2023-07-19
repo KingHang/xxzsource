@@ -44,7 +44,7 @@
 
     <!--添加产品-->
     <div class="common-level-rail">
-      <el-button v-auth="'/product/product/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加产品</el-button>
+      <el-button v-auth="'/goods/goods/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加产品</el-button>
     </div>
 
     <!--内容-->

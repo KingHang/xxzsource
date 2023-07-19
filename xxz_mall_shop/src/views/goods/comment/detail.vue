@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import GoodsApi from '@/api/product.js'
+import GoodsApi from '@/api/goods.js'
 
 export default {
   data() {

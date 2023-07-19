@@ -361,7 +361,7 @@ export default {
       const self = this
       const params = row.order_id
       self.$router.push({
-        path: '/order/order/Detail',
+        path: '/order/order/detail',
         query: {
           order_id: params
         }
