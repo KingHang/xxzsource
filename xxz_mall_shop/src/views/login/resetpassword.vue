@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="all-pwd" :style="'background-image:url(' + bgimg_url + ');background-repeat: no-repeat;background-size: 100%;'">
+  <div v-if="!loading" class="all-pwd">
     <div>
       <el-container class="login-container">
         <el-row class="h1" type="flex">
@@ -427,6 +427,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #FAFBFB;
 }
 .Third-party {
   margin: 10px 10px;

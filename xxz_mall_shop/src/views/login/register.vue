@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="all-register" :style="'background-image:url(' + bgimg_url + ');background-repeat: no-repeat;background-size: 100%;'">
+  <div v-if="!loading" class="all-register">
     <div>
       <el-container class="login-container">
         <el-row class="h1" type="flex">
@@ -400,6 +400,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #FAFBFB;
 }
 .loginyes {
   margin-top: 17px;
