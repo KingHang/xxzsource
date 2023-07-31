@@ -417,7 +417,7 @@ export default {
     /** 导出 **/
     onExport() {
       const baseUrl = window.location.protocol + '//' + window.location.host
-      window.location.href = baseUrl + '/index.php/shop/order.operate/export?' + qs.stringify(this.searchForm)
+      window.location.href = baseUrl + '/index.php/mall/order.operate/export?' + qs.stringify(this.searchForm)
     }
   }
 }

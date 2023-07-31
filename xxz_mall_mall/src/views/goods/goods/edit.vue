@@ -58,7 +58,7 @@ export default {
     return {
       activeName: 'basic',
       /* 商品ID */
-      product_id: 0,
+      goods_id: 0,
       /* 判断是编辑 */
       scene: 'edit',
       /* 是否正在加载 */
@@ -203,7 +203,7 @@ export default {
   },
   created() {
     /* 获取列表 */
-    this.product_id = this.$route.query.product_id
+    this.goods_id = this.$route.query.goods_id
     this.scene = this.$route.query.scene
     this.getData()
   },
@@ -212,7 +212,7 @@ export default {
     getData() {
       const self = this
       GoodsApi.getEditData({
-        product_id: self.product_id,
+        product_id: self.goods_id,
         scene: self.scene
       }).then(res => {
         self.loading = false
@@ -283,13 +283,13 @@ export default {
           const params = formatModel(self.model, self.form.model)
           params.scene = self.scene
           params.image = self.ImgKeepId(params.image)
-          params.product_id = self.product_id
+          params.product_id = self.goods_id
           params.alone_grade_equity = self.convertJson(self.form.gradeList)
           params.submit_type = submit_type
           params.store_ids = self.form.model.product_type === 1 ? self.form.model.store_ids_one : self.form.model.store_ids_two
           self.save_loading = true
           GoodsApi.editProduct({
-            product_id: self.product_id,
+            product_id: self.goods_id,
             params: JSON.stringify(params)
           }).then(data => {
             self.save_loading = false

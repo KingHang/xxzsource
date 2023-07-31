@@ -39,16 +39,6 @@ export default {
           url: 'pages/index/member',
           name: '我的',
           type: '页面'
-        },
-        {
-          url: 'pagesActivity/activity/home/index',
-          name: '活动报名',
-          type: '页面'
-        },
-        {
-          url: 'pagesMaterial/material/index',
-          name: '素材中心',
-          type: '页面'
         }
       ],
       /* 选中的值 */

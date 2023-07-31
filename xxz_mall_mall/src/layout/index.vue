@@ -15,6 +15,7 @@
 import { AppMain, Navbar, Sidebar } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
+import { delCookie } from '@/utils/base'
 
 export default {
   name: 'Layout',
@@ -24,6 +25,21 @@ export default {
     Sidebar
   },
   mixins: [ResizeMixin],
+  data() {
+    return {
+      /* 系统基本数据 */
+      baseInfo: {
+        shop_name: '',
+        user: {},
+        version: ''
+      }
+    }
+  },
+  provide: function() {
+    return {
+      baseInfo: this.baseInfo
+    }
+  },
   computed: {
     ...mapState({
       sidebar: state => state.app.sidebar,
@@ -41,9 +57,23 @@ export default {
       }
     }
   },
+  created() {
+    if (this.$route.query.from && this.$route.query.from === 'admin') {
+      delCookie('baseInfo')
+    }
+
+    this.getBaseInfo()
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    },
+    async getBaseInfo() {
+      const res = await this.$store.dispatch('common/getBaseInfo')
+      this.baseInfo.shop_name = res.shop_name
+      this.baseInfo.shop_logo = res.shop_logo
+      this.baseInfo.version = res.version
+      this.baseInfo.user = res.user
     }
   }
 }

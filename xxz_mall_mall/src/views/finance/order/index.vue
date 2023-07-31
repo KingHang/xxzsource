@@ -38,7 +38,7 @@
 
           <el-table-column prop="settled_id" fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-auth="'/cash/order/detail'" type="text" size="small" @click="addClick(scope.row)">详情</el-button>
+              <el-button v-auth="'/finance/order/detail'" type="text" size="small" @click="addClick(scope.row)">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -146,7 +146,7 @@ export default {
       const self = this
       const params = row.settled_id
       self.$router.push({
-        path: '/cash/order/detail',
+        path: '/finance/order/detail',
         query: {
           settled_id: params
         }

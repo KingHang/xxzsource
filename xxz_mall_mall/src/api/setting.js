@@ -163,11 +163,11 @@ const SettingApi = {
   },
   /** 满额包邮变量 **/
   fullfreeDetail(data) {
-    return request({ url: '/mall/plus.fullfree/index', method: 'get', params: data })
+    return request({ url: '/mall/plugin.fullfree/index', method: 'get', params: data })
   },
   /** 满额包邮设置 **/
   editFullfree(data) {
-    return request({ url: '/mall/plus.fullfree/index', method: 'post', data })
+    return request({ url: '/mall/plugin.fullfree/index', method: 'post', data })
   },
   /** 客服设置模板变量 **/
   serviceDetail(data) {

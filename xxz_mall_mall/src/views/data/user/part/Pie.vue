@@ -19,6 +19,7 @@
 
 <script>
 import DataApi from '@/api/data.js'
+import echarts from 'echarts'
 
 export default {
   data() {
@@ -91,7 +92,7 @@ export default {
     /** 创建图表对象 **/
     myEcharts() {
       // 基于准备好的dom，初始化echarts实例
-      this.myChart = this.$echarts.init(document.getElementById('PieBox'))
+      this.myChart = echarts.init(document.getElementById('PieBox'))
       this.getData()
     },
     /** 格式数据 **/

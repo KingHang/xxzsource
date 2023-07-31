@@ -2,14 +2,14 @@
   <div class="user">
     <!--添加管理员-->
     <div class="common-level-rail">
-      <el-button v-auth="'/auth/user/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加管理员</el-button>
+      <el-button v-auth="'/authority/user/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加管理员</el-button>
     </div>
 
     <!--内容-->
     <div class="product-content">
       <div class="table-wrap">
         <el-table v-loading="loading" size="small" :data="tableData" border style="width: 100%">
-          <el-table-column prop="shop_user_id" label="管理员ID" />
+          <el-table-column prop="mall_user_id" label="管理员ID" />
 
           <el-table-column prop="user_name" label="用户名" />
 
@@ -28,8 +28,8 @@
 
           <el-table-column fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.is_super < 1" v-auth="'/auth/user/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
-              <el-button v-if="scope.row.is_super < 1" v-auth="'/auth/user/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
+              <el-button v-if="scope.row.is_super < 1" v-auth="'/authority/user/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.is_super < 1" v-auth="'/authority/user/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,7 +51,7 @@
 
     <Add :open="open_add" :role-list="roleList" @close="closeAdd" />
 
-    <Edit :open="open_edit" :role-list="roleList" :shop_user_id="curModel.shop_user_id" @close="closeEdit" />
+    <Edit :open="open_edit" :role-list="roleList" :mall_user_id="curModel.mall_user_id" @close="closeEdit" />
   </div>
 </template>
 
@@ -176,26 +176,24 @@ export default {
         self.loading = true
         AuthorityApi.userDelete(
           {
-            shop_user_id: row.shop_user_id
+            mall_user_id: row.mall_user_id
           },
           true
-        )
-          .then(data => {
+        ).then(data => {
+          self.loading = false
+          if (data.code === 1) {
+            self.$message({
+              message: '恭喜你，该管理员删除成功',
+              type: 'success'
+            })
+            // 刷新页面
+            self.getTableList()
+          } else {
             self.loading = false
-            if (data.code === 1) {
-              self.$message({
-                message: '恭喜你，该管理员删除成功',
-                type: 'success'
-              })
-              // 刷新页面
-              self.getTableList()
-            } else {
-              self.loading = false
-            }
-          })
-          .catch(() => {
-            self.loading = false
-          })
+          }
+        }).catch(() => {
+          self.loading = false
+        })
       }).catch(() => {})
     }
   }

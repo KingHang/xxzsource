@@ -23,7 +23,7 @@
         <el-input v-model="curItem.params.auto.showNum" type="number" min="1" style="width: auto;" />
         <div>
           文章数据请到
-          <a href="#/plus/article/index" target="_blank">内容管理 - 文章列表</a>
+          <a href="#/plugin/news/index" target="_blank">内容管理 - 文章列表</a>
           中管理
         </div>
       </el-form-item>

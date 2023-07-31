@@ -94,7 +94,7 @@
               <div class="box">
                 <div class="title">商品待审核</div>
                 <ul class="matters_item">
-                  <li><span class="fb">{{ wait_data.audit.product }}</span>商品审核</li>
+                  <li><span class="fb">{{ wait_data.audit.goods }}</span>商品审核</li>
                   <li><span class="fb">{{ wait_data.audit.comment }}</span>评价审核</li>
                 </ul>
               </div>
@@ -256,7 +256,7 @@ export default {
   .operation-wrap .grid-content {
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-direction: row;
+    // -webkit-box-direction: row;
     -ms-flex-direction: row;
     flex-direction: row;
     justify-content: center;
@@ -296,7 +296,7 @@ export default {
   .matters-wrap .matters {
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-direction: column;
+    // -webkit-box-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
     justify-content: flex-start;

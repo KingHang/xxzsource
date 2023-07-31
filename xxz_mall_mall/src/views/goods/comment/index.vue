@@ -42,7 +42,7 @@
                 <div class="info">
                   <div class="name">{{ scope.row.product.product_name }}</div>
                   <div class="price">￥{{ scope.row.product.product_price }}</div>
-                  <div class="name">订单号:{{ scope.row.orderM.order_no }}</div>
+                  <div v-if="scope.row.orderM" class="name">订单号:{{ scope.row.orderM.order_no }}</div>
                 </div>
               </div>
             </template>
@@ -81,8 +81,8 @@
 
           <el-table-column fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-auth="'/product/comment/detail'" type="text" size="small" @click="detailClick(scope.row)">详情</el-button>
-              <el-button v-auth="'/product/comment/delete'" type="text" size="small" @click="delClick(scope.row)">删除</el-button>
+              <el-button v-auth="'/goods/comment/detail'" type="text" size="small" @click="detailClick(scope.row)">详情</el-button>
+              <el-button v-auth="'/goods/comment/delete'" type="text" size="small" @click="delClick(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

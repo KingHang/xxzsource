@@ -23,7 +23,7 @@ export default {
       let name = ''
       if (type === 'media') {
         name = '媒体组件'
-      } else if (type === 'shop') {
+      } else if (type === 'mall') {
         name = '商城组件'
       } else if (type === 'tools') {
         name = '工具组件'

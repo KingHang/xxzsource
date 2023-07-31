@@ -52,8 +52,8 @@
       <div class="table-wrap">
         <div v-if="(activeName === 'sell' || activeName === 'lower') && tableData.length > 0" class="batch-group">
           <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="toggleSelection(tableData)">{{ $t('page.selectAll') }}</el-checkbox>
-          <el-button v-auth="'/product/product/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('1')">{{ $t('page.onShelf') }}</el-button>
-          <el-button v-auth="'/product/product/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('2')">{{ $t('page.offShelf') }}</el-button>
+          <el-button v-auth="'/goods/goods/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('1')">{{ $t('page.onShelf') }}</el-button>
+          <el-button v-auth="'/goods/goods/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('2')">{{ $t('page.offShelf') }}</el-button>
         </div>
 
         <el-table ref="multipleTable" v-loading="loading" size="small" :data="tableData" border style="width: 100%" @selection-change="handleSelectionChange">
@@ -98,10 +98,9 @@
           <el-table-column fixed="right" label="操作" width="80">
             <template slot-scope="scope">
               <div class="table-btn-column">
-                <el-button v-if="scope.row.audit_status === 10" v-auth="'/product/product/edit'" type="text" size="small" @click="editClick(scope.row)">编辑商品</el-button>
-                <el-button v-if="scope.row.audit_status === 0" v-auth="'/product/product/edit'" type="text" size="small" @click="editClick(scope.row)">审核商品</el-button>
-                <el-button v-auth="'/product/product/delete'" type="text" size="small" @click="delClick(scope.row)">删除商品</el-button>
-                <!-- <el-button @click="promoteClick(scope.row)" type="text" size="small">{{ $t('page.promote') }}</el-button> -->
+                <el-button v-if="scope.row.audit_status === 10" v-auth="'/goods/goods/edit'" type="text" size="small" @click="editClick(scope.row)">编辑商品</el-button>
+                <el-button v-if="scope.row.audit_status === 0" v-auth="'/goods/goods/edit'" type="text" size="small" @click="editClick(scope.row)">审核商品</el-button>
+                <el-button v-auth="'/goods/goods/delete'" type="text" size="small" @click="delClick(scope.row)">删除商品</el-button>
               </div>
             </template>
           </el-table-column>
@@ -113,8 +112,8 @@
     <div class="pagination mg-top30">
       <div v-if="(activeName === 'sell' || activeName === 'lower') && tableData.length > 0" class="batch-group-bottom">
         <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="toggleSelection(tableData)">{{ $t('page.selectAll') }}</el-checkbox>
-        <el-button v-auth="'/product/product/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('1')">{{ $t('page.onShelf') }}</el-button>
-        <el-button v-auth="'/product/product/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('2')">{{ $t('page.offShelf') }}</el-button>
+        <el-button v-auth="'/goods/goods/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('1')">{{ $t('page.onShelf') }}</el-button>
+        <el-button v-auth="'/goods/goods/handle'" size="small" type="primary" class="mg-left20" @click="batchOperateClick('2')">{{ $t('page.offShelf') }}</el-button>
       </div>
 
       <el-pagination
@@ -252,7 +251,7 @@ export default {
       this.$router.push({
         path: '/goods/goods/edit',
         query: {
-          product_id: row.product_id,
+          goods_id: row.goods_id,
           scene: 'edit'
         }
       })
@@ -264,7 +263,7 @@ export default {
         type: 'warning'
       }).then(() => {
         GoodsApi.delProduct({
-          product_id: row.product_id
+          goods_id: row.goods_id
         }).then(data => {
           self.$message({
             message: '删除成功',
@@ -290,7 +289,7 @@ export default {
         type: 'warning'
       }).then(() => {
         GoodsApi.handleProduct({
-          product_id: dataObj.arr.join(','),
+          goods_id: dataObj.arr.join(','),
           type: type
         }).then(data => {
           self.$message({
@@ -308,7 +307,7 @@ export default {
       let firstName = ''
       const num = list.length
       for (let i = 0; i < num; i++) {
-        arr.push(list[i].product_id)
+        arr.push(list[i].goods_id)
         if (i === 0) {
           firstName = list[i].product_name
         }
@@ -332,7 +331,7 @@ export default {
     promoteClick(row) {
       this.scene = 'poster'
       GoodsApi.getPromoteImage({
-        product_id: row.product_id,
+        goods_id: row.goods_id,
         app_id: 10001
       }).then(data => {
         this.scene_url = data.data.url

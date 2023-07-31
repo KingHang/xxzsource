@@ -2,7 +2,7 @@
   <div class="product">
     <!--添加产品分类-->
     <div class="common-level-rail">
-      <el-button v-auth="'/product/category/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加分类</el-button>
+      <el-button v-auth="'/goods/category/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加分类</el-button>
     </div>
 
     <!--内容-->
@@ -40,8 +40,8 @@
 
           <el-table-column fixed="right" label="操作" width="100">
             <template slot-scope="scope">
-              <el-button v-auth="'/product/category/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
-              <el-button v-auth="'/product/category/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
+              <el-button v-auth="'/goods/category/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+              <el-button v-auth="'/goods/category/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

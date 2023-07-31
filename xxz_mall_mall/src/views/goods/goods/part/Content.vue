@@ -16,7 +16,7 @@
       </div>
     </el-form-item>
 
-    <el-form-item v-show="form.model.is_picture == 1" label="详情图片：">
+    <el-form-item v-show="form.model.is_picture === 1" label="详情图片：">
       <div class="draggable-list">
         <draggable v-model="form.model.contentImage" class="wrapper">
           <transition-group>

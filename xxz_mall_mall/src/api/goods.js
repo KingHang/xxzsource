@@ -75,7 +75,7 @@ const GoodsApi = {
   },
   /** 商品列表不带分页 **/
   getActiveProductList(data) {
-    return request({ url: '/mall/plus.fans.goods/lists', method: 'post', data })
+    return request({ url: '/mall/plugin.fans.goods/lists', method: 'post', data })
   },
   /** 商品评论列表 **/
   getCommentList(data) {

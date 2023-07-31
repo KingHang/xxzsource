@@ -91,36 +91,6 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="文章推广赠送成长值" prop="is_promote_article">
-        <el-radio-group v-model="form.is_promote_article">
-          <el-radio :label="1">开启</el-radio>
-          <el-radio :label="0">关闭</el-radio>
-        </el-radio-group>
-        <div class="lh18 mt10 gray9">
-          <p>开启后可在营销插件-文章推广-设置中编辑奖励<el-link type="primary" class="mg-left10" @click="goPage(2)">前往编辑</el-link></p>
-        </div>
-      </el-form-item>
-
-      <div class="common-form">成长值兑换通证</div>
-
-      <el-form-item label="是否开启自动兑换通证" prop="is_auto_token">
-        <el-radio-group v-model="form.is_auto_token">
-          <el-radio :label="1">开启</el-radio>
-          <el-radio :label="0">关闭</el-radio>
-        </el-radio-group>
-        <div class="lh18 mt10 gray9">
-          <p>开启后会员获得的成长值会被自动按比例兑换通证，同时成长值不清零</p>
-        </div>
-      </el-form-item>
-
-      <el-form-item label="通证兑换比例" prop="token_ratio" :rules="[{ required: true, message: ' ' }]">
-        <span class="mg-right10 lineHeight32">每</span>
-        <el-input v-model="form.token_ratio" type="number" autocomplete="off" min="0" class="w200">
-          <template slot="append">个</template>
-        </el-input>
-        <span class="mg-left10 lineHeight32">成长值自动兑换1通证</span>
-      </el-form-item>
-
       <!--提交-->
       <div class="common-button-wrapper">
         <el-button type="primary" size="small" :loading="saveLoading" @click="onSubmit">提交</el-button>
@@ -149,10 +119,7 @@ export default {
         register_grow: 0,
         is_invite: 1,
         invite_grow: 0,
-        is_sign: 1,
-        is_promote_article: 1,
-        is_auto_token: 1,
-        token_ratio: 100
+        is_sign: 1
       }
     }
   },
@@ -172,8 +139,6 @@ export default {
         self.form.is_register = parseInt(data.data.values.is_register)
         self.form.is_invite = parseInt(data.data.values.is_invite)
         self.form.is_sign = parseInt(data.data.values.is_sign)
-        self.form.is_promote_article = parseInt(data.data.values.is_promote_article)
-        self.form.is_auto_token = parseInt(data.data.values.is_auto_token)
         self.loading = false
       }).catch(() => {
         self.loading = false
@@ -206,10 +171,7 @@ export default {
     goPage(type) {
       switch (type) {
         case 1:
-          this.$router.push('/plus/sign/index')
-          break
-        case 2:
-          this.$router.push('/plus/articlepromotion/index?type=site')
+          this.$router.push('/plugin/clockin/index')
           break
       }
     }
@@ -218,6 +180,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .el-form {
+    background: #ffffff !important;
+  }
   .open-bg {
     margin: 20px 0;
     padding: 20px;

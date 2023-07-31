@@ -2,7 +2,7 @@
   <div class="user">
     <!--添加管理员-->
     <div class="common-level-rail">
-      <el-button v-auth="'/appsetting/appupdate/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加升级</el-button>
+      <el-button v-auth="'/app/appupdate/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick">添加升级</el-button>
     </div>
 
     <!--内容-->
@@ -21,8 +21,8 @@
 
           <el-table-column fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-auth="'/appsetting/appupdate/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
-              <el-button v-auth="'/appsetting/appupdate/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
+              <el-button v-auth="'/app/appupdate/edit'" type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+              <el-button v-auth="'/app/appupdate/delete'" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

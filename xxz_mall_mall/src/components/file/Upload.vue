@@ -113,7 +113,7 @@
     </el-dialog>
 
     <!--图片类别-->
-    <AddCategory v-if="isShowCategory" :category="category" :file_type="this_config.file_type" @closeCategory="closeCategoryFunc" />
+    <AddCategory v-if="isShowCategory" :category="category" :file-type="this_config.file_type" @closeCategory="closeCategoryFunc" />
   </div>
 </template>
 

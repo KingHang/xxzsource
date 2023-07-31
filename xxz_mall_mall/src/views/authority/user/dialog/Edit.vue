@@ -43,7 +43,7 @@ import AuthorityApi from '@/api/authority.js'
 
 export default {
   // eslint-disable-next-line vue/require-prop-types,vue/prop-name-casing
-  props: ['open', 'shop_user_id'],
+  props: ['open', 'mall_user_id'],
   data() {
     return {
       /* 左边长度 */
@@ -115,7 +115,7 @@ export default {
     getData() {
       const self = this
       AuthorityApi.userEditInfo({
-        shop_user_id: this.shop_user_id
+        mall_user_id: this.mall_user_id
       }).then(res => {
         self.loading = false
         self.roleList = res.data.roleList

@@ -1,5 +1,21 @@
+import { getSessionStorage, setSessionStorage } from '@/utils/base'
+import { createdAuth } from '@/utils/createdAuth'
+
 // import parseTime, formatTime and set to filter
 export { parseTime, formatTime } from '@/utils'
+
+/** 判断有没有权限 **/
+export function isAuth(val) {
+  let auth = getSessionStorage('authlist')
+  if (!auth) {
+    const authlist = {}
+    createdAuth(auth, authlist)
+    setSessionStorage('authlist', authlist)
+    auth = authlist
+  }
+  const value = val.toLowerCase()
+  return auth[value] === true
+}
 
 /**
  * Show plural label if time is plural number

@@ -35,6 +35,7 @@
 <script>
 import DataApi from '@/api/data.js'
 import { formatDate } from '@/utils/dateTime.js'
+import echarts from 'echarts'
 
 export default {
   data() {
@@ -109,7 +110,7 @@ export default {
     },
     myEcharts() {
       // 基于准备好的dom，初始化echarts实例
-      this.myChart = this.$echarts.init(document.getElementById('LineChart'))
+      this.myChart = echarts.init(document.getElementById('LineChart'))
       /* 获取列表 */
       this.getData()
     },

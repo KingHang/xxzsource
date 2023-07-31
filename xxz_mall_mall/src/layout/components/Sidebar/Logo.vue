@@ -2,12 +2,12 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
+        <img v-if="baseInfo.shop_logo" :src="baseInfo.shop_logo" class="sidebar-logo">
+        <h1 v-else class="sidebar-title">{{ baseInfo.shop_name }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <div class="sidebar-title">{{ title }}</div>
+        <img v-if="baseInfo.shop_logo" :src="baseInfo.shop_logo" class="sidebar-logo">
+        <div class="sidebar-title">{{ baseInfo.shop_name }}</div>
       </router-link>
     </transition>
   </div>
@@ -22,12 +22,7 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      title: '小玄猪',
-      logo: 'https://img.pighack.com/20220123155756e81819541.png'
-    }
-  }
+  inject: ['baseInfo']
 }
 </script>
 
@@ -53,6 +48,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
+      display: inline-block;
       width: 36px;
       height: 36px;
       border-radius: 36px;

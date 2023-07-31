@@ -26,11 +26,6 @@ export default {
           type: '菜单'
         },
         {
-          url: '/pagesAgent/agent/index/index',
-          name: '分销中心',
-          type: '菜单'
-        },
-        {
           url: '/pages/user/my-bargain/my-bargain',
           name: '我的砍价',
           type: '菜单'
@@ -58,7 +53,7 @@ export default {
           name: '我的关注',
           type: '菜单'
         }, {
-          url: '/pages/plus/signin/signin',
+          url: '/pages/plugin/signin/signin',
           name: '签到有礼',
           type: '菜单'
         }, {

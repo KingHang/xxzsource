@@ -22,6 +22,9 @@ import * as filters from './filters' // global filters
 
 import '@/directive/index.js'
 
+import './assets/font/iconfont.css'
+import './assets/font/iconfont.js'
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -44,6 +47,8 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
+Vue.prototype.$filter = filters
 
 Vue.config.productionTip = false
 

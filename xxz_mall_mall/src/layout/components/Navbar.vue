@@ -16,14 +16,14 @@
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
 
-        <div class="right-menu-version">当前版本：2.6</div>
+        <div class="right-menu-version">当前版本：{{ baseInfo.version }}</div>
 
-        <div class="right-menu-username">{{ name }}</div>
+        <div class="right-menu-username">{{ baseInfo.user.user_name }}</div>
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img src="https://img.pighack.com/20220123155756e81819541.png" class="user-avatar">
+          <img :src="baseInfo.shop_logo" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -59,6 +59,7 @@ export default {
     SizeSelect,
     Search
   },
+  inject: ['baseInfo'],
   computed: {
     ...mapGetters([
       'name',

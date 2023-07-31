@@ -33,7 +33,7 @@
         </template>
 
         <!--文章-->
-        <template v-else-if="item.type === 'article'">
+        <template v-else-if="item.type === 'news'">
           <Article :item="item" :index="index" :selected-index="form.selectedIndex" />
         </template>
 
@@ -62,18 +62,13 @@
           <Category :item="item" :index="index" :selected-index="form.selectedIndex" />
         </template>
 
-        <!--品牌分类组-->
-        <template v-else-if="item.type === 'brandCategory'">
-          <BrandCategory :item="item" :index="index" :selected-index="form.selectedIndex" />
-        </template>
-
         <!--权益卡组-->
         <template v-else-if="item.type === 'card'">
           <Card :item="item" :index="index" :selected-index="form.selectedIndex" />
         </template>
 
         <!--优惠券-->
-        <template v-else-if="item.type === 'coupon'">
+        <template v-else-if="item.type === 'voucher'">
           <Coupon :item="item" :index="index" :selected-index="form.selectedIndex" />
         </template>
 
@@ -116,21 +111,6 @@
         <template v-else-if="item.type === 'bargainProduct'">
           <BargainProduct :item="item" :index="index" :selected-index="form.selectedIndex" />
         </template>
-
-        <!--创业分红-->
-        <template v-else-if="item.type === 'bonusProduct'">
-          <BonusProduct :item="item" :index="index" :selected-index="form.selectedIndex" />
-        </template>
-
-        <!--直播-->
-        <template v-else-if="item.type === 'live'">
-          <Live :item="item" :index="index" :selected-index="form.selectedIndex" />
-        </template>
-
-        <!--微信直播-->
-        <template v-else-if="item.type === 'wxlive'">
-          <Wxlive :item="item" :index="index" :selected-index="form.selectedIndex" />
-        </template>
       </div>
     </draggable>
   </div>
@@ -149,7 +129,6 @@ import Notice from './model/Notice.vue'
 import NavBar from './model/NavBar.vue'
 import Product from './model/Product.vue'
 import Category from './model/Category.vue'
-import BrandCategory from './model/BrandCategory.vue'
 import Card from './model/Card.vue'
 import Coupon from './model/Coupon.vue'
 import Store from './model/Store.vue'
@@ -160,9 +139,6 @@ import Guide from './model/Guide.vue'
 import Seckill from './model/Seckill.vue'
 import assembleProduct from './model/assembleProduct.vue'
 import BargainProduct from './model/BargainProduct.vue'
-import BonusProduct from './model/BonusProduct.vue'
-import Live from './model/Live.vue'
-import Wxlive from './model/Wxlive.vue'
 import draggable from 'vuedraggable'
 
 export default {
@@ -191,8 +167,6 @@ export default {
     Product,
     /* 商品分类组 */
     Category,
-    /* 品牌分类组 */
-    BrandCategory,
     /* 权益卡组 */
     Card,
     /* 优惠券 */
@@ -214,13 +188,7 @@ export default {
     /* 拼团 */
     assembleProduct,
     /* 砍价 */
-    BargainProduct,
-    /* 创业分红 */
-    BonusProduct,
-    /* 直播 */
-    Live,
-    /* 微信直播 */
-    Wxlive
+    BargainProduct
   },
   props: {
     // eslint-disable-next-line vue/require-default-prop

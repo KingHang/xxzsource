@@ -1,0 +1,240 @@
+{
+  "id": "4183672",
+  "name": "小玄猪SAAS项目",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "36633529",
+      "name": "工作台_订单",
+      "font_class": "gongzuotai_dingdan",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "36633528",
+      "name": "工作台_店铺",
+      "font_class": "gongzuotai_dianpu",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "36633527",
+      "name": "工作台_用户",
+      "font_class": "gongzuotai_yonghu",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "36633526",
+      "name": "工作台_商品",
+      "font_class": "gongzuotai_shangpin",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "36622460",
+      "name": "插件_满减活动",
+      "font_class": "chajian_manjianhuodong",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "36622461",
+      "name": "插件_万能表单",
+      "font_class": "chajian_wannengbiaodan",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "36622459",
+      "name": "插件_赠品",
+      "font_class": "chajian_zengpin",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "36622457",
+      "name": "插件_包邮",
+      "font_class": "chajian_baoyou",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "36622458",
+      "name": "插件_公众号关注",
+      "font_class": "chajian_gongzhonghaoguanzhu",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "36622456",
+      "name": "插件_商品推荐",
+      "font_class": "chajian_shangpintuijian",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "36618635",
+      "name": "插件_引导收藏",
+      "font_class": "chajian_yindaoshoucang",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "36618634",
+      "name": "插件_权益卡",
+      "font_class": "chajian_quanyika",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "36618625",
+      "name": "插件_限时秒杀",
+      "font_class": "chajian_xianshimiaosha",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "36618633",
+      "name": "插件_文章",
+      "font_class": "chajian_wenzhang",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "36618632",
+      "name": "插件_转盘抽奖",
+      "font_class": "chajian_zhuanpanchoujiang",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "36618631",
+      "name": "积分商城",
+      "font_class": "jifenshangcheng",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "36618629",
+      "name": "插件_砍价",
+      "font_class": "chajian_kanjia",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "36618627",
+      "name": "插件_限时拼团",
+      "font_class": "chajian_xianshipintuan",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "36618628",
+      "name": "插件_优惠券",
+      "font_class": "chajian_youhuiquan",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "36618626",
+      "name": "插件_签到有礼",
+      "font_class": "chajian_qiandaoyouli",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "36618630",
+      "name": "插件_首页推送",
+      "font_class": "chajian_shouyetuisong",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "36615395",
+      "name": "商户",
+      "font_class": "shanghu",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "36615396",
+      "name": "统计",
+      "font_class": "tongji",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "36615394",
+      "name": "权限",
+      "font_class": "quanxian",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "36614927",
+      "name": "订单",
+      "font_class": "dingdan",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "36614517",
+      "name": "商品",
+      "font_class": "shangpin1",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "36614156",
+      "name": "退出登录",
+      "font_class": "tuichudenglu",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "36614048",
+      "name": "应用",
+      "font_class": "yingyong",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "36614051",
+      "name": "店铺",
+      "font_class": "dianpu",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "36614052",
+      "name": "会员",
+      "font_class": "huiyuan",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "36614053",
+      "name": "财务",
+      "font_class": "caiwu",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "36614054",
+      "name": "设置",
+      "font_class": "shezhi",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "36614056",
+      "name": "插件",
+      "font_class": "chajian",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    }
+  ]
+}

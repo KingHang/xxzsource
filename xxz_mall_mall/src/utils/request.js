@@ -14,9 +14,13 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+    if (config.url !== 'mall/file.upload/image') {
+      config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+    } else {
+      config.headers['Content-Type'] = 'multipart/form-data'
+    }
     config.withCredentials = true
-    if (config.method === 'post' && config.url !== '/shop/file.upload/image') {
+    if (config.method === 'post' && config.url !== '/mall/file.upload/image') {
       config.data = qs.stringify(config.data)
     }
     // if (store.getters.token) {

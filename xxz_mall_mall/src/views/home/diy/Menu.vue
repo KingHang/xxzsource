@@ -28,11 +28,7 @@ import couponPng from '@/assets/img/diy/coupon.png'
 import assembleProductPng from '@/assets/img/diy/assembleProduct.png'
 import bargainProductPng from '@/assets/img/diy/bargainProduct.png'
 import seckillProductPng from '@/assets/img/diy/seckillProduct.png'
-import bonusProductPng from '@/assets/img/diy/bonusProduct.png'
-import livePng from '@/assets/img/diy/live.png'
-import wxlivePng from '@/assets/img/diy/wxlive.png'
 import formInfoPng from '@/assets/img/diy/formInfo.png'
-import brandCategoryPng from '@/assets/img/diy/brandCategory.png'
 import cardPng from '@/assets/img/diy/card.png'
 import bannerPng from '@/assets/img/diy/banner.png'
 import imageSinglePng from '@/assets/img/diy/imageSingle.png'
@@ -58,7 +54,7 @@ export default {
           return productPng
         case 'category':
           return categoryPng
-        case 'coupon':
+        case 'voucher':
           return couponPng
         case 'assembleProduct':
           return assembleProductPng
@@ -66,16 +62,8 @@ export default {
           return bargainProductPng
         case 'seckillProduct':
           return seckillProductPng
-        case 'bonusProduct':
-          return bonusProductPng
-        case 'live':
-          return livePng
-        case 'wxlive':
-          return wxlivePng
         case 'formInfo':
           return formInfoPng
-        case 'brandCategory':
-          return brandCategoryPng
         case 'card':
           return cardPng
         case 'banner':
@@ -86,7 +74,7 @@ export default {
           return navBarPng
         case 'video':
           return videoPng
-        case 'article':
+        case 'news':
           return articlePng
         case 'special':
           return specialPng
@@ -111,7 +99,7 @@ export default {
       let name = ''
       if (type === 'media') {
         name = '媒体组件'
-      } else if (type === 'shop') {
+      } else if (type === 'mall') {
         name = '商城组件'
       } else if (type === 'tools') {
         name = '工具组件'
@@ -125,7 +113,7 @@ export default {
   },
   data() {
     return {
-      activeNames: ['media', 'shop', 'tools'],
+      activeNames: ['media', 'mall', 'tools'],
       /* 类别列表 */
       typeList: null
     }

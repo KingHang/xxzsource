@@ -170,7 +170,7 @@ export default {
           specSkuIdAttr.push(rows[j].item_id)
         }
         specList.push({
-          product_sku_id: 0,
+          goods_sku_id: 0,
           spec_sku_id: specSkuIdAttr.join('_'),
           rows: rows,
           spec_form: {}
@@ -185,7 +185,7 @@ export default {
           })
           if (overlap.length > 0) {
             specList[i].spec_form = overlap[0].spec_form
-            specList[i].product_sku_id = overlap[0].product_sku_id
+            specList[i].goods_sku_id = overlap[0].goods_sku_id
           }
         }
       }

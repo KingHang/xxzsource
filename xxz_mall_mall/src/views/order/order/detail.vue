@@ -43,12 +43,6 @@
             </div>
           </el-col>
           <el-col :span="5">
-            <div v-if="detail.deduct_money > 0" class="pb16">
-              <span class="gray9">CFP抵扣 (元)：</span>
-              {{ detail.deduct_money }}
-            </div>
-          </el-col>
-          <el-col :span="5">
             <div v-if="detail.fullreduce_money > 0" class="pb16">
               <span class="gray9">满减金额 (元)：</span>
               {{ detail.fullreduce_money }}
@@ -349,8 +343,8 @@
                 <el-option
                   v-for="(item, index) in expressList"
                   :key="index"
-                  :value="item.express_id"
                   :label="item.express_name"
+                  :value="item.express_id"
                 />
               </el-select>
             </el-form-item>

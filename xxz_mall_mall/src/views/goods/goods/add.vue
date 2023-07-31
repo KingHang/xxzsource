@@ -225,7 +225,7 @@ export default {
               message: '添加成功',
               type: 'success'
             })
-            self.$router.push('/product/product/index')
+            self.$router.push('/goods/goods/index')
           }).catch(() => {
             self.loading = false
           })

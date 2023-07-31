@@ -32,7 +32,7 @@
       </template>
 
       <!--文章组件-->
-      <template v-if="form.curItem.type === 'article'">
+      <template v-if="form.curItem.type === 'news'">
         <Article :cur-item="form.curItem" :selected-index="form.selectedIndex" />
       </template>
 
@@ -61,18 +61,13 @@
         <Category :cur-item="form.curItem" :selected-index="form.selectedIndex" />
       </template>
 
-      <!--品牌分类组-->
-      <template v-if="form.curItem.type === 'brandCategory'">
-        <BrandCategory :cur-item="form.curItem" :selected-index="form.selectedIndex" />
-      </template>
-
       <!--权益卡组-->
       <template v-if="form.curItem.type === 'card'">
         <Card :cur-item="form.curItem" :selected-index="form.selectedIndex" />
       </template>
 
       <!--优惠券-->
-      <template v-if="form.curItem.type === 'coupon'">
+      <template v-if="form.curItem.type === 'voucher'">
         <Coupon :cur-item="form.curItem" :selected-index="form.selectedIndex" />
       </template>
 
@@ -115,21 +110,6 @@
       <template v-if="form.curItem.type === 'bargainProduct'">
         <BargainProduct :cur-item="form.curItem" :selected-index="form.selectedIndex" />
       </template>
-
-      <!--创业分红-->
-      <template v-if="form.curItem.type === 'bonusProduct'">
-        <BonusProduct :cur-item="form.curItem" :selected-index="form.selectedIndex" />
-      </template>
-
-      <!--直播-->
-      <template v-if="form.curItem.type === 'live'">
-        <Live :cur-item="form.curItem" :selected-index="form.selectedIndex" />
-      </template>
-
-      <!--微信直播-->
-      <template v-if="form.curItem.type === 'wxlive'">
-        <Wxlive :cur-item="form.curItem" :selected-index="form.selectedIndex" />
-      </template>
     </template>
 
     <!--上传图片-->
@@ -157,7 +137,6 @@ import Notice from './params/Notice.vue'
 import NavBar from './params/NavBar.vue'
 import Product from './params/Product.vue'
 import Category from './params/Category.vue'
-import BrandCategory from './params/BrandCategory.vue'
 import Card from './params/Card.vue'
 import Coupon from './params/Coupon.vue'
 import Store from './params/Store.vue'
@@ -168,9 +147,6 @@ import Guide from './params/Guide.vue'
 import Seckill from './params/Seckill.vue'
 import assembleProduct from './params/assembleProduct.vue'
 import BargainProduct from './params/BargainProduct.vue'
-import BonusProduct from './params/BonusProduct.vue'
-import Live from './params/Live.vue'
-import Wxlive from './params/Wxlive.vue'
 import Upload from '@/components/file/Upload'
 import ProductSelect from '@/components/goods/Product'
 import StoreSelect from '@/components/store/StoreSelect'
@@ -201,8 +177,6 @@ export default {
     Product,
     /* 商品分类组 */
     Category,
-    /* 品牌分类组 */
-    BrandCategory,
     /* 权益卡组 */
     Card,
     /* 优惠券 */
@@ -223,18 +197,12 @@ export default {
     assembleProduct,
     /* 砍价 */
     BargainProduct,
-    /* 创业分红 */
-    BonusProduct,
     /* 上传图片 */
     Upload,
     /* 商品选择 */
     ProductSelect,
     /* 门店选中 */
-    StoreSelect,
-    /* 直播 */
-    Live,
-    /* 微信直播 */
-    Wxlive
+    StoreSelect
   },
   // eslint-disable-next-line vue/require-prop-types
   props: ['form', 'defaultData', 'diyData', 'opts'],

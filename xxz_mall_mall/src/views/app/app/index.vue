@@ -3,15 +3,22 @@
     <!--form表单-->
     <el-form ref="form" size="small" :model="form" label-width="200px">
       <div class="common-form">通行证设置</div>
+
       <el-form-item label="通行证类型">
-        <div><el-radio v-model="form.passport_type" :label="10">微信开放平台</el-radio></div>
+        <div>
+          <el-radio v-model="form.passport_type" :label="10">微信开放平台</el-radio>
+        </div>
+
         <div class="gray">
           目前仅支持微信开放平台，未来会支持手机号、用户名。如未注册或未绑定微信开放平台，请前往
           <a href="https://open.weixin.qq.com" target="_blank" class="blue">微信开放平台</a>
         </div>
       </el-form-item>
+
       <!--提交-->
-      <div class="common-button-wrapper"><el-button type="primary" @click="onSubmit">提交</el-button></div>
+      <div class="common-button-wrapper">
+        <el-button type="primary" @click="onSubmit">提交</el-button>
+      </div>
     </el-form>
   </div>
 </template>

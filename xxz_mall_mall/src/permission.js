@@ -1,4 +1,4 @@
-import router from './router'
+import router, { resetRouter } from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
@@ -27,17 +27,30 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } else {
       // determine whether the user has obtained his permission roles through getInfo
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      const hasRoles = store.state.user.roles && store.state.user.roles.length > 0
       if (hasRoles) {
-        next()
+        // 判断行业是否初始化选择
+        const baseInfo = JSON.parse(getCookie('baseInfo'))
+        // eslint-disable-next-line no-prototype-builtins
+        const isTrade = baseInfo && baseInfo.hasOwnProperty('isTrade') ? baseInfo.isTrade : 1
+        if (to.path !== '/industry' && isTrade === 0) {
+          next('/industry')
+        } else {
+          next()
+        }
+        NProgress.done()
       } else {
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-          const { roles } = await store.dispatch('user/getInfo')
+          // const { roles } = await store.dispatch('user/getInfo')
+          const roles = Math.random()
 
           // generate accessible routes map based on roles
-          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          // const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          const accessRoutes = await store.dispatch('user/generateRoutes', roles)
+
+          resetRouter()
 
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
@@ -56,7 +69,6 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()

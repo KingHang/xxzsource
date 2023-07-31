@@ -1,14 +1,13 @@
 <template>
   <div class="marketing-box">
     <el-tabs v-model="activeTab">
-      <el-tab-pane label="签到" name="signin" />
-      <el-tab-pane label="积分商城" name="points" />
-      <el-tab-pane label="秒杀" name="seckill" />
-      <el-tab-pane label="拼团" name="assemble" />
-      <el-tab-pane label="砍价" name="bargain" />
-      <el-tab-pane label="品牌日" name="brand" />
-      <el-tab-pane label="领券中心" name="coupon" />
-      <el-tab-pane label="幸运转盘" name="lottery" />
+      <el-tab-pane label="签到" name="clockin" />
+      <el-tab-pane label="积分商城" name="exchangepurch" />
+      <el-tab-pane label="秒杀" name="flashsell" />
+      <el-tab-pane label="拼团" name="groupsell" />
+      <el-tab-pane label="砍价" name="pricedown" />
+      <el-tab-pane label="领券中心" name="voucher" />
+      <el-tab-pane label="幸运转盘" name="raffle" />
       <el-tab-pane label="万能表单" name="table" />
     </el-tabs>
     <el-select v-model="activePage" placeholder="请选择" class="percent-w100" value-key="id" @change="changeFunc">
@@ -24,13 +23,13 @@ export default {
   data() {
     return {
       /* tab切换选择中值 */
-      activeTab: 'signin',
+      activeTab: 'clockin',
       /* 页面数据 */
       pages: [],
       /* 选中的值 */
       activePage: null,
       /* 秒杀数据 */
-      seckillList: [
+      flashsellList: [
         {
           id: 0,
           url: 'pages/plus/seckill/list/list',
@@ -39,7 +38,7 @@ export default {
         }
       ],
       /* 签到数据 */
-      signinList: [
+      clockinList: [
         {
           id: 0,
           url: 'pages/plus/signin/signin',
@@ -48,7 +47,7 @@ export default {
         }
       ],
       /* 积分商城数据 */
-      pointsList: [
+      exchangepurchList: [
         {
           id: 0,
           url: 'pages/plus/points/list/list',
@@ -57,7 +56,7 @@ export default {
         }
       ],
       /* 拼团 */
-      assembleList: [
+      groupsellList: [
         {
           id: 0,
           url: 'pages/plus/assemble/list/list',
@@ -66,7 +65,7 @@ export default {
         }
       ],
       /* 砍价 */
-      bargainList: [
+      pricedownList: [
         {
           id: 0,
           url: 'pages/plus/bargain/list/list',
@@ -74,17 +73,8 @@ export default {
           type: '营销'
         }
       ],
-      /* 品牌日 */
-      brandList: [
-        {
-          id: 0,
-          url: 'pagesBrand/brand/list',
-          name: '品牌日',
-          type: '营销'
-        }
-      ],
       /* 领券中心 */
-      couponList: [
+      voucherList: [
         {
           id: 0,
           url: 'pages/coupon/coupon',
@@ -93,7 +83,7 @@ export default {
         }
       ],
       /* 幸运转盘 */
-      lotteryList: [
+      raffleList: [
         {
           id: 0,
           url: 'pages/plus/lottery/lottery',
@@ -110,22 +100,20 @@ export default {
       const self = this
       self.pages = []
       if (n !== o) {
-        if (n === 'signin') {
-          self.pages = self.signinList
-        } else if (n === 'points') {
-          self.pages = self.pointsList
-        } else if (n === 'seckill') {
-          self.pages = self.seckillList
-        } else if (n === 'assemble') {
-          self.pages = self.assembleList
-        } else if (n === 'bargain') {
-          self.pages = self.bargainList
-        } else if (n === 'brand') {
-          self.pages = self.brandList
-        } else if (n === 'coupon') {
-          self.pages = self.couponList
-        } else if (n === 'lottery') {
-          self.pages = self.lotteryList
+        if (n === 'clockin') {
+          self.pages = self.clockinList
+        } else if (n === 'exchangepurch') {
+          self.pages = self.exchangepurchList
+        } else if (n === 'flashsell') {
+          self.pages = self.flashsellList
+        } else if (n === 'groupsell') {
+          self.pages = self.groupsellList
+        } else if (n === 'pricedown') {
+          self.pages = self.pricedownList
+        } else if (n === 'voucher') {
+          self.pages = self.voucherList
+        } else if (n === 'raffle') {
+          self.pages = self.raffleList
         } else if (n === 'table') {
           self.pages = self.tableList
         }
@@ -134,7 +122,7 @@ export default {
     }
   },
   created() {
-    this.pages = this.signinList
+    this.pages = this.clockinList
     this.getData()
     this.autoSend()
   },

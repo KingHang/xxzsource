@@ -1,7 +1,6 @@
 import UserApi from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-import { delCookie, deleteSessionStorage } from '@/utils/base'
 
 const state = {
   token: getToken(),
@@ -82,15 +81,6 @@ const actions = {
         removeToken()
         resetRouter()
 
-        delCookie('isLogin')
-        delCookie('baseInfo')
-        deleteSessionStorage('rolelist')
-        deleteSessionStorage('authlist')
-        this.$store.commit('user/setState', {
-          key: 'roles',
-          val: null
-        })
-
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
@@ -108,16 +98,6 @@ const actions = {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
       removeToken()
-
-      delCookie('isLogin')
-      delCookie('baseInfo')
-      deleteSessionStorage('rolelist')
-      deleteSessionStorage('authlist')
-      this.$store.commit('user/setState', {
-        key: 'roles',
-        val: null
-      })
-
       resolve()
     })
   },

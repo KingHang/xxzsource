@@ -159,6 +159,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .el-form {
+    background: #ffffff !important;
+  }
   .open-bg {
     margin: 20px 0;
     padding: 20px;

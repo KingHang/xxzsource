@@ -2,7 +2,7 @@
   <div class="user">
     <!--添加页面-->
     <div class="common-level-rail">
-      <el-button v-auth="'home/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick()">添加页面</el-button>
+      <el-button v-auth="'/home/add'" size="small" type="primary" icon="el-icon-plus" @click="addClick()">添加页面</el-button>
     </div>
 
     <!--内容-->
@@ -31,8 +31,8 @@
 
           <el-table-column fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-auth="'/page/page/edit'" type="text" size="small" @click="editClick(scope.row.page_id)">编辑</el-button>
-              <el-button v-if="scope.row.page_type === 20" v-auth="'/page/page/delete'" type="text" size="small" @click="deleteClick(scope.row.page_id)">删除</el-button>
+              <el-button v-auth="'/home/edit'" type="text" size="small" @click="editClick(scope.row.page_id)">编辑</el-button>
+              <el-button v-if="scope.row.page_type === 20" v-auth="'/home/delete'" type="text" size="small" @click="deleteClick(scope.row.page_id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -4,14 +4,14 @@
     <div class="model-container">
       <div class="img-box p10" :style="'backgroundColor:'+formData.backgroundColor+';'">
         <div class="d-a-c">
-          <template v-if="item.is_show">
-            <div v-for="(item, indexTemp) in formData.list" :key="indexTemp" class="d-c d-c-c" @mouseenter="mouseenter" @mouseleave="mouseleave">
+          <div v-for="(item, indexTemp) in formData.list" :key="indexTemp" class="d-c d-c-c" @mouseenter="mouseenter" @mouseleave="mouseleave">
+            <template v-if="item.is_show">
               <div v-if="formData.type !== 2">
                 <img class="nav_img" :src="item.iconPath" alt="">
               </div>
               <div v-if="formData.type !== 1" :style="'color:'+formData.textColor+' ;'">{{ item.text }}</div>
-            </div>
-          </template>
+            </template>
+          </div>
         </div>
       </div>
     </div>

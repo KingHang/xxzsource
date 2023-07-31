@@ -2,7 +2,6 @@
   <div>
     <el-tabs v-model="activeName">
       <el-tab-pane label="会员通知" name="user" />
-      <el-tab-pane label="服务者通知" name="servant" />
       <el-tab-pane label="平台通知" name="shop" />
       <el-tab-pane label="商户通知" name="supplier" />
       <el-tab-pane label="获取手机号" name="mobile" />
@@ -10,9 +9,6 @@
 
     <!--会员通知-->
     <Message v-if="activeName === 'user'" :message_to="10" />
-
-    <!--服务者通知-->
-    <Message v-if="activeName === 'servant'" :message_to="40" />
 
     <!--平台通知-->
     <Message v-if="activeName ==='shop'" :message_to="20" />

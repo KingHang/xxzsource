@@ -1,7 +1,7 @@
 <template>
   <div class="product-add">
     <!--form表单-->
-    <el-form ref="form" size="small" :model="form" label-width="150px">
+    <el-form ref="form" size="small" :model="form" label-width="180px">
       <!--添加门店-->
       <div class="common-form">短信通知（阿里云短信）</div>
 

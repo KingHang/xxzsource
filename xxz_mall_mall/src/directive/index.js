@@ -29,13 +29,14 @@ Vue.directive('auth', function(el, binding) {
   }
   const value = binding.value.toLowerCase()
   if (auth[value] !== true) {
-    // el.style.display = 'none'
+    el.style.display = 'none'
   }
 })
 
 /** 默认图片 **/
 Vue.directive('img-url', async function(el, binding) {
   let imgURL = ''
+
   if (binding.value instanceof Object) {
     const jsonStr = binding.expression.split(',')[0].replace(/\'/g, '')
     imgURL = checkChild(binding.value, jsonStr)

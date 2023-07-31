@@ -6,11 +6,9 @@
     <el-row>
       <el-col :span="12">
         <h1 class="text-jumbo text-ginormous">
-          Oops!
+          很遗憾！
         </h1>
-        gif来源<a href="https://zh.airbnb.com/" target="_blank">airbnb</a> 页面
         <h2>你没有权限去该页面</h2>
-        <h6>如有不满请联系你领导</h6>
         <ul class="list-unstyled">
           <li>或者你可以去:</li>
           <li class="link-type">
@@ -18,16 +16,15 @@
               回首页
             </router-link>
           </li>
-          <li class="link-type">
-            <a href="https://www.taobao.com/">随便看看</a>
-          </li>
           <li><a href="#" @click.prevent="dialogVisible=true">点我看图</a></li>
         </ul>
       </el-col>
+
       <el-col :span="12">
-        <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream.">
+        <img :src="errGif" width="313" height="428" alt="">
       </el-col>
     </el-row>
+
     <el-dialog :visible.sync="dialogVisible" title="随便看">
       <img :src="ewizardClap" class="pan-img">
     </el-dialog>
