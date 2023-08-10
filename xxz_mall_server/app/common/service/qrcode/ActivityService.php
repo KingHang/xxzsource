@@ -47,7 +47,7 @@ class ActivityService extends Base
         } elseif ($this->type == 2) {
             $param = $base_url . 'activityShare?id=' . $this->log_id;
         } else {
-            $param = json_encode(['id'=>$this->log_id,'verify_code'=>$this->verify_code,'Interface'=>"plugin.activity.activityLog/sign",'token'=>'','app_id'=>'']);
+            $param = json_encode(['id'=>$this->log_id,'verify_code'=>$this->verify_code,'Interface'=>"plugin.activity.activityLog/clockin",'token'=>'','app_id'=>'']);
         }
         $qrcode = new QrCode($param);
         $qrcode = $this->saveMpQrcode($qrcode, $this->appId, $this->log_id, 'image_mp'.$this->type);

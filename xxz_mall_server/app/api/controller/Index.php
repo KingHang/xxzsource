@@ -2,28 +2,11 @@
 
 namespace app\api\controller;
 
-use app\api\model\page\Home as AppPage;
-use app\api\model\plus\agent\Apply as AgentApplyModel;
-use app\api\model\plus\agent\User as AgentUserModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\home\Home as AppPage;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\enum\settings\SettingEnum;
 use app\common\model\app\AppUpdate as AppUpdateModel;
-use app\common\model\settings\Agreement as AgreementModel;
-use app\common\model\purveyor\Service as ServiceModel;
-use app\api\model\plus\chat\Chat as ChatModel;
-use app\common\model\plugin\agent\GradeLog;
-use app\common\model\plugin\agent\Grade as AgentGrade;
-use app\common\model\plugin\agent\OrderDetail;
-use app\common\model\plugin\agent\OrderSettled;
-use app\common\model\plugin\agent\Referee;
-use app\api\model\order\Order as orderModel;
-use app\api\model\plus\agent\Order as agentOrderModel;
-use think\facade\Cache;
-use app\common\model\plugin\agent\Capital;
-use app\common\library\helper;
-use app\common\model\user\User;
-use app\common\model\plugin\agent\Apply as ApplyModel;
-use app\common\model\plugin\agent\Setting as AgentSettingModel;
+use app\common\model\setting\Agreement as AgreementModel;
 /**
  * 页面控制器
  */
@@ -49,18 +32,25 @@ class Index extends Controller
         // 当前用户信息
         $userInfo = $this->getUser(false);
         if ($userInfo) {
-            $agentInfo = AgentUserModel::detail($userInfo['user_id']);
+            $agentInfo = (object)[];
             $data['userInfo'] = $userInfo;
             $data['agentInfo'] = $agentInfo ? $agentInfo : (object)[];
-            $data['is_agent'] = !!$agentInfo && !$agentInfo['is_delete'];
-            $data['is_applying'] = AgentApplyModel::isApplying($userInfo['user_id']);
+            $data['is_agent'] = false;
+            $data['is_applying'] = false;
         } else {
             $data['userInfo'] = (object)[];
             $data['agentInfo'] = (object)[];
             $data['is_agent'] = false;
             $data['is_applying'] = false;
         }
-        $data['tip'] = (new AgentApplyModel())->checkApply($userInfo);
+        $data['tip'] =  [
+        'is_agent' => false,
+        'is_applying' => false,
+        'is_pop' => false,
+        'name' => '',
+        'type' => 0,
+        'setmsg' => ''
+    ];
         return $this->renderSuccess('', $data);
     }
 
@@ -131,82 +121,6 @@ class Index extends Controller
         }
         return $this->renderSuccess('', compact('result'));
     }
-    public function agent_settled()
-    {
-        event('AgentOrderMonth', 10001);
-        echo 111;die;
-    }
-    public function setAgentCache()
-    {echo 11;die;
-        set_time_limit(0);
-        $list = (new AgentUserModel())->where('is_delete' , '=' , '0')->select();
-        $i = 0;
-        foreach ($list as $item) {
-            $i ++;
-            Cache::delete('agent_user_list_' . $item['user_id']);
-            (new AgentUserModel())->getRefereeUserList($item);
-        }
-//        $data = AgentSettingModel::getAll();
-//        $setting = $data['condition']['values'];
-//        $gradeIds = AgentGrade::getTeamGradeList($setting['team_level']);
-//        $list = (new AgentUserModel())->where('is_delete' , '=' , 0)->whereIn('grade_id',$gradeIds)->select();
-//        $agent_setting = $data['venturebonus_basic']['values'];
-//        $bonusGradeIds = AgentGrade::getTeamGradeList($agent_setting['grade_id']);
-//        foreach ($list as $item) {
-//            Cache::delete('direct_agent_user_list_' . $item['user_id']);
-//            (new AgentUserModel())->getDirectUserIds($item);
-//            Cache::delete('direct_agent_user_list_bonus_' . $item['user_id']);
-//            (new AgentUserModel())->getDirectUserIds($item,0,'bonus');
-//
-//            Cache::delete('agent_low_list_' . $item['user_id'] . 'bonus');
-//            Cache::delete('agent_low_list_' . $item['user_id']);
-//            (new AgentUserModel())->getLowTeamIdWithGrad($bonusGradeIds,$item,0,[],'bonus');
-//            (new AgentUserModel())->getLowTeamIdWithGrad($gradeIds,$item);
-//        }
-        return $this->renderSuccess('', $i);
-    }
-    // 分销商等级回滚
-    public function agentGardRollback() {
-        $list = (new GradeLog())->alias('a')
-            ->field('au.real_name,au.mobile,a.old_grade_id,a.new_grade_id,a.user_id,ag.grade_id')
-            ->join('agent_user au' , 'au.user_id = a.user_id')
-            ->join('agent_grade ag' , 'ag.grade_id = au.grade_id')
-            ->where(['change_type' => 20])
-            ->whereRaw('old_grade_id != new_grade_id')
-            ->select();
 
-        foreach ($list as $item) {
-            if ($item['new_grade_id'] == $item['grade_id']) {
-                // 回滚等级
-                (new AgentUserModel())->where('user_id' , '=' , $item['user_id'])->update([
-                    'grade_id' => $item['old_grade_id']
-                ]);
-                // 更新缓存
-                (new AgentUserModel())->getRefereeUserList(['user_id' => $item['user_id']],1);
-                // 添加等级变动日志
-                (new GradeLogModel)->save([
-                    'old_grade_id' => $item['new_grade_id'],
-                    'new_grade_id' => $item['old_grade_id'],
-                    'change_type' => 10,
-                    'user_id' => $item['user_id'],
-                    'app_id' => 10001,
-                    'remark' => '等级变更错误回滚'
-                ]);
-            }
-        }
-        return $this->renderSuccess('', $list);
-    }
-    public function bbb()
-    {
-        $list = (new OrderModel())->alias('o')
-            ->join('agent_order a' , 'a.order_id = o.order_id' , 'left')
-            ->where('o.pay_type' , '=' , 20)
-            ->where('o.pay_status' , '=' , 20)
-            ->whereIn('o.order_status',[10,30])     
-            ->where('o.order_id' , '=' ,1408)
-            ->whereNull('a.id')
-            ->field('o.user_id,o.order_id,o.order_source')
-            ->select();
-    }
-   
+
 }

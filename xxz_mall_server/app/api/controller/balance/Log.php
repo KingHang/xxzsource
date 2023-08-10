@@ -3,7 +3,7 @@
 namespace app\api\controller\balance;
 
 use app\api\controller\Controller;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\model\user\BalanceLog as BalanceLogModel;
 use app\common\exception\BaseException;
 use think\db\exception\DbException;

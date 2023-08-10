@@ -4,7 +4,7 @@ namespace app\api\controller\user;
 
 use app\api\model\user\User as UserModel;
 use app\api\controller\Controller;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\exception\BaseException;
 use app\api\model\user\Timelog;
 
@@ -103,12 +103,6 @@ class User extends Controller
         } else {
             return $this->renderError('绑定失败');
         }
-    }
-    public function getCertificateNumber()
-    {
-        $user = $this->getUser();
-        $user_id = $user['user_id'];
-        return $this->renderSuccess('',\app\common\model\plugin\agent\User::details($user_id));
     }
 
     /**

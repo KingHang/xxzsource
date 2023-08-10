@@ -5,14 +5,12 @@ namespace app\api\service\order\paysuccess\type;
 use app\api\model\user\User as UserModel;
 use app\api\model\order\Order as OrderModel;
 use app\common\model\order\OrderTrade as OrderTradeModel;
-use app\common\model\plugin\agent\OrderDetail;
 use app\common\model\user\BalanceLog as BalanceLogModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\user\balanceLog\BalanceLogSceneEnum;
-use app\api\model\plus\agent\Order as AgentOrderModel;
 use app\common\service\BaseService;
 use app\common\service\product\factory\ProductFactory;
-use app\api\model\plus\live\Room as RoomModel;
+use app\api\model\plugin\live\Room as RoomModel;
 use app\api\model\order\OrderGoods as OrderProductModel;
 /**
  * 订单支付成功服务类
@@ -110,13 +108,6 @@ class MasterPaySuccessService extends BaseService
             // 获取订单详情
             $detail = OrderModel::getUserOrderDetail($this->model['order_id'], $this->user['user_id']);
             event('PaySuccess', $detail);
-            event('AgentUserGrade', $this->user['user_id']);
-            //记录创业分红订单
-            OrderDetail::addBouns($detail);
-            // 记录分销商订单
-            if ($detail['is_agent'] == 1) {
-                AgentOrderModel::createOrder($detail);
-            }
         }
     }
     /**

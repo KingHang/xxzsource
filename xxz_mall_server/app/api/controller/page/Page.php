@@ -3,7 +3,7 @@
 namespace app\api\controller\page;
 
 use app\api\controller\Controller;
-use app\api\model\page\FormInfo as FormInfoModel;
+use app\api\model\home\FormInfo as FormInfoModel;
 
 class Page extends Controller
 {

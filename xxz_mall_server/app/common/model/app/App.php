@@ -22,7 +22,7 @@ class App extends BaseModel
      */
     public function trade()
     {
-        return $this->belongsTo('app\common\model\admin\Trade', 'trade_id', 'trade_id');
+        return $this->belongsTo('app\common\model\super\Trade', 'trade_id', 'trade_id');
     }
 
     /**

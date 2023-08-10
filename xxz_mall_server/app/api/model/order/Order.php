@@ -2,11 +2,11 @@
 
 namespace app\api\model\order;
 
-use app\api\model\product\Goods;
-use app\api\model\product\Goods as ProductModel;
+use app\api\model\goods\Goods;
+use app\api\model\goods\Goods as ProductModel;
 use app\api\service\order\paysuccess\type\MasterPaySuccessService;
 use app\api\service\order\PaymentService;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\order\OrderSourceEnum;
 use app\common\enum\order\OrderTypeEnum;
@@ -23,13 +23,10 @@ use app\common\library\helper;
 use app\common\model\order\Order as OrderModel;
 use app\api\service\order\checkpay\CheckPayFactory;
 use app\common\service\product\factory\ProductFactory;
-use app\common\model\plugin\voucher\UserVoucher as UserCouponModel;
-use app\common\model\plugin\agent\Product as AgentProductModel;
+use app\common\model\plugin\voucher\UserCoupon as UserCouponModel;
 use app\common\model\order\OrderTrade as OrderTradeModel;
 use app\common\model\order\OrderExtract as OrderExtractModel;
 use app\common\service\order\OrderRefundService;
-use app\common\model\plugin\agent\OrderDetail as OrderDetailModel;
-use app\common\model\order\OrderTravelers;
 
 /**
  * 普通订单模型
@@ -68,7 +65,6 @@ class Order extends OrderModel
             $this->error = $checkPay->getError();
             return false;
         }
-
         // 余额支付
         if ($payType == OrderPayTypeEnum::BALANCE) {
             return $this->onPaymentByBalance($this['order_no']);
@@ -121,7 +117,7 @@ class Order extends OrderModel
             // 用户查询
             $model = $model->where('user_id', '=', $user_id);
         }
-        return $model->with(['product'=>['OrderTravelers','image'], 'supplier'])
+        return $model->with(['product.image', 'supplier'])
             ->where($filter)
             ->where('is_delete', '=', 0)
             ->order(['create_time' => 'desc'])
@@ -169,11 +165,6 @@ class Order extends OrderModel
             $productList = self::getGiftProduct($params['product_id'],$params['product_sku_id'],$productList);
         }
         foreach ($productList as &$item) {
-            // 根据出行人数量重置旅游商品购买数量
-            if ($item['product_type'] == 4) {
-                $params['product_num'] = isset($params['travelers']) ? count($params['travelers']) : 1;
-            }
-
             $item['total_num'] = $params['product_num'];
             if (isset($item['gift_status']) && $item['gift_status']==1)
             {
@@ -188,11 +179,6 @@ class Order extends OrderModel
             // 商品pv,开启了分销才计算
             $item['pv'] = 0;
             $item['total_pv'] = 0;
-            $agent_product = AgentProductModel::detail($params['product_id'], $item['spec_sku_id']);
-            if($agent_product){
-                $item['pv'] = $agent_product['pv'];
-                $item['total_pv'] = helper::bcmul($item['pv'], $params['product_num']);
-            }
         }
         $supplierData[] = [
             'shop_supplier_id' => $product['shop_supplier_id'],
@@ -206,14 +192,14 @@ class Order extends OrderModel
     public static function getGiftProduct($product_id,$spec_sku_id,$productList,$total_num=1)
     {
         $product_sku_id = GoodsSku::detail($product_id,$spec_sku_id);
-        $product_sku_id = $product_sku_id['product_sku_id'];
-        if (GoodsGift::where(['product_id'=>$product_id,'product_sku_id'=>$product_sku_id])->find())
+        $product_sku_id = $product_sku_id['goods_sku_id'];
+        if (GoodsGift::where(['goods_id'=>$product_id,'goods_sku_id'=>$product_sku_id])->find())
         {
-            $data = GoodsGiftSku::where('product_id',$product_id)->select();
+            $data = GoodsGiftSku::where('goods_id',$product_id)->select();
             if ($data){
                 foreach ($data as $key =>$v)
                 {
-                    $product = Goods::detail($v['gift_product_id']);
+                    $product = Goods::detail($v['gift_goods_id']);
                     $product['gift_num'] = $v['gift_num'];
                     $product['total_num'] = $total_num;
                     $product['gift_status'] = 1;
@@ -289,11 +275,7 @@ class Order extends OrderModel
                 return false;
             }
         }
-        // 验证是否存在已结束佣金 存在不能取消
-        if ((new OrderDetailModel())->checkOrderSettled($this['order_id'])) {
-            $this->error = '订单存在已结算记录，不能取消';
-            return false;
-        }
+
         // 订单取消事件
         return $this->transaction(function () use ($user) {
             // 订单是否已支付
@@ -310,11 +292,7 @@ class Order extends OrderModel
                 $this['points_num'] > 0 && $user->setIncPoints($this['points_num'], $describe, 3);
                 // 回退用户通证
                 $this['deduct_num'] > 0 && $user->giftcertAmountToken($user['mobile'], $this['deduct_num'], $user['user_id'], '订单取消：商品CFP退回');
-                // 回退权益卡兑换次数
-                (new OrderTravelers())->rollBenefitCardNumber($this['order_id']);
             }
-            // 分销订单失效
-            (new OrderDetailModel())->setInvalid($this['order_id']);
             // 更新订单状态
             return $this->save(['order_status' => $isPay ? OrderStatusEnum::APPLY_CANCEL : OrderStatusEnum::CANCELLED , 'cancel_time' => time()]);
         });
@@ -327,20 +305,16 @@ class Order extends OrderModel
     {
         $model = new static();
         $where = ['order_id' => $order_id];
-        if ($source == 'agent') {
-            $where['agent_id'] = $user_id;
-        } else {
-            $where['user_id'] = $user_id;
-        }
-        $order = $model->where($where)->with(['product' => ['image', 'refund','OrderTravelers'], 'address', 'express', 'extractStore', 'supplier', 'billuser.bill','orderCarditem'])->find();
+        $where['user_id'] = $user_id;
+        $order = $model->where($where)->with(['product' => ['image', 'refund'], 'address', 'express', 'extractStore', 'supplier', 'billuser.bill','orderCarditem'])->find();
         if (empty($order)) {
             throw new BaseException(['msg' => '订单不存在']);
         }
         //区别拼团
         if ($order['order_source'] == 30 && isset($order->billuser)) {
             $order->billuser->bill->countdown = $order->billuser->bill->end_time - time();
-            $assemble_bill_id = $order->billuser->assemble_bill_id;
-            $order->billuser->userList = BillUser::with(['user'])->where('assemble_bill_id',$assemble_bill_id)->select();
+            $assemble_bill_id = $order->billuser->groupsell_bill_id;
+            $order->billuser->userList = BillUser::with(['user'])->where('groupsell_bill_id',$assemble_bill_id)->select();
         }
         return $order;
     }
@@ -410,7 +384,7 @@ class Order extends OrderModel
     /**
      * 构建支付请求的参数
      */
-    public static function onOrderPayment($user, $order_arr, $payType, $pay_source,$code)
+    public static function onOrderPayment($user, $order_arr, $payType, $pay_source,$code='')
     {
         //如果来源是h5,首次不处理，payH5再处理
         if($pay_source == 'h5'){
@@ -450,14 +424,6 @@ class Order extends OrderModel
         if ($this['delivery_status']['value'] != 20) {
             return false;
         }
-        // 权益卡订单不支持退款
-        if ($this['order_source'] == 110) {
-            return false;
-        }
-        // 虚拟计次、旅游商品不支持退款
-        if (in_array($this['product'][0]['product_type'],[2,3,4])) {
-            return false;
-        }
         // 允许申请售后期限(天)
         $refundDays = SettingModel::getItem('trade')['order']['refund_days'];
         // 不允许售后
@@ -482,8 +448,8 @@ class Order extends OrderModel
     {
         $model = new static();
         return $model->alias('order')->where('order.user_id', '=', $user_id)
-            ->join('order_product', 'order_product.order_id = order.order_id', 'left')
-            ->where('order_product.product_source_id', '=', $product_id)
+            ->join('order_goods', 'order_goods.order_id = order.order_id', 'left')
+            ->where('order_goods.goods_source_id', '=', $product_id)
             ->where('order.pay_status', '=', 20)
             ->where('order.order_source', '=', $order_source)
             ->where('order.order_status', '<>', 20)
@@ -540,7 +506,7 @@ class Order extends OrderModel
         if(isset($params['pay_status'])&&$params['pay_status']){
             $model = $model->where('pay_status','=',$params['pay_status']);
         }
-        return $model->with(['product.image'])
+        return $model->with(['goods.image'])
             ->where('shop_supplier_id', '=', $params['shop_supplier_id'])
             ->where('room_id', '>', 0)
             ->where('is_delete', '=', 0)
@@ -556,8 +522,8 @@ class Order extends OrderModel
     {
         $model = new static();
         return $model->alias('order')->where('order.user_id', '=', $user_id)
-            ->join('order_product', 'order_product.order_id = order.order_id', 'left')
-            ->where('order_product.product_id', '=', $product_id)
+            ->join('order_goods', 'order_goods.order_id = order.order_id', 'left')
+            ->where('order_goods.goods_id', '=', $product_id)
             ->where('order.order_source', '=', OrderSourceEnum::MASTER)
             ->where('order.order_status', '<>', 21)
             ->sum('total_num');
@@ -644,8 +610,8 @@ class Order extends OrderModel
     {
         $model = new static();
         return $model->alias('order')->where('order.user_id', '=', $user_id)
-            ->join('order_product', 'order_product.order_id = order.order_id', 'left')
-            ->whereIn('order_product.product_id', $product_ids)
+            ->join('order_goods', 'order_goods.order_id = order.order_id', 'left')
+            ->whereIn('order_goods.goods_id', $product_ids)
             ->where('order.order_status', '<>', 20)
             ->sum('total_num');
     }
@@ -657,11 +623,7 @@ class Order extends OrderModel
             $this->error = "订单状态不对";
             return false;
         }
-        // 验证是否存在已结束佣金 存在不能取消
-        if ((new OrderDetailModel())->checkOrderSettled($this['order_id'])) {
-            $this->error = '订单存在已结算记录，不能取消';
-            return false;
-        }
+
         // 订单取消事件
         $status = $this->transaction(function () use ($data) {
             // 执行退款操作
@@ -674,12 +636,8 @@ class Order extends OrderModel
             $user = $this['user'];
             $describe = "订单取消：{$this['order_no']}";
             $this['points_num'] > 0 && $user->setIncPoints($this['points_num'], $describe, 3);
-            // 分销订单失效
-            (new OrderDetailModel())->setInvalid($this['order_id']);
             // 回退用户通证
             $this['deduct_num'] > 0 && $user->giftcertAmountToken($user['mobile'], $this['deduct_num'], $user['user_id'], '订单取消：商品CFP退回');
-            // 回退权益卡兑换次数
-            (new OrderTravelers())->rollBenefitCardNumber($this['order_id']);
             // 更新订单状态
             return $this->save(['order_status' => 20, 'cancel_remark' => $data['remark'],'cancel_time' => time()]);
         });
@@ -734,15 +692,9 @@ class Order extends OrderModel
                 return false;
             }
         }
-        // 验证是否存在已结束佣金 存在不能取消
-        if ((new OrderDetailModel())->checkOrderSettled($this['order_id'])) {
-            $this->error = '订单存在已结算记录，不能取消';
-            return false;
-        }
+
         $this->startTrans();
         try {
-            // 分销订单失效
-            (new OrderDetailModel())->setInvalid($this['order_id']);
             $this->save(['order_status' => OrderStatusEnum::APPLY_CANCEL, 'cancel_remark' => isset($data['remark']) ? $data['remark'] : '','cancel_time' => time()]);
             $this->commit();
             return true;
@@ -758,11 +710,6 @@ class Order extends OrderModel
      */
     public function confirmCancel($data)
     {
-        // 验证是否存在已结束佣金 存在不能取消
-        if ((new OrderDetailModel())->checkOrderSettled($this['order_id'])) {
-            $this->error = '订单存在已结算记录，不能取消';
-            return false;
-        }
         // 订单取消事件
         $status = $this->transaction(function () use ($data) {
             if ($data['is_cancel'] == true) {
@@ -776,12 +723,8 @@ class Order extends OrderModel
                 $user = $this['user'];
                 $describe = "订单取消：{$this['order_no']}";
                 $this['points_num'] > 0 && $user->setIncPoints($this['points_num'], $describe, 3);
-                // 分销订单失效
-                (new OrderDetailModel())->setInvalid($this['order_id']);
                 // 回退用户通证
                 $this['deduct_num'] > 0 && $user->giftcertAmountToken($user['mobile'], $this['deduct_num'], $user['user_id'], '订单取消：商品CFP退回');
-                // 回退权益卡兑换次数
-                (new OrderTravelers())->rollBenefitCardNumber($this['order_id']);
             }
             // 更新订单状态
             return $this->save(['order_status' => $data['is_cancel'] ? 20 : 10]);

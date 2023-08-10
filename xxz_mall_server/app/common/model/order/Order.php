@@ -2,7 +2,7 @@
 
 namespace app\common\model\order;
 
-use app\api\controller\plus\assemble\Bill;
+use app\api\controller\plugin\groupsell\Bill;
 use app\common\enum\order\OrderSourceEnum;
 use app\common\model\BaseModel;
 use app\common\enum\settings\DeliveryTypeEnum;
@@ -17,7 +17,7 @@ use app\common\model\order\OrderGoods;
 use app\common\service\message\MessageService;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use think\facade\Filesystem;
-use app\common\model\settings\Express as ExpressModel;
+use app\common\model\setting\Express as ExpressModel;
 
 /**
  * 订单模型模型
@@ -70,7 +70,7 @@ class Order extends BaseModel
      */
     public function express()
     {
-        return $this->belongsTo('app\\common\\model\\settings\\Express', 'express_id', 'express_id');
+        return $this->belongsTo('app\\common\\model\\setting\\Express', 'express_id', 'express_id');
     }
 
     /**
@@ -102,7 +102,7 @@ class Order extends BaseModel
      */
     public function room()
     {
-        return $this->belongsTo('app\\common\\model\\plus\\live\\Room', 'room_id', 'room_id');
+        return [];
     }
 
     /**
@@ -110,7 +110,7 @@ class Order extends BaseModel
      */
     public function supplier()
     {
-        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'shop_supplier_id', 'shop_supplier_id')->field(['shop_supplier_id', 'name', 'user_id']);
+        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'purveyor_id', 'purveyor_id')->field(['purveyor_id', 'name', 'user_id','purveyor_id as shop_supplier_id']);
     }
     /**
      * 订单卡项表
@@ -124,7 +124,7 @@ class Order extends BaseModel
      */
     public function billuser()
     {
-        return $this->belongsTo('app\\common\\model\\plus\\assemble\\BillUser', 'order_id', 'order_id');
+        return $this->belongsTo('app\\common\\model\\plugin\\groupsell\\BillUser', 'order_id', 'order_id');
     }
     /**
      * 订单状态文字描述
@@ -324,7 +324,7 @@ class Order extends BaseModel
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function detail($where, $with = ['user', 'address', 'product' => ['image', 'refund', 'express','OrderTravelers'], 'extract', 'express', 'extractStore.logo', 'extractClerk', 'supplier','orderCarditem.Carditem.CarditemServer.server'])
+    public static function detail($where, $with = ['user', 'address', 'product' => ['image', 'refund', 'express'], 'extract', 'express', 'extractStore.logo', 'extractClerk'])
     {
         is_array($where) ? $filter = $where : $filter['order_id'] = (int)$where;
         return (new static())->with($with)->where($filter)->find();
@@ -333,7 +333,7 @@ class Order extends BaseModel
     /**
      * 订单详情
      */
-    public static function detailByNo($order_no, $with = ['user', 'address', 'product' => ['image', 'refund'], 'extract', 'express', 'extractStore.logo', 'extractClerk', 'supplier'])
+    public static function detailByNo($order_no, $with = ['user', 'address', 'product' => ['image', 'refund'], 'extract', 'express', 'extractStore.logo', 'extractClerk'])
     {
         return (new static())->with($with)->where('order_no', '=', $order_no)->find();
     }
@@ -451,7 +451,7 @@ class Order extends BaseModel
         }
 
         if ($shop_supplier_id > 0) {
-            $model = $model->where('shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('purveyor_id', '=', $shop_supplier_id);
         }
 
         $model = $model->where('is_delete', '=', 0)
@@ -657,7 +657,7 @@ class Order extends BaseModel
     public function getToBeReleasedOrderList()
     {
         return $this->alias('o')->with(['product'])
-            ->join('order_product og', 'og.order_id=o.order_id')
+            ->join('order_goods og', 'og.order_id=o.order_id')
             ->where('o.receipt_status' , '=' , 20)
             ->where('og.already_stages < og.gift_stages')
             ->where('og.gift_stages > 1')

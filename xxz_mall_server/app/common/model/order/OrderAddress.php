@@ -2,7 +2,7 @@
 
 namespace app\common\model\order;
 
-use app\common\model\settings\Region;
+use app\common\model\setting\Region;
 use app\common\model\BaseModel;
 
 /**

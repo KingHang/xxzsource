@@ -28,8 +28,6 @@ class OrderSourceEnum extends Enum
     //卡项订单
     const CARD = 80;
     const BRAND = 100;
-    // 权益卡
-    const BENEFIT = 110;
     /**
      * 获取枚举数据
      */
@@ -75,10 +73,6 @@ class OrderSourceEnum extends Enum
             self::BRAND => [
                 'name' => '品牌日',
                 'value' => self::BRAND,
-            ],
-            self::BENEFIT => [
-                'name' => '权益卡',
-                'value' => self::BENEFIT,
             ],
         ];
     }

@@ -27,17 +27,11 @@ class PaySourceSuccessFactory
             case OrderSourceEnum::ASSEMBLE:
                 return new AssemblePaySuccessService();
                 break;
-            case OrderSourceEnum::AGENT:
-                return new MasterPaySuccessService();
-                break;
             case OrderSourceEnum::SERVER:
                 return new ServerPaySuccessService();
                 break;
             case OrderSourceEnum::CARD:
                 return new CardPaySuccessService();
-                break;
-            case OrderSourceEnum::BENEFIT:
-                return new BenefitCardPaySuccessService();
                 break;
         }
     }

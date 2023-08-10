@@ -3,10 +3,10 @@
 namespace app\api\service\order\settled;
 
 use app\api\model\order\Order as OrderModel;
-use app\api\model\plus\seckill\Active as ActiveModel;
-use app\api\model\plus\seckill\Product as ProductModel;
+use app\api\model\plugin\flashsell\Active as ActiveModel;
+use app\api\model\plugin\flashsell\Goods as ProductModel;
 use app\common\enum\order\OrderSourceEnum;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 
 /**
  * 秒杀订单结算服务类
@@ -31,7 +31,7 @@ class SeckillOrderSettledService extends OrderSettledService
         // 自身构造,差异化规则
         $this->settledRule = array_merge($this->settledRule, [
             'is_coupon' => $this->config['is_coupon'],
-            'is_agent' => $this->config['is_agent'],
+            'is_agent' => false,
             'is_use_points' => $this->config['is_point'],
             'is_user_grade' => false,     // 会员等级折扣
         ]);
@@ -54,7 +54,7 @@ class SeckillOrderSettledService extends OrderSettledService
                 return false;
             }
             //是否在秒杀时间段
-            $seckill_model = ProductModel::detail($product['seckill_sku']['seckill_product_id'], ['active']);
+            $seckill_model = ProductModel::detail($product['seckill_sku']['flashsell_goods_id'], ['active']);
             $res = (new ActiveModel())->checkOrderTime($seckill_model['active']);
             if ($res['code'] != 0) {
                 $this->error = $res[$res['code']];

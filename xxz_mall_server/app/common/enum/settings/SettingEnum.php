@@ -34,7 +34,7 @@ class SettingEnum extends Enum
     // 商品推荐
     const RECOMMEND = 'recommend';
     // 签到有礼
-    const SIGN = 'sign';
+    const SIGN = 'clockin';
     // 首页推送
     const HOMEPUSH = 'homepush';
     // 引导收藏
@@ -44,9 +44,9 @@ class SettingEnum extends Enum
     // 积分商城
     const POINTSMALL = 'pointsmall';
     // 限时秒杀
-    const SECKILL = 'seckill';
+    const SECKILL = 'flashsell';
     // 限时拼团
-    const ASSEMBLE = 'assemble';
+    const ASSEMBLE = 'groupsell';
     // 限时砍价
     const BARGAIN = 'pricedown';
     // 获取手机号
@@ -81,8 +81,6 @@ class SettingEnum extends Enum
     const DEDUCT = 'deduct';
     //品牌设置
     const BRAND = 'brand';
-    // 权益卡设置
-    const BENEFIT = 'benefit';
     /**
      * 获取订单类型值
      */
@@ -232,10 +230,6 @@ class SettingEnum extends Enum
             self::BRAND => [
                 'value' => self::BRAND,
                 'describe' => '品牌设置',
-            ],
-            self::BENEFIT => [
-                'value' => self::BENEFIT,
-                'describe' => '权益卡设置',
             ]
         ];
     }

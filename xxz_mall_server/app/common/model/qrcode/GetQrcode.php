@@ -3,13 +3,9 @@ declare (strict_types = 1);
 
 namespace app\common\model\qrcode;
 
-use app\common\model\app\AppOpen as AppOpenModel;
 use app\common\model\app\AppWx;
-use app\common\model\settings\Settings as SettingModel;
 use app\common\service\qrcode\Base;
 use Endroid\QrCode\QrCode;
-use think\Model;
-use think\facade\Env;
 
 /**
  * @mixin \think\Model

@@ -4,19 +4,17 @@ namespace app\api\controller\user;
 
 use app\api\controller\Controller;
 use app\api\model\order\Order as OrderModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\service\pay\PayService;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\exception\BaseException;
-use app\common\model\plugin\agent\OrderDetail;
 use app\common\model\plugin\groupsell\BillUser;
 use app\common\service\qrcode\ExtractService;
 use app\common\model\purveyor\Service as ServiceModel;
 use app\common\model\purveyor\User as SupplierUserModel;
 use app\api\model\order\OrderGoods;
-use app\common\model\order\VerifyProductLog;
+use app\common\model\order\VerifyGoodsLog;
 use app\common\model\order\VerifyServerLog;
-use app\timebank\model\Timebank_basicsetup;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -74,9 +72,7 @@ class Order extends Controller
         $model['expressInfo'] = (object)$model['expressInfo'];
         // 该订单是否允许申请售后
         $model['isAllowRefund'] = $model->isAllowRefund();
-        $model['supplier']['supplier_user_id'] = (new SupplierUserModel())->where('shop_supplier_id', '=', $model['shop_supplier_id'])->value('supplier_user_id');
-        // 通证设置
-        $tokenSetting = (new Timebank_basicsetup())->basicsetupDesc(1);
+        $model['supplier']['supplier_user_id'] = (new SupplierUserModel())->where('purveyor_id', '=', $model['purveyor_id'])->value('purveyor_user_id');
         return $this->renderSuccess('', [
             'balance' => $this->user['balance'],
             'order' => $model,  // 订单详情
@@ -84,11 +80,11 @@ class Order extends Controller
                 // 积分名称
                 'points_name' => SettingModel::getPointsName(),
                 // 通证名称
-                'token_name' => $tokenSetting['token_name'],
+                'token_name' => '无',
                 //是否开启客服
                 'service_open' => SettingModel::getSysConfig()['service_open'],
                 //店铺客服信息
-                'mp_service' => ServiceModel::detail($model['shop_supplier_id']),
+                'mp_service' => ServiceModel::detail($model['purveyor_id']),
             ],
             'show_alipay' => PayService::isAlipayOpen($pay_source, $model['app_id'])
         ]);
@@ -105,7 +101,6 @@ class Order extends Controller
             'points_bonus' => 0,
             'list' => array()
         ];
-        $is_card = 0;
         foreach ($order_arr as $id) {
             $model = OrderModel::getUserOrderDetail($id, $this->user['user_id']);
             $order['pay_price'] += $model['pay_price'];
@@ -117,15 +112,8 @@ class Order extends Controller
                 'address' => $model['address'],
                 'delivery_type' => $model['delivery_type'],
             );
-            if (!empty($model['product'])) {
-                foreach ($model['product'] as $product) {
-                    if (in_array($product['product_type'],[3,4])) {
-                        $is_card ++;
-                    }
-                }
-            }
         }
-        return $this->renderSuccess('', compact('order','is_card'));
+        return $this->renderSuccess('', compact('order'));
     }
 
     /**
@@ -138,6 +126,7 @@ class Order extends Controller
         if (!$order['express_no']) {
             return $this->renderError('没有物流信息');
         }
+
         // 获取物流信息
         $model = $order['express'];
         $express = $model->dynamic($model['express_name'], $model['express_code'], $order['express_no']);
@@ -285,73 +274,34 @@ class Order extends Controller
      * @param $order_product_id
      * @return Json
      */
-    public function getOrderVerifyInfo()
+    public function getOrderVerifyInfo($order_product_id)
     {
-        $post = $this->postData();
-        $product_type = isset($post['product_type']) && $post['product_type'] > 0 ? $post['product_type'] : 3;
-        $order_product_id = isset($post['order_product_id']) ? $post['order_product_id'] : 0;
-        $verify_code = isset($post['verify_code']) ? $post['verify_code'] : '';
         $productModel = new OrderGoods();
-        $info = $productModel->productDetail($order_product_id,$this->user['user_id'],$product_type,$verify_code);
+        $info = $productModel->productDetail($order_product_id,$this->user['user_id']);
         if ($info) {
             return $this->renderSuccess('', $info);
         }
         return $this->renderError($productModel->getError() ?: '请求失败');
     }
 
-    /**
-     * 获取核销记录
-    */
     public function getOrderVerifyLog($order_product_id)
     {
-        $post = $this->postData();
-        $product_type = isset($post['product_type']) ? $post['product_type'] : 3;
-        $mdoel = (new OrderGoods());
-        $info = $mdoel->productDetail($order_product_id,$this->user['user_id'],$product_type);
-        if (!$info) {
-            return $this->renderError($mdoel->getError() ?: '请求失败');
-        }
+        $info = (new OrderGoods())->productDetail($order_product_id,$this->user['user_id']);
         $log_list = [
             'product_name' => $info['product_name'],
-            'product_id' => $info['product_id'],
+            'product_id' => $info['goods_id'],
             'order_id' => $info['order_id'],
-            'order_product_id' => $info['order_product_id'],
+            'order_goods_id' => $info['order_goods_id'],
             'product_type' => $info['product_type'],
             'order_source' => $info['order_source'],
         ];
-        if (in_array($info['product_type'],[3,4])) {
-            // 计次/旅游商品核销记录
-            $log_list['log'] = (new VerifyProductLog)->getLogList($info['opt_id'],$info['product_type']);
+        if ($info['product_type'] == 3) {
+            // 计次商品核销记录
+            $log_list['log'] = (new VerifyGoodsLog)->getLogList($order_product_id);
         } else {
             // 服务核销记录
             $log_list['log'] = (new VerifyServerLog)->getLogList($info['order_id'] , $info['verify_code']);
         }
         return $this->renderSuccess('', $log_list);
-    }
-
-    /**
-     * 我的权益卡
-    */
-    public function getMyBenefitCardList()
-    {
-        $mdoel = (new OrderGoods());
-        $post = $this->postData();
-        $list = $mdoel->getMyBenefitCardList($post,$this->user['user_id']);
-        return $this->renderSuccess('', $list);
-    }
-
-    /**
-     * 我的旅游卡详情
-     * @return Json
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     */
-    public function getMyBenefitCardDetail()
-    {
-        $mdoel = (new OrderGoods());
-        $post = $this->postData();
-        $detail = $mdoel->getMyBenefitCardDetail($post,$this->user['user_id']);
-        return $this->renderSuccess('', $detail);
     }
 }

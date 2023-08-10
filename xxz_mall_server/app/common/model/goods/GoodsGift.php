@@ -12,7 +12,7 @@ use think\Model;
  */
 class GoodsGift extends BaseModel
 {
-    protected $pk = 'product_gift_id';
+    protected $pk = 'goods_gift_id';
     protected $name = 'goods_gift';
     public function productgiftsku()
     {
@@ -28,6 +28,7 @@ class GoodsGift extends BaseModel
     }
     public function add($params)
     {
+
         $params['app_id'] = self::$app_id;
         if (!isset($params['gift']) || empty($params['gift'])) {
             $this->error = '请选择商品';
@@ -41,20 +42,20 @@ class GoodsGift extends BaseModel
         return $this->transaction(function () use ($params) {
             $status=0;
             // 添加领取记录
-            if ($this->where('goods_id', $params['gift'][0]['product_id'])->find()) {
+            if ($this->where('goods_id', $params['gift'][0]['goods_id'])->find()) {
                 $this->error = '该商品已存在';
                 return false;
             }
             foreach ($params['gift'] as $t =>$arr) {
                 $arr['app_id'] = self::$app_id;
                 $status = $this->create($arr);
-                Goods::where(['goods_id'=>$arr['product_id']])->save(['is_open_gift'=>$params['is_open_gift']]);
+                Goods::where(['goods_id'=>$arr['goods_id']])->save(['is_open_gift'=>$params['is_open_gift']]);
             }
             if ($status) {
                 foreach ($params['giftsku'] as $K => $v) {
                     $v['app_id'] = self::$app_id;
                     GoodsGiftSku::create($v);
-                    Goods::where(['goods_id'=>$v['gift_product_id']])->save(['is_gift'=>1]);
+                    Goods::where(['goods_id'=>$v['gift_goods_id']])->save(['is_gift'=>1]);
                 }
             }
             return $status;
@@ -66,7 +67,7 @@ class GoodsGift extends BaseModel
         if (!empty($params['search'])) {
             if ($params['search_type'] == 1 )
             {
-                $model = $model->where('product.product_name', 'like', '%' . trim($params['search']) . '%');
+                $model = $model->where('goods.product_name', 'like', '%' . trim($params['search']) . '%');
             }
             if ($params['search_type'] == 2 )
             {
@@ -75,47 +76,49 @@ class GoodsGift extends BaseModel
 
         }
         if (!empty($params['is_open_gift']) || $params['is_open_gift'] === '0') {
-            $model = $model->where('product.is_open_gift', '=', $params['is_open_gift']);
+            $model = $model->where('goods.is_open_gift', '=', $params['is_open_gift']);
         }
         $data = $model
             ->withJoin(['product'],'left')
-            ->join('productGiftSku','xxzshop_product_gift.goods_id=productGiftSku.goods_id','left')
-            ->join('product product1','productGiftSku.gift_goods_id=product1.goods_id','left')
-            ->with(['product'=>['image'],'productgiftsku'=>['product'=>['image'=>['file']]]])
-            ->group('xxzshop_product_gift.goods_id')
+            ->join('goodsGiftSku','xxzmall_goods_gift.goods_id=goodsGiftSku.goods_id','left')
+            ->join('goods product1','goodsGiftSku.gift_goods_id=product1.goods_id','left')
+            ->with(['product'=>['image'],'productGiftSku'=>['product'=>['image'=>['file']]]])
+            ->group('xxzmall_goods_gift.goods_id')
             ->paginate($params);
+//        var_dump($data->toArray());die;
         foreach ($data as $key => $v)
         {
-            $data[$key]['product']['image'] = GoodsImage::where('goods_id',$v['product_id'])->find();
+            $data[$key]['product']['image'] = GoodsImage::where('goods_id',$v['goods_id'])->find();
             $data[$key]['product']['image']['file'] = UploadFile::where('file_id',$data[$key]['product']['image']['image_id'])->find();
-            $product_sku_id = $this->where('goods_id',$v['product_id'])->column('product_sku_id');
-            $product_sku = GoodsSku::where(['product_sku_id'=>$product_sku_id])->select();
+            $product_sku_id = $this->where('goods_id',$v['goods_id'])->column('goods_sku_id');
+            $product_sku = GoodsSku::where(['goods_sku_id'=>$product_sku_id])->select();
             if ($product_sku){
                 foreach ($product_sku as $k =>$value)
                 {
                     $product_sku[$k]['sku_msg'] = (new Goods())::getProductSku($v['product'],$value['spec_sku_id']);
                 }
             }
-            foreach ($v['productgiftsku'] as $t =>$arr)
+            foreach ($v['productGiftSku'] as $t =>$arr)
             {
-                $v['productgiftsku'][$t]['spec'] = (new Goods())::getProductSku($arr['product'],$arr['spec_sku_id']);
+                $v['productGiftSku'][$t]['spec'] = (new Goods())::getProductSku($arr['product'],$arr['spec_sku_id']);
             }
             $data[$key]['product_sku'] = $product_sku;
         }
         return $data;
     }
-    public function detail($gift_product_id)
+    public function detail($gift_goods_id)
     {
         $model = $this;
         $data = $model
-            ->with(['product'=>['image'=>['file']],'productgiftsku'=>['product'=>['image'=>['file']]]])
-            ->where('product_gift_id',$gift_product_id)->find();
-        foreach ($data['productgiftsku'] as $t =>$arr)
+            ->with(['product'=>['image'=>['file']],'productGiftSku'=>['product'=>['image'=>['file']]]])
+            ->where('goods_gift_id',$gift_goods_id)->find();
+        foreach ($data['productGiftSku'] as $t =>$arr)
         {
-            $data['productgiftsku'][$t]['spec'] = (new Goods())::getProductSku($arr['product'],$arr['spec_sku_id']);
+            $data['productGiftSku'][$t]['spec'] = (new Goods())::getProductSku($arr['product'],$arr['spec_sku_id']);
         }
-        $product_sku_id = $this->where('goods_id',$data['product_id'])->column('product_sku_id');
-        $product_sku = GoodsSku::where(['product_sku_id'=>$product_sku_id])->select();
+
+        $product_sku_id = $this->where('goods_id',$data['goods_id'])->column('goods_sku_id');
+        $product_sku = GoodsSku::where(['goods_sku_id'=>$product_sku_id])->select();
         if ($product_sku){
             foreach ($product_sku as $k =>$value)
             {
@@ -138,10 +141,10 @@ class GoodsGift extends BaseModel
         }
 
         return $this->transaction(function () use ($params) {
-            $this->where(['product_id'=>$params['product_id']])->delete();
-            GoodsGiftSku::where(['product_id'=>$params['product_id']])->delete();
+            $this->where(['goods_id'=>$params['goods_id']])->delete();
+            GoodsGiftSku::where(['goods_id'=>$params['goods_id']])->delete();
 
-            if ($params['product_id'] != $params['gift'][0]['product_id'] && $this->where('goods_id', $params['gift'][0]['product_id'])->find())
+            if ($params['goods_id'] != $params['gift'][0]['goods_id'] && $this->where('goods_id', $params['gift'][0]['goods_id'])->find())
             {
                 $this->error = '该商品已存在';
                 return false;
@@ -149,17 +152,15 @@ class GoodsGift extends BaseModel
             foreach ($params['gift'] as $t =>$arr)
             {
                 $arr['app_id'] = self::$app_id;
-
                 $status = $this->create($arr);
-                Goods::where(['product_id'=>$arr['product_id']])->save(['is_open_gift'=>$params['is_open_gift']]);
+                Goods::where(['goods_id'=>$arr['goods_id']])->save(['is_open_gift'=>$params['is_open_gift']]);
             }
             if ($status) {
-
                 foreach ($params['giftsku'] as $K => $v)
                 {
                     $v['app_id'] = self::$app_id;
                     GoodsGiftSku::create($v);
-                    Goods::where(['product_id'=>$v['gift_product_id']])->save(['is_gift'=>1]);
+                    Goods::where(['goods_id'=>$v['gift_goods_id']])->save(['is_gift'=>1]);
                 }
             }
             return $status;
@@ -170,8 +171,8 @@ class GoodsGift extends BaseModel
         return $this->transaction(function () use ($product_ids) {
             // 添加领取记录
             $status =0;
-            $this->where(['product_id'=>$product_ids])->delete();
-            $status =GoodsGiftSku::where(['product_id'=>$product_ids])->delete();
+            $this->where(['goods_id'=>$product_ids])->delete();
+            $status =GoodsGiftSku::where(['goods_id'=>$product_ids])->delete();
             return $status;
         });
     }
@@ -182,7 +183,7 @@ class GoodsGift extends BaseModel
             $status =0;
             foreach ($data['product_ids'] as $ids)
             {
-                $status =Goods::where(['product_id'=>$ids])->find()->save(['is_open_gift'=>$data['is_open_gift']]);
+                $status =Goods::where(['goods_id'=>$ids])->find()->save(['is_open_gift'=>$data['is_open_gift']]);
             }
 
             return $status;

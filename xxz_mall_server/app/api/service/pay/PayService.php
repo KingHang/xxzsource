@@ -5,7 +5,7 @@ namespace app\api\service\pay;
 
 use app\common\enum\settings\SettingEnum;
 use app\common\model\app\AppOpen as AppOpenModel;
-use app\common\model\settings\Settings;
+use app\common\model\setting\Setting;
 
 class PayService
 {
@@ -21,7 +21,7 @@ class PayService
      * 是否开启h5支付宝支付
      */
     private static function isH5AlipayOpen($app_id){
-        return Settings::getItem(SettingEnum::H5ALIPAY, $app_id)['is_open'];
+        return Setting::getItem(SettingEnum::H5ALIPAY, $app_id)['is_open'];
     }
 
     /**

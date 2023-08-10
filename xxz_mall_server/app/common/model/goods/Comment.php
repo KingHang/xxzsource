@@ -73,7 +73,7 @@ class Comment extends BaseModel
             $product_model = new Goods();
             $res = $product_model->getWhereData($params['name'])->toArray();
             $str = implode(',', array_column($res, 'product_id'));
-            $model = $model->where('goods_id', 'in', $str);
+            $model = $model->where('product_id', 'in', $str);
         }
         if (isset($params['score']) && $params['score'] > 0) {
             $model = $model->where('score', '=', $params['score']);

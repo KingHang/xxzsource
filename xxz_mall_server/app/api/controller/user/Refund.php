@@ -3,11 +3,11 @@
 namespace app\api\controller\user;
 
 use app\api\controller\Controller;
-use app\api\model\settings\Express as ExpressModel;
+use app\api\model\setting\Express as ExpressModel;
 use app\api\model\order\OrderGoods as OrderProductModel;
 use app\api\model\order\OrderRefund as OrderRefundModel;
 use app\api\model\order\OrderRefundLog as OrderRefundLogModel;
-use app\api\model\settings\Message as MessageModel;
+use app\api\model\setting\Message as MessageModel;
 use app\common\enum\order\OrderRefundLogEnum;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;

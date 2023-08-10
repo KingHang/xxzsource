@@ -26,7 +26,7 @@ class Task extends TaskModel
      */
     public function setIsEnd($taskIds)
     {
-        return $this->where('bargain_task_id' , 'in', $taskIds)->data([
+        return $this->where('pricedown_task_id' , 'in', $taskIds)->data([
             'status' => 2
         ])->update();
     }

@@ -21,6 +21,6 @@ class GoodsGiftSku extends Model
      */
     public function specRel()
     {
-        return $this->belongsToMany('SpecValue', 'ProductSpecRel')->order(['id' => 'asc']);
+        return $this->belongsToMany('SpecValue', 'GoodsSpecRel')->order(['id' => 'asc']);
     }
 }

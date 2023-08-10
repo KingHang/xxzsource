@@ -4,7 +4,6 @@ namespace app\api\model\order;
 
 use app\common\model\order\OrderRefund as OrderRefundModel;
 use app\common\model\order\Order as OrderModel;
-use app\common\model\plugin\agent\OrderDetail as OrderDetailModel;
 
 /**
  * 售后单模型
@@ -66,7 +65,7 @@ class OrderRefund extends OrderRefundModel
         $model = $this;
         $state > -1 && $model = $this->where('status', '=', $state);
         if(isset($params['shop_supplier_id'])&&$params['shop_supplier_id']){
-            $model = $model->where('shop_supplier_id','=',$params['shop_supplier_id']);
+            $model = $model->where('purveyor_id','=',$params['shop_supplier_id']);
         }
         return $model->with(['order_master', 'orderproduct.image'])
             ->where('user_id', '=', $user_id)
@@ -116,26 +115,20 @@ class OrderRefund extends OrderRefundModel
      */
     public function apply($user, $product, $data)
     {
-        // 验证是否存在已结束佣金 存在不能取消
-        if ((new OrderDetailModel())->checkOrderSettled($product['order_id'])) {
-            $this->error = '订单存在已结算记录，不能取消';
-            return false;
-        }
+
         // 兼容分销小程序
         $user_id = $user['user_id'];
-        if (isset($data['source']) && $data['source'] == 'agent') {
-            $user_id = $data['user_id'];
-        }
+
         $this->startTrans();
         try {
             // 更改订单状态为售后
             $orderInfo = new OrderModel();
             $shop_supplier_id = $orderInfo->where(['order_id'=>$product['order_id']])->value('
-                shop_supplier_id');
+                purveyor_id');
             $orderInfo->where(['order_id'=>$product['order_id']])->update(['order_status' => 40]);
             // 新增售后单记录
             $this->save([
-                'order_product_id' => $data['order_product_id'],
+                'order_goods_id' => $data['order_product_id'],
                 'order_id' => $product['order_id'],
                 'user_id' => $user_id,
                 'type' => $data['type'],
@@ -143,14 +136,12 @@ class OrderRefund extends OrderRefundModel
                 'is_agree' => 0,
                 'status' => 0,
                 'app_id' => self::$app_id,
-                'shop_supplier_id'=>$shop_supplier_id
+                'purveyor_id'=>$shop_supplier_id
             ]);
             // 记录凭证图片关系
             if (isset($data['images']) && !empty($data['images'])) {
                 $this->saveImages($this['order_refund_id'], $data['images']);
             }
-            // 分销订单失效
-            (new OrderDetailModel())->setInvalid($this['order_id']);
             // 记录售后处理进度
             (new OrderRefundLog())->save([
                 'order_refund_id' => $this['order_refund_id'],

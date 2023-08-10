@@ -33,7 +33,7 @@ class OrderRefund extends BaseModel
      */
     public function orderproduct()
     {
-        return $this->belongsTo('app\\common\\model\\order\\OrderGoods', 'order_product_id', 'order_product_id');
+        return $this->belongsTo('app\\common\\model\\order\\OrderGoods', 'order_goods_id', 'order_goods_id');
     }
 
     /**
@@ -49,7 +49,7 @@ class OrderRefund extends BaseModel
      */
     public function express()
     {
-        return $this->belongsTo('app\\api\\model\\settings\\Express');
+        return $this->belongsTo('app\\api\\model\\setting\\Express');
     }
 
     /**
@@ -65,7 +65,7 @@ class OrderRefund extends BaseModel
      */
     public function supplier()
     {
-        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'shop_supplier_id', 'shop_supplier_id');
+        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'purveyor_id', 'purveyor_id');
     }
 
     /**
@@ -126,7 +126,7 @@ class OrderRefund extends BaseModel
         }
 
         if($shop_supplier_id > 0){
-            $model = $model->where('shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('purveyor_id', '=', $shop_supplier_id);
         }
 
         $model = $model->where('is_agree', '=', 10);

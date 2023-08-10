@@ -3,7 +3,6 @@
 namespace app\api\model\user;
 
 use app\common\model\user\Favorite as FavoriteModel;
-use app\common\model\purveyor\Purveyor as SupplierModel;
 use app\common\model\goods\Goods as ProductModel;
 /**
  * 收藏模型类
@@ -26,7 +25,7 @@ class Favorite extends FavoriteModel
         try {
             // 取消店铺关注
             if($this['type'] == 10){
-                (new SupplierModel())->where('shop_supplier_id', '=', $this['pid'])
+                (new SupplierModel())->where('purveyor_id', '=', $this['pid'])
                     ->dec('fav_count')->update();
             }
             $this->delete();
@@ -47,7 +46,7 @@ class Favorite extends FavoriteModel
             // 店铺收藏
             if($data['type'] == 10){
                 $data['shop_supplier_id'] = $data['pid'];
-                (new SupplierModel())->where('shop_supplier_id', '=', $data['pid'])
+                (new SupplierModel())->where('purveyor_id', '=', $data['pid'])
                     ->inc('fav_count')->update();
             }else{
                 $product = ProductModel::detail($data['pid']);

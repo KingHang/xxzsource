@@ -62,8 +62,8 @@ class Userweb extends Controller
             // 订单详情
             $model = OrderModel::getUserOrderDetail($order_id, $user['user_id']);
             // 构建支付请求
-            $payment = OrderModel::onOrderPayment($user, [$model], OrderPayTypeEnum::WECHAT, 'payH5','');
-            $return_Url = urlencode(base_url()."h5/pages/order/myorder/myorder");
+            $payment = OrderModel::onOrderPayment($user, [$model], OrderPayTypeEnum::WECHAT, 'payH5');
+            $return_Url = urlencode(base_url()."h5/pages/index/order/myorder");
         }else if($order_type == OrderTypeEnum::BALANCE){
             // 订单详情
             $model = BalanceOrderModel::getUserOrderDetail($order_id, $user['user_id']);

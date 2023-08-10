@@ -3,7 +3,7 @@
 namespace app\common\model\user;
 
 use app\common\model\BaseModel;
-use app\common\model\settings\Region;
+use app\common\model\setting\Region;
 
 class UserAddress extends BaseModel
 {

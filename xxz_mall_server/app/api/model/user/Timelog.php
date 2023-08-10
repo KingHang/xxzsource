@@ -12,7 +12,7 @@ use app\common\library\helper;
  */
 class Timelog extends BaseModel
 {
-    protected $table = 'xxzshop_usertime_log';
+    protected $table = 'xxzmall_usertime_log';
     protected $autoWriteTimestamp = true;
     protected $readonly = ['create_time', 'update_time'];
 

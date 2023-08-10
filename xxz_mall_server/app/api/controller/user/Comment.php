@@ -5,7 +5,7 @@ namespace app\api\controller\user;
 use app\api\controller\Controller;
 use app\api\model\order\Order as OrderModel;
 use app\api\model\order\OrderGoods as OrderProductModel;
-use app\api\model\product\Comment as CommentModel;
+use app\api\model\goods\Comment as CommentModel;
 
 /**
  * 订单评价管理

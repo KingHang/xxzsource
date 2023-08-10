@@ -9,7 +9,7 @@ use app\common\model\BaseModel;
  */
 class Home extends BaseModel
 {
-    protected $pk = 'page_id';
+    protected $pk = 'home_id';
     protected $name = 'home';
 
     /**
@@ -21,7 +21,7 @@ class Home extends BaseModel
         static $defaultPage = [];
         if (!empty($defaultPage)) return $defaultPage;
         return [
-            'type' => 'home',
+            'type' => 'page',
             'name' => '页面设置',
             'params' => [
                 'name' => '页面名称',
@@ -46,7 +46,7 @@ class Home extends BaseModel
             'search' => [
                 'name' => '搜索框',
                 'type' => 'search',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => ['placeholder' => '请输入商品名称'],
                 'style' => [
                     'textAlign' => '3',
@@ -168,9 +168,9 @@ class Home extends BaseModel
                     'height' => 190
                 ]
             ],
-            'article' => [
+            'news' => [
                 'name' => '文章组',
-                'type' => 'article',
+                'type' => 'news',
                 'group' => 'media',
                 'params' => [
                     'source' => 'auto', // choice; auto
@@ -187,13 +187,13 @@ class Home extends BaseModel
                     [
                         'article_title' => '此处显示文章标题',
                         'show_type' => 10,
-                        'image' => self::$base_url . 'image/diy/article/01.png',
+                        'image' => self::$base_url . 'image/diy/news/01.png',
                         'views_num' => 309
                     ],
                     [
                         'article_title' => '此处显示文章标题',
                         'show_type' => 10,
-                        'image' => self::$base_url . 'image/diy/article/01.png',
+                        'image' => self::$base_url . 'image/diy/news/01.png',
                         'views_num' => 309
                     ]
                 ],
@@ -284,7 +284,7 @@ class Home extends BaseModel
             'product' => [
                 'name' => '商品组',
                 'type' => 'product',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'auto' => [
@@ -309,7 +309,7 @@ class Home extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -317,7 +317,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -325,7 +325,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -333,7 +333,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -344,7 +344,7 @@ class Home extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -353,7 +353,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -365,7 +365,7 @@ class Home extends BaseModel
             'category' => [
                 'name' => '商品分类组',
                 'type' => 'category',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'all', // choice; all
                     'productSort' => 'all', // all; sales; price
@@ -400,7 +400,7 @@ class Home extends BaseModel
                 'list' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -408,7 +408,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -416,10 +416,10 @@ class Home extends BaseModel
                     ]
                 ]
             ],
-            'coupon' => [
+            'voucher' => [
                 'name' => '优惠券组',
-                'type' => 'coupon',
-                'group' => 'shop',
+                'type' => 'voucher',
+                'group' => 'mall',
                 'style' => [
                     'paddingTop' => 10,
                     'background' => '#ffffff'
@@ -443,7 +443,7 @@ class Home extends BaseModel
             'assembleProduct' => [
                 'name' => '拼团商品组',
                 'type' => 'assembleProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'showNum' => 6,
@@ -467,28 +467,28 @@ class Home extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -498,7 +498,7 @@ class Home extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -506,7 +506,7 @@ class Home extends BaseModel
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -517,7 +517,7 @@ class Home extends BaseModel
             'bargainProduct' => [
                 'name' => '砍价商品组',
                 'type' => 'bargainProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'showNum' => 6,
@@ -549,13 +549,13 @@ class Home extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
@@ -564,13 +564,13 @@ class Home extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
@@ -579,7 +579,7 @@ class Home extends BaseModel
             'seckillProduct' => [
                 'name' => '秒杀商品组',
                 'type' => 'seckillProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'showNum' => 6
                 ],
@@ -598,13 +598,13 @@ class Home extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
@@ -613,159 +613,21 @@ class Home extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
-                    ],
-                ]
-            ],
-            'bonusProduct' => [
-                'name' => '创业分红组',
-                'type' => 'bonusProduct',
-                'group' => 'shop',
-                'params' => [
-                    'source' => 'auto', // choice; auto
-                    'showNum' => 6,
-                    'auto' => [
-                        'category' => 0,
-                        'productSort' => 'all', // all; sales; price
-                    ]
-                ],
-                'style' => [
-                    'background' => '#F6F6F6',
-                    'display' => 'list', // list; slide
-                    'column'=> '1',
-                    'show' => [
-                        'productName' => true,
-                        'productPrice' => true
-                    ]
-                ],
-                // '自动获取' => 默认数据
-                'defaultData' => [
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                    ],
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                    ],
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                    ],
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                    ]
-                ],
-                // '手动选择' => 默认数据
-                'data' => [
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                        'is_default' => true
-                    ],
-                    [
-                        'product_name' => '此处是创业分红',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
-                        'product_price' => '99.00',
-                        'is_default' => true
-                    ]
-                ]
-            ],
-            'live' => [
-                'name' => '热门直播',
-                'type' => 'live',
-                'group' => 'shop',
-                'params' => [
-                    'source' => 'auto', // choice; auto
-                    'showNum' => 6
-                ],
-                'style' => [
-                    'background' => '#FFFFFF',
-                    'color'=> '#333333'
-                ],
-                // '自动获取' => 默认数据
-                'defaultData' => [
-                    [
-                        'shop_name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'name' => '主播昵称',
-                    ],
-                    [
-                        'shop_name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'name' => '主播昵称',
-                    ],
-                ],
-                // '手动选择' => 默认数据
-                'data' => [
-                    [
-                        'name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'anchor_name' => '主播昵称',
-                    ],
-                    [
-                        'name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'anchor_name' => '主播昵称',
-                    ],
-                ]
-            ],
-            'wxlive' => [
-                'name' => '微信直播',
-                'type' => 'wxlive',
-                'group' => 'shop',
-                'params' => [
-                    'source' => 'auto', // choice; auto
-                    'showNum' => 6
-                ],
-                'style' => [
-                    'background_image' => self::$base_url . 'image/diy/active/live.png',
-                    'color' => '#000000'
-                ],
-                // '自动获取' => 默认数据
-                'defaultData' => [
-                    [
-                        'shop_name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'name' => '主播昵称',
-                    ],
-                    [
-                        'shop_name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'name' => '主播昵称',
-                    ],
-                ],
-                // '手动选择' => 默认数据
-                'data' => [
-                    [
-                        'name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'anchor_name' => '主播昵称',
-                    ],
-                    [
-                        'name' => '直播间名称',
-                        'logo_image' => self::$base_url . 'image/diy/circular.png',
-                        'anchor_name' => '主播昵称',
                     ],
                 ]
             ],
@@ -787,225 +649,11 @@ class Home extends BaseModel
             'formInfo' => [
                 'name' => '信息表单',
                 'type' => 'formInfo',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => ['placeholder' => '请填写'],
                 'style' => [
                     'textAlign' => '3',
                     'searchStyle' => '3'
-                ]
-            ],
-            'brandCategory' => [
-                'name' => '品牌分类组',
-                'type' => 'brandCategory',
-                'group' => 'shop',
-                'params' => [
-                    'source' => 'all', // choice; all
-                    'productSort' => 'all', // all; sales; price
-                    'showType' => 'limit', // limit; all
-                    'showNum' => 6
-                ],
-                'style' => [
-                    'background' => '#F6F6F6',
-                    'display' => 'list', // list; slide
-                    'column' => '1',
-                    'show' => [
-                        'productName' => 1,
-                        'productPrice' => 1,
-                        'linePrice' => 1,
-                        'sellingPoint' => 0,
-                        'productSales' => 0,
-                    ]
-                ],
-                // 默认分类数据
-                'data' => [
-                    [
-                        'name' => '全部'
-                    ],
-                    [
-                        'name' => '分类1'
-                    ],
-                    [
-                        'name' => '分类2'
-                    ]
-                ],
-                // 默认品牌数据
-                'list' => [
-                    [
-                        'brand' =>[
-                            'brand_name' => '此处显示品牌名称',
-                            'brand_logo' => self::$base_url . 'image/diy/product/01.png',
-                            'image' => [
-                                'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                            ]
-                        ],
-                        'signLog' => [
-                            [
-                                'product' => [
-                                    'product_name' => '此处显示商品名称',
-                                    'image' => [
-                                        [
-                                            'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                                        ]
-
-                                    ],
-                                    'product_price' => '99.00',
-                                    'line_price' => '139.00',
-                                    'selling_point' => '此款商品美观大方 不容错过',
-                                    'product_sales' => '100',
-                                ]
-                            ],
-                            [
-                                'product' => [
-                                    'product_name' => '此处显示商品名称',
-                                    'image' => [
-                                        [
-                                            'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                                        ]
-
-                                    ],
-                                    'product_price' => '99.00',
-                                    'line_price' => '139.00',
-                                    'selling_point' => '此款商品美观大方 不容错过',
-                                    'product_sales' => '100',
-                                ]
-                            ]
-                        ],
-                    ],
-                    [
-                        'brand' =>[
-                            'brand_name' => '此处显示品牌名称',
-                            'brand_logo' => self::$base_url . 'image/diy/product/01.png',
-                            'image' => [
-                                'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                            ]
-                        ],
-                        'signLog' => [
-                            [
-                                'product' => [
-                                    'product_name' => '此处显示商品名称',
-                                    'image' => [
-                                        [
-                                            'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                                        ]
-
-                                    ],
-                                    'product_price' => '99.00',
-                                    'line_price' => '139.00',
-                                    'selling_point' => '此款商品美观大方 不容错过',
-                                    'product_sales' => '100',
-                                ]
-                            ],
-                            [
-                                'product' => [
-                                    'product_name' => '此处显示商品名称',
-                                    'image' => [
-                                        [
-                                            'file_path'=>self::$base_url . 'image/diy/product/01.png',
-                                        ]
-
-                                    ],
-                                    'product_price' => '99.00',
-                                    'line_price' => '139.00',
-                                    'selling_point' => '此款商品美观大方 不容错过',
-                                    'product_sales' => '100',
-                                ]
-                            ]
-                        ],
-                    ],
-                ]
-            ],
-            'card' => [
-                'name' => '权益卡组',
-                'type' => 'card',
-                'group' => 'shop',
-                'params' => [
-                    'source' => 'auto', // auto; choice
-                    'cardSort' => 'all', // all; sales; price
-                    'showNum' => 6
-                ],
-                'style' => [
-                    'background' => '#F6F6F6',
-                    'display' => 'list', // list; slide
-                    'column' => '1',
-                    'show' => [
-                        'cardName' => 1,
-                        'price' => 1,
-                        'validPeriod' => 1
-                    ]
-                ],
-                // '自动获取' => 默认数据
-                'defaultData' => [
-                    [
-                        'card_name' => '此处显示权益卡名称',
-                        'image' => self::$base_url . 'image/diy/trip.png',
-                        'price' => '99.00',
-                        'valid_period' => '永久有效',
-                        'benefit' => [
-                            [
-                                'benefit_name' => '权益1',
-                                'number' => 10,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/shortTrip.png',
-                            ],
-                            [
-                                'benefit_name' => '权益2',
-                                'number' => 5,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/longTrip.png',
-                            ]
-                        ]
-                    ],
-                    [
-                        'card_name' => '此处显示权益卡名称',
-                        'image' => self::$base_url . 'image/diy/trip.png',
-                        'price' => '99.00',
-                        'valid_period' => '永久有效',
-                        'benefit' => [
-                            [
-                                'benefit_name' => '权益1',
-                                'number' => 10,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/shortTrip.png',
-                            ]
-                        ]
-                    ]
-                ],
-                // '手动选择' => 默认数据
-                'data' => [
-                    [
-                        'card_name' => '此处显示权益卡名称',
-                        'image' => self::$base_url . 'image/diy/trip.png',
-                        'price' => '99.00',
-                        'valid_period' => '永久有效',
-                        'benefit' => [
-                            [
-                                'benefit_name' => '权益1',
-                                'number' => 10,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/shortTrip.png',
-                            ],
-                            [
-                                'benefit_name' => '权益2',
-                                'number' => 5,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/longTrip.png',
-                            ]
-                        ]
-                    ],
-                    [
-                        'card_name' => '此处显示权益卡名称',
-                        'image' => self::$base_url . 'image/diy/trip.png',
-                        'price' => '99.00',
-                        'valid_period' => '永久有效',
-                        'benefit' => [
-                            [
-                                'benefit_name' => '权益1',
-                                'number' => 10,
-                                'desc' => '描述',
-                                'image' => self::$base_url . 'image/diy/shortTrip.png',
-                            ]
-                        ]
-                    ]
                 ]
             ],
         ];
@@ -1057,14 +705,14 @@ class Home extends BaseModel
     {
         $array = json_decode($json, true);
         $items = $array['items'];
-        if (isset($items['home'])) {
-            unset($items['home']);
+        if (isset($items['page'])) {
+            unset($items['page']);
         }
         foreach ($items as &$item) {
             isset($item['data']) && $item['data'] = array_values($item['data']);
         }
         return [
-            'home' => isset($array['home']) ? $array['home'] : $array['items']['home'],
+            'page' => isset($array['page']) ? $array['page'] : $array['items']['page'],
             'items' => array_values(array_filter($items))
         ];
     }
@@ -1074,7 +722,7 @@ class Home extends BaseModel
      */
     private function _mergeDefaultData($array)
     {
-        $array['home'] = array_merge_multiple($this->getDefaultPage(), $array['home']);
+        $array['page'] = array_merge_multiple($this->getDefaultPage(), $array['page']);
         $defaultItems = $this->getDefaultItems();
         foreach ($array['items'] as &$item) {
             if (isset($defaultItems[$item['type']])) {

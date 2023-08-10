@@ -4,7 +4,7 @@ namespace app\api\controller\file;
 
 use app\api\controller\Controller;
 use app\api\model\file\UploadFile as UploadFileModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\library\storage\Driver as StorageDriver;
 
 /**

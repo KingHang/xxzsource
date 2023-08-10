@@ -3,11 +3,10 @@
 namespace app\api\controller\store;
 
 use app\api\controller\Controller;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\model\store\Clerk as ClerkModel;
 use app\api\model\order\Order as OrderModel;
 use app\api\model\order\OrderGoods as OrderProductModel;
-use app\common\model\order\OrderTravelers;
 
 /**
  * 自提订单管理
@@ -81,14 +80,9 @@ class Order extends Controller
         $OrderProductModel = new OrderProductModel();
         // 获取消单订单详情
         $order = $OrderProductModel->getVerifyOrderDetail($verify_code,$type);
+//        return $this->renderSuccess('订单核销成功',$order);
         $ClerkModel = ClerkModel::detail(['user_id' => $this->user['user_id']]);
-        $check_type = 2;
-        if ($order['product_type'] == 3) {
-            $check_type = 1;
-        } elseif ($order['product_type'] == 4) {
-            $check_type = 3;
-        }
-        if (!$ClerkModel->checkUser($order['store_ids'] ? explode(',' , $order['store_ids']) : [] , $check_type)) {
+        if (!$ClerkModel->checkUser($order['store_ids'] ? explode(',' , $order['store_ids']) : [] , $order['product_type'] == 3 ? 1 : 2)) {
             return $this->renderError($ClerkModel->getError());
         }
         // 确认核销
@@ -96,33 +90,5 @@ class Order extends Controller
             return $this->renderSuccess('订单核销成功', []);
         }
         return $this->renderError($order->getError() ?:'核销失败');
-    }
-
-    /**
-     * 修改出行人信息
-    */
-    public function updateOrderTravelersInfo()
-    {
-        $post = $this->postData();
-        $model = new OrderTravelers();
-        $OrderProductModel = new OrderProductModel();
-        // 获取消单订单详情
-        $order = $OrderProductModel->productDetail($post['opt_id'],$this->user['user_id'],4);
-        $ClerkModel = ClerkModel::detail(['user_id' => $this->user['user_id']]);
-        // 验证当前店员权限
-        $check_type = 2;
-        if ($order['product_type'] == 3) {
-            $check_type = 1;
-        } elseif ($order['product_type'] == 4) {
-            $check_type = 3;
-        }
-        if (!$ClerkModel->checkUser($order['store_ids'] ? explode(',' , $order['store_ids']) : [] , $check_type)) {
-            return $this->renderError($ClerkModel->getError());
-        }
-        // 修改出行人信息
-        if ($model->updateOrderTravelersInfo($post)) {
-            return $this->renderSuccess('编辑成功', []);
-        }
-        return $this->renderError($model->getError() ?:'操作失败');
     }
 }

@@ -13,9 +13,9 @@ class CardOrderSettledService extends OrderCardSettledService
     /**
      * 构造函数
      */
-    public function __construct($user, $supplierData, $params, $agentUser)
+    public function __construct($user, $supplierData, $params)
     {
-        parent::__construct($user, $supplierData, $params, $agentUser);
+        parent::__construct($user, $supplierData, $params);
         //订单来源
         $this->orderSource = [
             'source' => OrderSourceEnum::CARD,

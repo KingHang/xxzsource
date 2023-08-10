@@ -4,7 +4,7 @@ namespace app\common\service\product\factory;
 
 use app\common\enum\product\DeductStockTypeEnum;
 use app\common\model\plugin\exchangepurch\ProductSku as ProductSkuModel;
-use app\common\model\plugin\exchangepurch\Product as ProductModel;
+use app\common\model\plugin\exchangepurch\Goods as ProductModel;
 
 /**
  * 商品来源-普通商品扩展类
@@ -22,9 +22,9 @@ class PointsProductService extends ProductService
                 $sku = ProductSkuModel::detail($product['sku_source_id']);
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('point_goods_id', '=', $sku['point_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('exchangepurch_goods_id', '=', $sku['exchangepurch_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 下单减库存
-                    (new ProductSkuModel)->where('point_product_sku_id', '=', $sku['point_product_sku_id'])->dec('point_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('exchangepurch_goods_sku_id', '=', $sku['exchangepurch_goods_sku_id'])->dec('point_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
                     log_write('exchangepurch updateProductStock'. $e->getMessage());
                 }
@@ -40,14 +40,14 @@ class PointsProductService extends ProductService
         foreach ($productList as $product) {
             $sku = ProductSkuModel::detail($product['sku_source_id']);
             // 记录商品的销量
-            (new ProductModel)->where('point_goods_id', '=', $sku['point_product_id'])->inc('total_sales', $product['total_num'])->update();
+            (new ProductModel)->where('exchangepurch_goods_id', '=', $sku['exchangepurch_goods_id'])->inc('total_sales', $product['total_num'])->update();
             // 付款减库存
             if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT) {
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('point_goods_id', '=', $sku['point_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('exchangepurch_goods_id', '=', $sku['exchangepurch_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 付款减库存
-                    (new ProductSkuModel)->where('point_product_sku_id', '=', $sku['point_product_sku_id'])->dec('point_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('exchangepurch_goods_sku_id', '=', $sku['exchangepurch_goods_sku_id'])->dec('point_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
                     log_write('exchangepurch updateStockSales'. $e->getMessage());
                 }
@@ -67,9 +67,9 @@ class PointsProductService extends ProductService
                     || $isPayOrder) {
                 $sku = ProductSkuModel::detail($product['sku_source_id']);
                 // 回退主库存
-                (new ProductModel)->where('point_goods_id', '=', $sku['point_product_id'])->inc('stock', $product['total_num'])->update();
+                (new ProductModel)->where('exchangepurch_goods_id', '=', $sku['point_goods_id'])->inc('stock', $product['total_num'])->update();
                 // 回退sku库存
-                (new ProductSkuModel)->where('point_product_sku_id', '=', $sku['point_product_sku_id'])->inc('stock', $product['total_num'])->update();
+                (new ProductSkuModel)->where('exchangepurch_goods_sku_id', '=', $sku['exchangepurch_goods_sku_id'])->inc('stock', $product['total_num'])->update();
             }
         }
     }

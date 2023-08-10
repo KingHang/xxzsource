@@ -3,13 +3,11 @@
 namespace app\api\service\order\paysuccess\type;
 
 use app\api\model\user\User as UserModel;
-use app\api\model\supplier\DepositOrder as DepositOrderModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\user\balanceLog\BalanceLogSceneEnum;
 use app\common\model\user\BalanceLog as BalanceLogModel;
 use app\common\service\BaseService;
-use app\common\model\purveyor\User as SupplierUserModel;
-use app\common\model\purveyor\Purveyor as SupplierModel;
+
 /**
  * 押金支付成功服务类
  */
@@ -72,22 +70,10 @@ class CashPaySuccessService extends BaseService
             // 记录订单支付信息
             $this->updatePayInfo($payType);
             // 更新申请状态和添加账号
-            $this->updateSupplier($this->user['user_id']);
         });
         return true;
     }
-    //更新申请状态和添加账号
-    public function updateSupplier($user_id){
-        $supplier_user = (new SupplierUserModel())->where(['user_id'=>$user_id])->find();
-        $supplier = SupplierModel::detail($supplier_user['shop_supplier_id']);
-        if($supplier_user){
-            //更新
-            $supplier->save([
-                'status' => 0,
-                'deposit_money' => $this->model['pay_price']
-            ]);
-        }
-    }
+
 
     /**
      * 更新订单记录

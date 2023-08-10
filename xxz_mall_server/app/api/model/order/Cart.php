@@ -4,12 +4,10 @@ namespace app\api\model\order;
 
 use app\api\model\order\Order as OrderModel;
 use think\facade\Cache;
-use app\api\model\product\Goods as ProductModel;
-use app\api\model\product\GoodsSku as ProductSkuModel;
-use app\common\model\purveyor\Purveyor as SupplierModel;
+use app\api\model\goods\Goods as ProductModel;
+use app\api\model\goods\GoodsSku as ProductSkuModel;
 use app\common\library\helper;
 use app\common\model\store\Store AS StoreModel;
-use app\common\model\plugin\agent\Product as AgentProductModel;
 
 /**
  * 购物车管理
@@ -40,10 +38,10 @@ class Cart
     /**
      * 购物车列表 (含商品信息)
      */
-    public function getList($cartIds = null, $type = 0 ,$is_show_gift = 0,$params=[])
+    public function getList($cartIds = null, $type = 0 ,$is_show_gift = 0)
     {
         // 获取购物车商品列表
-        return $this->getOrderProductList($cartIds, $type ,$is_show_gift,$params);
+        return $this->getOrderProductList($cartIds, $type ,$is_show_gift);
     }
 
     /**
@@ -116,11 +114,6 @@ class Cart
             $product['shop_supplier_id'] = $item['shop_supplier_id'];
             $product['supplier_price'] = bcmul($product['supplier_price'], $item['total_num'], 2);
             $product['total_pv'] = 0;
-            $agent_product = AgentProductModel::detail($item['product_id'], $product['product_sku']['spec_sku_id']);
-            if($agent_product){
-                $product['pv'] = $agent_product['pv'];
-                $product['total_pv'] = helper::bcmul($product['pv'], $item['total_num']);
-            }
             $productList[] = $product->hidden(['category', 'content', 'image']);
         }
         $supplierIds = array_unique(helper::getArrayColumn($productList, 'shop_supplier_id'));
@@ -136,7 +129,7 @@ class Cart
     /**
      * 获取购物车中的商品列表
      */
-    public function getOrderProductList($cartIds, $type = 0 ,$is_show_gift = 0,$params=[])
+    public function getOrderProductList($cartIds, $type = 0 ,$is_show_gift = 0)
     {
         // 购物车商品列表
         $productList = [];
@@ -166,10 +159,6 @@ class Cart
             if ($product['is_delete']) {
                 $this->delete($key);
                 continue;
-            }
-            // 根据出行人数量重置旅游商品购买数量
-            if ($product['product_type'] == 4) {
-                $item['product_num'] = isset($params['travelers']) ? count($params['travelers']) : 1;
             }
             // 重置商品sku
             if ($type) {
@@ -204,11 +193,7 @@ class Cart
             // 商品pv,开启了分销才计算
             $product['pv'] = 0;
             $product['total_pv'] = 0;
-            $agent_product = AgentProductModel::detail($product['product_id'], $product['spec_sku_id']);
-            if($agent_product){
-                $product['pv'] = $agent_product['pv'];
-                $product['total_pv'] = helper::bcmul($product['pv'], $product['total_num']);
-            }
+
             $productList[] = $product->hidden(['category', 'content', 'image']);
             if ($is_show_gift ==1)
             {

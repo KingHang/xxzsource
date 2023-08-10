@@ -2,7 +2,7 @@
 
 namespace app\common\service\qrcode;
 
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use Grafika\Color;
 use Grafika\Grafika;
 use Endroid\QrCode\QrCode;
@@ -23,12 +23,12 @@ class MaterialService extends Base
 
     // 小程序码链接
     private $pages = [
-        10 => 'pages/product/detail/detail',
+        10 => 'pages/goods/detail/detail',
         20 => 'pagesBrand/brand/detail',
-//        20 => 'pages/product/detail/detail',
-        30 => 'pages/plugin/seckill/detail/detail',
-        60 => 'pages/product/detail/detail',
-        40 => 'pages/plugin/assemble/detail/detail ',
+//        20 => 'pages/goods/detail/detail',
+        30 => 'pages/plugin/flashsell/detail/detail',
+        60 => 'pages/goods/detail/detail',
+        40 => 'pages/plugin/groupsell/detail/detail ',
         50 => 'pages/plugin/pricedown/detail/detail',
     ];
 
@@ -63,7 +63,7 @@ class MaterialService extends Base
         // 商品海报背景图
         $backdrop = __DIR__ . '/resource/product_bg2.png';
         // 下载商品首图
-        $productUrl = $this->saveTempImage($appId, $this->product['image'][0]['file_path'], 'product');
+        $productUrl = $this->saveTempImage($appId, $this->product['image'][0]['file_path'], 'goods');
         $qrcode = null;
         if($this->source == 'wx'){
             // 小程序码参数
@@ -72,7 +72,7 @@ class MaterialService extends Base
             $qrcode = $this->saveQrcode($appId, $scene, $this->pages[$this->productType]);
         }else if($this->source == 'mp' || $this->source == 'h5'){
             $scene = "gid:{$this->product['product_id']},uid:" . ($this->user_id ?: '');
-            $qrcode = new QrCode(base_url().'h5/pages/product/detail/detail?product_id='.$this->product['product_id'].'&app_id='.$appId.'&referee_id='.$this->user_id ?: '');
+            $qrcode = new QrCode(base_url().'h5/pages/goods/detail/detail?product_id='.$this->product['product_id'].'&app_id='.$appId.'&referee_id='.$this->user_id ?: '');
             $qrcode = $this->saveMpQrcode($qrcode, $appId, $scene, 'image_mp');
         }
         // 拼接海报图
@@ -149,8 +149,8 @@ class MaterialService extends Base
         // 商城名
         // $fontSize = 26;
         // $store = SettingModel::getItem('store');
-        // $this->product['store_name'] = $store['name'];
-        // $name = $this->wrapText($fontSize, 0, $fontPath, $this->product['store_name'], 850, 80);
+        // $this->goods['store_name'] = $store['name'];
+        // $name = $this->wrapText($fontSize, 0, $fontPath, $this->goods['store_name'], 850, 80);
         // $editor->text($backdropImage, $name, $fontSize, 575, 1250, new Color('#FFFFFF'), $fontPath);
 
         // 头像和昵称
@@ -194,7 +194,7 @@ class MaterialService extends Base
         $editor->resizeExact($shopImage, 112, 112);
         $editor->blend($backdropImage, $shopImage, 'normal', 1.0, 'top-left', 70, 50);
 
-        // $productName = $this->wrapText($fontSize, 0, $fontPath, "划线价".$this->product['product']['sku'][0]['line_price'], 900, 80);
+        // $productName = $this->wrapText($fontSize, 0, $fontPath, "划线价".$this->goods['goods']['sku'][0]['line_price'], 900, 80);
         // $editor->text($backdropImage, $productName, $fontSize, 80, 100, new Color('#333333'), $fontPath);
 
         // 打开小程序码

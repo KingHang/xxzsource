@@ -6,11 +6,11 @@ use app\api\model\order\Cart as CartModel;
 use app\api\model\order\Order as OrderModel;
 use app\api\service\order\settled\MasterOrderSettledService;
 use app\api\controller\Controller;
-use app\api\model\settings\Message as MessageModel;
+use app\api\model\setting\Message as MessageModel;
 use app\api\service\pay\PayService;
 use app\common\enum\order\OrderTypeEnum;
 use app\common\library\helper;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\service\order\PaymentService;
 use app\common\model\order\OrderTrade as OrderTradeModel;
 /**
@@ -77,7 +77,7 @@ class Order extends Controller
         // 商品结算信息
         $CartModel = new CartModel($user);
         // 购物车商品列表
-        $supplierData = $CartModel->getList($params['cart_ids'],'',$is_show_gift=1,$params);
+        $supplierData = $CartModel->getList($params['cart_ids'],'',$is_show_gift=1);
         // 实例化订单service
         $orderService = new MasterOrderSettledService($user, $supplierData, $params);
         // 获取订单信息

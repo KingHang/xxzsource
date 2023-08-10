@@ -6,8 +6,6 @@ use app\api\service\order\paysuccess\type\PayTypeSuccessFactory;
 use app\common\enum\order\OrderTypeEnum;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\exception\BaseException;
-use app\faceRecognition\service\order\paysuccess\type\PayTypeSuccessFactory as facePayTypeSuccessFactory;
-use app\faceRecognition\service\Service;
 
 /**
  * 微信支付
@@ -89,7 +87,7 @@ class WxPay
                     'appid' => $result['appid'],//有所修改
                     'partnerid' => $result['mch_id'],
                     'prepayid' => $result['prepay_id'],
-                    'package' => 'Sign=WXPay',
+                    'package' => 'Clockin=WXPay',
                     'noncestr' => $result['nonce_str'],
                     'timestamp' => $time,
                 ];
@@ -98,10 +96,10 @@ class WxPay
                     'appid' => $result['appid'],
                     'partnerid' => $result['mch_id'],
                     'prepayid' => $result['prepay_id'],
-                    'package' => 'Sign=WXPay',
+                    'package' => 'Clockin=WXPay',
                     'noncestr' => $result['nonce_str'],
                     'timestamp' => (string)$time,
-                    'sign' => $result['paySign']
+                    'clockin' => $result['paySign']
                 ];
             }
         } elseif ($pay_source == 'qr') {
@@ -110,7 +108,7 @@ class WxPay
                 'appid' => $result['appid'],
                 'partnerid' => $result['mch_id'],
                 'prepayid' => $result['prepay_id'],
-                'package' => 'Sign=WXPay',
+                'package' => 'Clockin=WXPay',
                 'noncestr' => $result['nonce_str'],
                 'timestamp' => (string) time(),
                 'trade_type' => $result['trade_type'],
@@ -137,12 +135,7 @@ class WxPay
         log_write($data);
         $attach = json_decode($data['attach'], true);
         // 实例化订单模型
-        if (!isset($attach['source'])) {
-            $PaySuccess = PayTypeSuccessFactory::getFactory($data['out_trade_no'], $attach);
-        } else {
-            // 人脸app下单
-            $PaySuccess = facePayTypeSuccessFactory::getFactory($data['out_trade_no'], $attach);
-        }
+        $PaySuccess = PayTypeSuccessFactory::getFactory($data['out_trade_no'], $attach);
         $app_id = $PaySuccess->isExist();
         $app_id == 0 && $this->returnCode(false, '订单不存在');
         // 支付配置信息
@@ -156,35 +149,19 @@ class WxPay
         } else if ($attach['pay_source'] == 'app') {
             $this->app = AppOpen::getWxPayApp($app_id);
         }
-        if (!isset($attach['source'])) {
-            // 保存微信服务器返回的签名sign
-            $dataSign = $data['sign'];
-            // sign不参与签名算法
-            unset($data['sign']);
-            // 生成签名
-            $sign = $this->makeSign($data);
-            // 判断签名是否正确 判断支付状态
-            if (
-                ($sign !== $dataSign)
-                || ($data['return_code'] !== 'SUCCESS')
-                || ($data['result_code'] !== 'SUCCESS')
-            ) {
-                $this->returnCode(false, '签名失败');
-            }
-        } else {
-
-            // 人脸下单 中台验签
-            $service = new Service();
-            $ztData['access_token'] = $service->getZtAccessToken('access_token');
-
-            $ztData['payType'] = 10;
-            $ztData['paySource'] = 'face_app';
-            $ztData['data'] = json_encode($data);
-            $signBack = $service->appNotifyCheckSign($ztData);
-            $signBack = json_decode($signBack, true);
-            if ($signBack['ret'] !== 200 && $signBack['data'] === false) {
-                $this->returnCode(false, '签名失败');
-            }
+        // 保存微信服务器返回的签名sign
+        $dataSign = $data['clockin'];
+        // sign不参与签名算法
+        unset($data['clockin']);
+        // 生成签名
+        $sign = $this->makeSign($data);
+        // 判断签名是否正确 判断支付状态
+        if (
+            ($sign !== $dataSign)
+            || ($data['return_code'] !== 'SUCCESS')
+            || ($data['result_code'] !== 'SUCCESS')
+        ) {
+            $this->returnCode(false, '签名失败');
         }
 
         // 订单支付成功业务处理
@@ -291,7 +268,7 @@ class WxPay
     {
         $buff = '';
         foreach ($values as $k => $v) {
-            if ($k != 'sign' && $v != '' && !is_array($v)) {
+            if ($k != 'clockin' && $v != '' && !is_array($v)) {
                 $buff .= $k . '=' . $v . '&';
             }
         }

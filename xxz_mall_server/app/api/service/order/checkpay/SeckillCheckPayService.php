@@ -32,6 +32,7 @@ class SeckillCheckPayService extends CheckPayService
     protected function checkProductStatus($productList)
     {
         foreach ($productList as $product) {
+
             // 秒杀商品sku信息
             $seckillProductSku = SeckillSkuModel::detail($product['sku_source_id'], ['product']);
             $seckillProduct = $seckillProductSku['product'];
@@ -47,7 +48,7 @@ class SeckillCheckPayService extends CheckPayService
             }
 
             // 付款减库存
-            if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT && $product['total_num'] > $seckillProduct['seckill_stock']) {
+            if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT && $product['total_num'] > $seckillProductSku['seckill_stock']) {
                 $this->error = "很抱歉，商品 [{$product['product_name']}] 库存不足";
                 return false;
             }

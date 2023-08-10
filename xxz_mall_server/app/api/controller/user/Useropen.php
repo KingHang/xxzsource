@@ -4,7 +4,7 @@ namespace app\api\controller\user;
 
 use app\api\controller\Controller;
 use app\api\model\order\Order as OrderModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\model\user\UserOpen as UserOpenModel;
 use app\api\model\user\UserMp as UserMpModel;
 use app\common\enum\order\OrderPayTypeEnum;

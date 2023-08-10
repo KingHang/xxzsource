@@ -3,7 +3,7 @@
 namespace app\common\model\order;
 
 use app\common\model\BaseModel;
-use app\shop\service\order\ExportService;
+use app\mall\service\order\ExportService;
 
 /**
  * 商品订单模型

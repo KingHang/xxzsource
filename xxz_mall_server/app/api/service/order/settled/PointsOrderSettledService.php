@@ -3,7 +3,7 @@
 namespace app\api\service\order\settled;
 
 use app\common\enum\order\OrderSourceEnum;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\api\model\order\Order as OrderModel;
 
 /**
@@ -27,7 +27,7 @@ class PointsOrderSettledService extends OrderSettledService
         $this->settledRule = array_merge($this->settledRule, [
             'force_points' => true,     //强制使用积分，积分兑换
             'is_coupon' => $this->config['is_coupon'],
-            'is_agent' => $this->config['is_agent'],
+            'is_agent' => false,
             'is_user_grade' => false,     // 会员等级折扣
             'is_reduce' => false, //满减
         ]);

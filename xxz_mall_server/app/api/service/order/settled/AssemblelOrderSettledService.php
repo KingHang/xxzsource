@@ -4,8 +4,8 @@ namespace app\api\service\order\settled;
 
 use app\api\model\order\Order as OrderModel;
 use app\common\enum\order\OrderSourceEnum;
-use app\common\model\settings\Settings as SettingModel;
-use app\api\model\plus\assemble\BillUser as BillUserModel;
+use app\common\model\setting\Setting as SettingModel;
+use app\api\model\plugin\groupsell\BillUser as BillUserModel;
 /**
  * 拼团商城订单结算服务类
  */
@@ -29,7 +29,7 @@ class AssemblelOrderSettledService extends OrderSettledService
         // 自身构造,差异化规则
         $this->settledRule = array_merge($this->settledRule, [
             'is_coupon' => $this->config['is_coupon'],
-            'is_agent' => $this->config['is_agent'],
+            'is_agent' => false,
             'is_use_points' => $this->config['is_point'],
             'is_user_grade' => false,     // 会员等级折扣
         ]);
@@ -53,7 +53,7 @@ class AssemblelOrderSettledService extends OrderSettledService
             }
             // 参与过就不要再参加了
             if($product['bill_source_id'] > 0){
-                $join_count = (new BillUserModel)->where('assemble_bill_id', '=', $product['bill_source_id'])
+                $join_count = (new BillUserModel)->where('groupsell_bill_id', '=', $product['bill_source_id'])
                     ->where('user_id', '=', $this->user['user_id'])
                     ->count();
                 if($join_count > 0){

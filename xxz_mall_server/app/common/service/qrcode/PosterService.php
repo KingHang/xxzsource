@@ -3,7 +3,7 @@
 namespace app\common\service\qrcode;
 
 use app\common\model\plugin\agent\Grade;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use Endroid\QrCode\QrCode;
 use Grafika\Color;
 use Grafika\Grafika;
@@ -213,15 +213,12 @@ class PosterService extends Base
             $arr['nickName']['left'] = 120;
             $arr['nickName']['top'] = 1240;
 
-            // 一星孝亲楷模
             $textColor = '';
             if ($grade['certificate_bg'] == 'https://img.dfhlyl.com/20220714092034437c89371.jpg') {
                 $textColor = '441982';
             } else if ($grade['certificate_bg'] == 'https://img.dfhlyl.com/20220714092124866764125.jpg') {
-                // 三星孝亲楷模
                 $textColor = '831a5c';
             } else if ($grade['certificate_bg'] == 'https://img.dfhlyl.com/20220714092142d792d0436.jpg') {
-                // 五星孝亲楷模
                 $textColor = '82191e';
             }
 
@@ -260,7 +257,7 @@ class PosterService extends Base
             $this->config['tip']['color'] = "999999";
             $this->config['tip']['left'] = 180;
             $this->config['tip']['top'] = 130;
-            $this->config['tip']['text'] = '精彩尽在 汇乐宝商城';
+            $this->config['tip']['text'] = '小玄猪';
 
             $this->config['qrcode']['width'] = 90;
             $this->config['qrcode']['height'] = 90;

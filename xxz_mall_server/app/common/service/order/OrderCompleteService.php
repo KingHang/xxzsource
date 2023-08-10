@@ -3,17 +3,12 @@
 namespace app\common\service\order;
 
 use app\common\library\helper;
-use app\common\model\settings\Settings;
-use app\common\model\purveyor\Capital as SupplierCapitalModel;
-use app\common\model\purveyor\Purveyor as SupplierModel;
+use app\common\model\setting\Setting;
 use app\common\model\user\User as UserModel;
-use app\common\model\settings\Settings as SettingModel;
-use app\common\model\plugin\agent\Order as AgentOrderModel;
 use app\common\model\user\GrowthLog as GrowthLogModel;
 use app\common\model\user\PointsLog as PointsLogModel;
 use app\common\enum\order\OrderTypeEnum;
 use app\common\model\order\OrderSettled as OrderSettledModel;
-use app\common\model\plugin\giftcert\Log as LogModel;
 use app\common\model\order\OrderGoods as OrderProductModel;
 use Exception;
 
@@ -39,7 +34,6 @@ class OrderCompleteService
     /* @var UserModel $model */
     private $UserModel;
 
-    private $supplierModel;
     /**
      * 构造方法
      */
@@ -48,7 +42,6 @@ class OrderCompleteService
         $this->orderType = $orderType;
         $this->model = $this->getOrderModel();
         $this->UserModel = new UserModel;
-        $this->supplierModel = new SupplierModel();
     }
 
     /**
@@ -70,10 +63,7 @@ class OrderCompleteService
         //if (SettingModel::getItem('trade', $appId)['order']['refund_days'] == 0) {
             $this->settled($orderList);
         //}
-        // 发放分销商佣金
-//        foreach ($orderList as $order) {
-//            AgentOrderModel::grantMoney($order, $this->orderType);
-//        }
+
         return true;
     }
 
@@ -91,8 +81,6 @@ class OrderCompleteService
         $this->setGiftPointsBonus($orderList);
         // 处理订单赠送的成长值
         $this->setGiftGrowthValueBonus($orderList);
-        // 处理订单商品赠送CFP等等
-        $this->setGiftcertBonus($orderList);
         // 将订单设置为已结算
         $this->model->onBatchUpdate($orderIds, ['is_settled' => 1]);
         // 供应商结算
@@ -111,7 +99,7 @@ class OrderCompleteService
         // 订单结算记录
         $orderSettledData = [];
         foreach ($orderList as $order) {
-            if($order['shop_supplier_id'] == 0){
+            if($order['purveyor_id'] == 0){
                 continue;
             }
             // 供应价格+运费
@@ -119,7 +107,7 @@ class OrderCompleteService
             $sysMoney = $order['sys_money'];
             // B2b模式，如果有参与分销，减去分销的佣金
             // 商城设置
-            $settings = Settings::getItem('store');
+            $settings = Setting::getItem('store');
             $refundSupplierMoney = 0;
             $refundSysMoney = 0;
             // 减去订单退款的金额
@@ -135,19 +123,12 @@ class OrderCompleteService
                     $refundSysMoney += $product['sys_money'];
                 }
             }
-            // 分销佣金,只要未失效，都算结算，不管后续是否有退款，因此结算时间设置要注意
-            $agentOrder = AgentOrderModel::getDetailByOrderId($order['order_id'], OrderTypeEnum::MASTER);
             $agentMoney = 0;
-            if($agentOrder['is_invalid'] == 0){
-                $agentMoney = $agentOrder['first_money'] + $agentOrder['second_money'] + $agentOrder['third_money'];
-                $supplierMoney -= $agentMoney;
-            }
-
-            !isset($supplierData[$order['shop_supplier_id']]) && $supplierData[$order['shop_supplier_id']] = 0.00;
-            $supplierMoney > 0 && $supplierData[$order['shop_supplier_id']] += $supplierMoney;
+            !isset($supplierData[$order['purveyor_id']]) && $supplierData[$order['purveyor_id']] = 0.00;
+            $supplierMoney > 0 && $supplierData[$order['purveyor_id']] += $supplierMoney;
             $orderSettledData[] = [
                 'order_id' => $order['order_id'],
-                'shop_supplier_id' => $order['shop_supplier_id'],
+                'purveyor_id' => $order['purveyor_id'],
                 'order_money' => $order['order_price'],
                 'pay_money' => $order['pay_price'],
                 'express_money' => $order['express_price'],
@@ -163,18 +144,14 @@ class OrderCompleteService
             ];
             // 商家结算记录
             $supplierCapitalData[] = [
-                'shop_supplier_id' => $order['shop_supplier_id'],
+                'purveyor_id' => $order['purveyor_id'],
                 'money' => $supplierMoney,
                 'describe' => '订单结算，订单号：' . $order['order_no'],
                 'app_id' => $order['app_id']
             ];
         }
-        // 累积到供应商表记录
-        $this->supplierModel->onBatchIncSupplierMoney($supplierData);
         // 修改平台结算金额
         (new OrderSettledModel())->saveAll($orderSettledData);
-        // 供应商结算明细金额
-        (new SupplierCapitalModel())->saveAll($supplierCapitalData);
         return true;
     }
     /**
@@ -375,7 +352,6 @@ class OrderCompleteService
             }
             !isset($userData[$order['user_id']]) && $userData[$order['user_id']] = 0.00;
             $expendMoney > 0 && $userData[$order['user_id']] += $expendMoney;
-            event('AgentUserGrade', $order['user_id']);
         }
         // 累积到会员表记录
         $this->UserModel->onBatchIncExpendMoney($userData);

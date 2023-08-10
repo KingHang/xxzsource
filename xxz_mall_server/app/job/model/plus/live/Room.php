@@ -14,7 +14,7 @@ class Room extends RoomModel
      * {"app":"59302.livepush.myqcloud.com","appid":1251815325,"appname":"live",
      * "channel_id":"1400410245_10002","errcode":0,"errmsg":"","event_time":1598429581,
      * "event_type":1,"height":0,"idc_id":33,"node":"117.68.64.13","sequence":"6930028316735004652","set_id":2,
-     * "sign":"64818ed3c66765bd3df9cf81a3ea4c8c","stream_id":"1400410245_10002",
+     * "clockin":"64818ed3c66765bd3df9cf81a3ea4c8c","stream_id":"1400410245_10002",
      * "stream_param":"txSecret=1ef224d69fdacd79cb4d599c854b6456&txTime=5F476B0C","t":1598430181,"user_ip":"27.18.182.202",
      * "width":0}
      */
@@ -68,7 +68,7 @@ class Room extends RoomModel
      * {"app":"59302.livepush.myqcloud.com","appid":1251815325,"appname":"live","channel_id":"1400410245_10002",
      * "duration":107,"end_time":1598454291,"end_time_usec":655664,"event_type":100,"file_format":"mp4",
      * "file_id":"5285890806906490148","file_size":6847302,"media_start_time":3151,"record_bps":0,
-     * "record_file_id":"5285890806906490148","sign":"316dce02ade926ffbdeae56dac1eb764","start_time":1598454185,
+     * "record_file_id":"5285890806906490148","clockin":"316dce02ade926ffbdeae56dac1eb764","start_time":1598454185,
      * "start_time_usec":991166,"stream_id":"1400410245_10002",
      * "stream_param":"txSecret=c7606f1568c4639375e908bf4bf16a5d&txTime=5F47CB23","t":1598454893,
      * "task_id":"1818336333418013137","video_id":"1251815325_6b522017b15f4095943d1ef38a182e37","

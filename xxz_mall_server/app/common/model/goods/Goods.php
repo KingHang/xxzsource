@@ -2,8 +2,7 @@
 
 namespace app\common\model\goods;
 
-use app\api\model\settings\Settings as SettingModel;
-use app\api\model\supplier\Purveyor as SupplierModel;
+use app\api\model\purveyor\Purveyor as SupplierModel;
 use app\common\library\helper;
 use app\common\model\BaseModel;
 use app\common\model\store\Store;
@@ -19,10 +18,22 @@ class Goods extends BaseModel
 {
     protected $name = 'goods';
     protected $pk = 'goods_id';
-    protected $append = ['product_sales', 'time_text', 'store_list', 'store_num'];
+    protected $append = ['product_sales', 'time_text', 'store_list', 'store_num','goods_id','supplier','product_id'];
 	protected $type = [
         'verify_enddate' => 'timestamp:Y-m-d H:i:s',
     ];
+	public function getProductIdAttr($value,$data)
+    {
+        if (isset($data['goods_id'])) {
+            return $data['goods_id'];
+        }
+    }
+    public function getShopSupplierIdAttr($value,$data)
+    {
+        if (isset($data['purveyor_id'])) {
+            return $data['purveyor_id'];
+        }
+    }
     public function getCategoryParamsValueAttr($value,$data)
     {
         return json_decode($data['category_params_value'],true);
@@ -31,9 +42,8 @@ class Goods extends BaseModel
     public function getStoreNumAttr($value, $data)
     {
         $num = 0;
-        if(!isset($data['store_ids']))$data['store_ids']='';
         if (in_array($data['product_type'],['1,2']) || ($data['product_type'] == 3 && $data['store_ids'] == '')) {
-            $num = (new StoreModel)->where(['status' => 1 , 'is_delete' => 0 , 'purveyor_id' => isset($data['shop_supplier_id']) ? $data['shop_supplier_id'] : 0])->count();
+            $num = (new StoreModel)->where(['status' => 1 , 'is_delete' => 0 , 'purveyor_id' => $data['purveyor_id']])->count();
         } else {
             $num = count(explode(',', $data['store_ids']));
         }
@@ -58,10 +68,6 @@ class Goods extends BaseModel
         } else {
             if (in_array($data['product_type'],[1,2]) || ($data['product_type'] == 3 && $data['store_ids'] == '')) {
                 $where = ['status' => 1 , 'is_delete' => 0 ];
-                // 判断店铺类型  自营店铺获取全部门店  供应商获取供应商门店
-                if (isset($data['shop_supplier_id']) && $data['shop_supplier_id'] > 0 && !(new SupplierModel())->checkSupplierType($data['shop_supplier_id'])) {
-                    $where['purveyor_id'] = $data['shop_supplier_id'];
-                }
                 $list = (new StoreModel)->where($where)->select();
             } else {
                 $list = (new StoreModel)->where('store_id', 'in', $data['store_ids'])->select();
@@ -126,7 +132,7 @@ class Goods extends BaseModel
      */
     public function category()
     {
-        return $this->belongsTo('app\\common\\model\\goods\\Category','category_id','category_id');
+        return $this->belongsTo('app\\common\\model\\goods\\Category');
     }
 
     /**
@@ -134,7 +140,7 @@ class Goods extends BaseModel
      */
     public function sku()
     {
-        return $this->hasMany('app\\common\\model\\goods\\GoodsSku', 'goods_id', 'goods_id')->order(['goods_sku_id' => 'asc']);
+        return $this->hasMany('GoodsSku')->order(['goods_sku_id' => 'asc']);
     }
 
     /**
@@ -142,7 +148,7 @@ class Goods extends BaseModel
      */
     public function specRel()
     {
-        return $this->belongsToMany('SpecValue', 'GoodsSpecRel','spec_id','spec_id')->order(['id' => 'asc']);
+        return $this->belongsToMany('SpecValue', 'GoodsSpecRel')->order(['id' => 'asc']);
     }
 
     /**
@@ -150,7 +156,7 @@ class Goods extends BaseModel
      */
     public function image()
     {
-        return $this->hasMany('app\\common\\model\\goods\\GoodsImage', 'goods_id', 'goods_id')->where('image_type', '=', 0)->order(['id' => 'asc']);
+        return $this->hasMany('app\\common\\model\\goods\\GoodsImage')->where('image_type', '=', 0)->order(['id' => 'asc']);
     }
 
     /**
@@ -158,7 +164,7 @@ class Goods extends BaseModel
      */
     public function contentImage()
     {
-        return $this->hasMany('app\\common\\model\\goods\\GoodsImage','goods_id','goods_id')->where('image_type', '=', 1)->order(['id' => 'asc']);
+        return $this->hasMany('app\\common\\model\\goods\\GoodsImage')->where('image_type', '=', 1)->order(['id' => 'asc']);
     }
 
     /**
@@ -166,7 +172,7 @@ class Goods extends BaseModel
      */
     public function delivery()
     {
-        return $this->BelongsTo('app\\common\\model\\settings\\Delivery','goods_id','goods_id');
+        return $this->BelongsTo('app\\common\\model\\setting\\Delivery');
     }
 
     /**
@@ -175,15 +181,6 @@ class Goods extends BaseModel
     public function commentData()
     {
         return $this->hasMany('app\\common\\model\\goods\\Comment', 'goods_id', 'goods_id');
-    }
-
-    /**
-     * 关联供应商表
-     */
-    public function supplier()
-    {
-        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'purveyor_id', 'purveyor_id')
-            ->field(['purveyor_id', 'name', 'address', 'logo_id']);
     }
 
     /**
@@ -201,13 +198,7 @@ class Goods extends BaseModel
     {
         return $this->hasOne('app\\common\\model\\file\\UploadFile', 'file_id', 'poster_id');
     }
-    /**
-     *关联权益
-     */
-    public function benefit()
-    {
-        return $this->hasOne('app\\common\\model\\plus\\benefit\\Benefit', 'benefit_id', 'benefit_id');
-    }
+
     /**
      * 计费方式
      */
@@ -220,7 +211,7 @@ class Goods extends BaseModel
     /**
      * 获取商品列表
      */
-    public function getList($param,$field = 'product.*')
+    public function getList($param,$field = 'goods.*')
     {
         // 商品列表获取条件
         $params = array_merge([
@@ -238,7 +229,7 @@ class Goods extends BaseModel
         $model = $this;
         if ($params['category_id'] > 0) {
             $arr = Category::getSubCategoryId($params['category_id']);
-            $model = $model->where('product.category_id', 'IN', $arr);
+            $model = $model->where('goods.category_id', 'IN', $arr);
         }
         if (!empty($params['product_name'])) {
             $model = $model->where('product_name', 'like', '%' . trim($params['product_name']) . '%');
@@ -252,9 +243,6 @@ class Goods extends BaseModel
         if ($params['audit_status'] > -1) {
             $model = $model->where('audit_status', '=', $params['audit_status']);
         }
-        if (isset($params['is_agent']) && $params['is_agent'] > -1) {
-            $model = $model->where('is_agent', '=', $params['is_agent']);
-        }
         // 排序规则
         $sort = [];
         if ($params['sortType'] === 'all') {
@@ -267,11 +255,9 @@ class Goods extends BaseModel
         if (isset($params['type'])) {
             $model = $this->buildProductType($model, $params['type']);
         }
-        if (isset($params['shop_supplier_id']) && $params['shop_supplier_id'] && isset($params['delivery_type']) && $params['delivery_type'] != 10) {
-            $model = $model->whereRaw("product.purveyor_id = '" . $params['shop_supplier_id'] . "' OR supplier.store_type = 20");
-        }
+
         if (!isset($params['delivery_type']) && isset($params['shop_supplier_id']) && $params['shop_supplier_id'] > 0) {
-            $model = $model->where('product.purveyor_id', '=', $params['shop_supplier_id']);
+            $model = $model->where('goods.purveyor_id', '=', $params['shop_supplier_id']);
         }
         if (isset($params['product_id']) && $params['product_id']) {
             $model = $model->whereNotIn('goods_id', $params['product_id']);
@@ -280,7 +266,7 @@ class Goods extends BaseModel
             $model = $model->where('store_type', '<>', 30);
         }
         if (isset($params['is_deduct']) && $params['is_deduct'] !== '') {
-            $model = $model->where('product.is_deduct', '=', $params['is_deduct']);
+            $model = $model->where('goods.is_deduct', '=', $params['is_deduct']);
         }
         // 获取支持自提商品
         if (isset($params['delivery_type']) && isset($params['store_id']) && $params['delivery_type'] == 20 && $params['store_id'] > 0) {
@@ -290,31 +276,22 @@ class Goods extends BaseModel
         // 多规格商品 最高价与最低价
         $ProductSku = new GoodsSku;
         $minPriceSql = $ProductSku->field(['MIN(product_price)'])
-            ->where('goods_id', 'EXP', "= `product`.`goods_id`")->buildSql();
+            ->where('goods_id', 'EXP', "= `goods`.`goods_id`")->buildSql();
         $maxPriceSql = $ProductSku->field(['MAX(product_price)'])
-            ->where('goods_id', 'EXP', "= `product`.`goods_id`")->buildSql();
-//        $agentProduct = new agentProductModel;
-//        $minPvPriceSql = $agentProduct->field(['MAX(pv)'])
-//            ->where('goods_id', 'EXP', "= `product`.`product_id`")->buildSql();
+            ->where('goods_id', 'EXP', "= `goods`.`goods_id`")->buildSql();
         // 执行查询
-        $list = $model->alias('product')
+
+        $list = $model->alias('goods')
             ->field([$field, '(sales_initial + sales_actual) as product_sales',
                 "$minPriceSql AS product_min_price",
-                "$maxPriceSql AS product_max_price"
+                "$maxPriceSql AS product_max_price",
+                "goods.goods_id as product_id"
             ])
-
-            ->with(['category', 'image.file', 'sku', 'supplier'])
-            ->join('purveyor supplier', 'product.purveyor_id = supplier.purveyor_id', 'left')
-            ->where('product.is_delete', '=', 0)
-            ->where('supplier.is_delete', '=', 0)
-            ->where('supplier.status', '=', 0)
-            ->where('supplier.is_recycle', '=', 0)
+            ->with(['category', 'image.file', 'sku'])
+            ->where('goods.is_delete', '=', 0)
             ->where($filter)
             ->order($sort)
-//            ->fetchSql(true)->select();
-//        var_dump($list);die;
             ->paginate($params);
-//        var_dump($list);die;
         // 整理列表数据并返回
         return $this->setProductListData($list, true);
     }
@@ -407,41 +384,11 @@ class Goods extends BaseModel
                     $product['grade_ids'] = [];
                 }
             }
-            $this->getProductCfpDiscount($product);
             // 回调函数
             is_callable($callback) && call_user_func($callback, $product);
         }
-
         return $data;
     }
-    /*
-     * 获取每个商品的cfp折扣
-     */
-    public function getProductCfpDiscount(&$product)
-    {
-        $setting = SettingModel::getItem('deduct');
-        if ($product['is_deduct'] == 0 ){//商品是否开启折扣
-            if($product['deduct_type'] == 1){//当折扣为自定义比例折扣时
-                if ($product['customize_deduct'] == 1){//当自定义比例折扣时为折扣比例
-                    $deduct_price = $product['product_price'] * $product['deduct_discount_setting'] /100;
-                    $deduct_product_price = $product['product_price'] - $deduct_price;
-                    $deduct_money = $setting['deduct_money'];
-                    $cfpNum = $deduct_price/$deduct_money;
-                }else{//当自定义比例折扣时为金额折扣
-                    $deduct_product_price = $product['product_price'] - $product['deduct_money_setting'];
-                    $cfpNum = $product['deduct_money_setting'] / $setting['deduct_money'];
-                }
-
-            }else{//当折扣为默认比例折扣时
-                $deduct_price = $product['product_price'] * $setting['max_money_ratio'] / 100;
-                $deduct_product_price = $product['product_price'] - $deduct_price;
-                $deduct_money = $setting['deduct_money'];
-                $cfpNum = $deduct_price/$deduct_money;
-            }
-            $product['show_deduct_money'] = "$cfpNum"."CFP"."+"."￥"."$deduct_product_price";
-        }
-    }
-
 
     /**
      * 根据商品id集获取商品列表
@@ -492,7 +439,7 @@ class Goods extends BaseModel
         foreach ($skuData as $item) {
             $image = (isset($item['image']) && !empty($item['image'])) ? $item['image'] : ['file_id' => 0, 'file_path' => ''];
             $specListData[] = [
-                'goods_sku_id' => $item['product_sku_id'],
+                'goods_sku_id' => $item['goods_sku_id'],
                 'spec_sku_id' => $item['spec_sku_id'],
                 'rows' => [],
                 'spec_form' => [
@@ -565,7 +512,6 @@ class Goods extends BaseModel
         if (empty($model)) {
             return $model;
         }
-
         // 整理商品数据并返回
         return $model->setProductListData($model, false);
     }
@@ -638,19 +584,7 @@ class Goods extends BaseModel
         return $this->where('is_delete', '=', 0)->where($where)->count();
     }
 
-    /**
-     * 供应商商品总销量
-     */
-    public function reSupplierTotalSales($shop_supplier_id)
-    {
-        $total = $this->where('purveyor_id', '=', $shop_supplier_id)
-            ->sum(Db::raw('sales_initial + sales_actual'));
 
-        return (new SupplierModel())->where('purveyor_id', '=', $shop_supplier_id)
-            ->save([
-                'product_sales' => $total
-            ]);
-    }
 
     /**
      * 根据商品id获取商品的shop_supplier_id

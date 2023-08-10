@@ -4,7 +4,7 @@ namespace app\api\controller\user;
 
 use app\api\model\user\UserAddress;
 use app\api\controller\Controller;
-use app\common\model\settings\Region as RegionModel;
+use app\common\model\setting\Region as RegionModel;
 
 /**
  * 收货地址控制器

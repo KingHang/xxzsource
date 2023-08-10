@@ -4,7 +4,7 @@ namespace app\job\event;
 
 use app\job\model\order\Order as OrderModel;
 use think\facade\Cache;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\job\service\OrderService;
 use app\common\enum\order\OrderTypeEnum;
 use app\common\service\order\OrderCompleteService;

@@ -2,7 +2,7 @@
 
 namespace app\common\service\qrcode;
 
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use Grafika\Color;
 use Grafika\Grafika;
 use Endroid\QrCode\QrCode;

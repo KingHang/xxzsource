@@ -5,7 +5,7 @@ namespace app\common\model\user;
 
 use app\common\library\sms\Driver as SmsDriver;
 use app\common\model\BaseModel;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 
 /**
  * 短信模型

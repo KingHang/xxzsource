@@ -43,9 +43,6 @@ class GrowthLog extends BaseModel
             case 7:
                 $valueData['text'] = '邀请奖励';
                 break;
-            case 8:
-                $valueData['text'] = '活动报名奖励';
-                break;
         }
 
         return $valueData;

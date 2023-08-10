@@ -3,7 +3,7 @@
 namespace app\common\model\file;
 
 use app\common\model\BaseModel;
-use app\shop\model\file\UploadFile;
+use app\mall\model\file\UploadFile;
 
 /**
  * 文件库分组模型
@@ -17,7 +17,7 @@ class UploadGroup extends BaseModel
      * 分组详情
      */
     public static function detail($group_id, $shop_supplier_id = 0) {
-        return (new static())->where('shop_supplier_id', '=', $shop_supplier_id)->find($group_id);
+        return (new static())->where('purveyor_id', '=', $shop_supplier_id)->find($group_id);
     }
 
     /**
@@ -27,7 +27,7 @@ class UploadGroup extends BaseModel
     {
         $model = $this;
         !empty($groupType) && $model = $model->where('group_type', '=', trim($groupType));
-        return $model->where('shop_supplier_id', '=', $shop_supplier_id)
+        return $model->where('purveyor_id', '=', $shop_supplier_id)
             ->where('is_delete', '=', 0)
             ->order(['sort' => 'asc', 'create_time' => 'desc'])
             ->select();

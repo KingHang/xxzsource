@@ -4,7 +4,7 @@ namespace app\job\service;
 
 use app\common\service\product\factory\ProductFactory;
 use app\job\model\order\Order as OrderModel;
-use app\common\model\plugin\voucher\UserVoucher as UserCouponModel;
+use app\common\model\plugin\voucher\UserCoupon as UserCouponModel;
 use app\common\library\helper;
 
 class OrderService
@@ -30,7 +30,7 @@ class OrderService
     public function close()
     {
         // 查询截止时间未支付的订单
-        $list = $this->model->getCloseList(['product', 'user']);
+        $list = $this->model->getCloseList(['product' ,'user']);
         $this->closeOrderIds = helper::getArrayColumn($list, 'order_id');
         // 取消订单事件
         if (!empty($this->closeOrderIds)) {

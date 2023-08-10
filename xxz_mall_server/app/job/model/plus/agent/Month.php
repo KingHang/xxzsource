@@ -6,7 +6,7 @@ use app\common\model\plugin\agent\Month as AgentMonthModel;
 use app\common\model\plugin\agent\Setting as AgentSettingModel;
 use app\common\model\plugin\agent\User;
 use app\common\model\plugin\agent\User as AgentUserModel;
-use app\shop\model\plugin\agent\OrderDetail as OrderDetailModel;
+use app\mall\model\plugin\agent\OrderDetail as OrderDetailModel;
 
 /**
  * 分销商订单模型

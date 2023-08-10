@@ -3,7 +3,7 @@
 namespace app\common\service\message;
 
 use app\common\library\sms\Driver as SmsDriver;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 
 /**
  * 短信消息通知服务

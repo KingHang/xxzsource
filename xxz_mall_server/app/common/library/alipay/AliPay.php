@@ -12,7 +12,7 @@ use app\common\enum\settings\SettingEnum;
 use app\common\exception\BaseException;
 use app\common\library\helper;
 use app\common\model\app\AppOpen as AppOpenModel;
-use app\common\model\settings\Settings;
+use app\common\model\setting\Setting;
 use app\faceRecognition\service\Service;
 
 /**
@@ -43,7 +43,7 @@ class AliPay
             $this->publicKey = $config['alipay_publickey'];
         }else{
             // 获取配置
-            $config = Settings::getItem(SettingEnum::H5ALIPAY, $app_id);
+            $config = Setting::getItem(SettingEnum::H5ALIPAY, $app_id);
             $this->app_id = $config['app_id'];
             $this->privateKey = $config['privateKey'];
             $this->publicKey = $config['publicKey'];
@@ -95,7 +95,7 @@ class AliPay
                 'notify_url' => base_url() . 'index.php/job/notify/alipay_notify?order_type=' . $orderType . '&pay_source=' . $pay_source . '&ple=' . $multiple,
                 'biz_content' => json_encode($requestConfigs, JSON_UNESCAPED_UNICODE),
             );
-            $commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
+            $commonConfigs["clockin"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
             // 跳h5
             return $this->buildRequestForm($commonConfigs);
         }
@@ -174,7 +174,7 @@ class AliPay
             'version' => '1.0',
             'biz_content' => json_encode($requestConfigs),
         );
-        $commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
+        $commonConfigs["clockin"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
         $result = curlPost('https://openapi.alipay.com/gateway.do?charset=utf-8', $commonConfigs);
         return json_decode($result, true);
     }
@@ -276,7 +276,7 @@ class AliPay
             'version' => '1.0',
             'biz_content' => json_encode($requestConfigs),
         );
-        $commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
+        $commonConfigs["clockin"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
         $result = curlPost('https://openapi.alipay.com/gateway.do?charset=utf-8', $commonConfigs);
         $resultArr = json_decode($result, true);
         $result = $resultArr['alipay_trade_refund_response'];
@@ -386,10 +386,10 @@ class AliPay
      **/
     public function rsaCheck($params)
     {
-        $sign = $params['sign'];
+        $sign = $params['clockin'];
         $signType = $params['sign_type'];
         unset($params['sign_type']);
-        unset($params['sign']);
+        unset($params['clockin']);
         return $this->verify($this->getSignContent($params), $sign, $signType);
     }
 

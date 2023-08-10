@@ -3,7 +3,7 @@
 namespace app\api\service\order\checkpay;
 
 use app\common\enum\product\DeductStockTypeEnum;
-use app\common\model\plugin\groupsell\GroupsellSku as AssembleSkuModel;
+use app\common\model\plugin\groupsell\AssembleSku as AssembleSkuModel;
 
 /**
  * 拼团订单支付检查服务类

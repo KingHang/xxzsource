@@ -3,8 +3,8 @@
 namespace app\api\service\order\paysuccess\type;
 
 use app\api\model\user\User as UserModel;
-use app\api\model\plus\activity\ActivityOrder;
-use app\api\model\plus\activity\ActivityLog;
+use app\api\model\plugin\activity\ActivityOrder;
+use app\api\model\plugin\activity\ActivityLog;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\user\balanceLog\BalanceLogSceneEnum;
 use app\common\model\user\BalanceLog as BalanceLogModel;

@@ -4,9 +4,6 @@ namespace app\job\service;
 
 use app\job\model\plus\activity\Order as OrderModel;
 use app\common\library\helper;
-use app\common\model\purveyor\Capital as SupplierCapitalModel;
-use app\common\model\purveyor\Purveyor as SupplierModel;
-use app\common\model\plugin\activity\Remind as RemindModel;
 use app\common\service\message\MessageService;
 class ActivityOrderService
 {
@@ -24,7 +21,6 @@ class ActivityOrderService
     public function __construct()
     {
         $this->model = new OrderModel;
-        $this->supplierModel = new SupplierModel();
     }
 
     /**
@@ -62,7 +58,6 @@ class ActivityOrderService
         // 累积到供应商表记录
         $this->supplierModel->onBatchIncSupplierMoney($supplierData);
         // 供应商结算明细金额
-        (new SupplierCapitalModel())->saveAll($supplierCapitalData);
         // 将订单设置为已结算
         $this->model->onBatchUpdate($orderIds, ['is_settled' => 1]);
     }

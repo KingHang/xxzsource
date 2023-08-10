@@ -4,8 +4,8 @@ namespace app\common\service\message;
 
 use app\common\model\user\User as UserModel;
 use app\common\enum\order\OrderTypeEnum;
-use app\common\model\settings\MessageSettings as MessageSettingsModel;
-use app\common\model\settings\Message as MessageModel;
+use app\common\model\setting\MessageSettings as MessageSettingsModel;
+use app\common\model\setting\Message as MessageModel;
 use app\common\enum\order\OrderPayTypeEnum;
 
 /**
@@ -71,7 +71,7 @@ class MessageService
             return;
         }*/
 
-        //SmsMessageService::send($data, $settings['sms_template'], $phone, $order['app_id']);
+        //SmsMessageService::send($data, $setting['sms_template'], $phone, $order['app_id']);
     }
 
     /**

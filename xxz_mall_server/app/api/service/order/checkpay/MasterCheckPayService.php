@@ -2,7 +2,7 @@
 
 namespace app\api\service\order\checkpay;
 
-use app\api\model\product\GoodsSku as ProductSkuModel;
+use app\api\model\goods\GoodsSku as ProductSkuModel;
 use app\common\enum\product\DeductStockTypeEnum;
 
 /**
@@ -41,7 +41,7 @@ class MasterCheckPayService extends CheckPayService
                 return false;
             }
             // 获取商品的sku信息
-            $productSku = $this->getOrderProductSku($product['product_id'], $product['spec_sku_id']);
+            $productSku = $this->getOrderProductSku($product['goods_id'], $product['spec_sku_id']);
             // sku已不存在
             if (empty($productSku)) {
                 $this->error = "很抱歉，商品 [{$product['product_name']}] sku已不存在，请重新下单";

@@ -4,19 +4,12 @@ namespace app\api\controller\user;
 
 use app\api\controller\Controller;
 use app\api\model\order\OrderGoods;
-use app\api\model\plus\agent\Apply as AgentApplyModel;
-use app\api\model\plus\agent\Setting;
-use app\api\model\plus\agent\User as AgentUserModel;
 use app\api\model\user\User as UserModel;
 use app\api\model\order\Order as OrderModel;
-use app\api\model\settings\Settings as SettingModel;
-use app\api\model\plus\coupon\UserVoucher as UserCouponModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\enum\settings\GetPhoneTypeEnum;
 use app\common\library\helper;
-use app\timebank\ztservice\Service;
 use think\facade\Cache;
-use app\api\model\supplier\Purveyor as SupplierModel;
-use app\api\model\plus\chat\Chat as ChatModel;
 
 /**
  * 个人中心主页
@@ -38,7 +31,7 @@ class Index extends Controller
             $coupon_model = new UserCouponModel();
             $coupon = count($coupon_model->getList($user['user_id'], -1, false, false));
             $cardvoucher = new OrderGoods();
-            $cardvoucherNum = $cardvoucher->getList(['data_status'=>1],$user['user_id'],1);
+            $cardvoucherNum = count($cardvoucher->getList($date_status=1,$user['user_id']));
 
             //订单总数
             $model = new OrderModel;
@@ -48,9 +41,9 @@ class Index extends Controller
             $commentNum = $model->getCount($user, 'comment');
 
             //分销
-            $agentInfo = AgentUserModel::detail($user['user_id']);
-            $is_agent = !!$agentInfo && !$agentInfo['is_delete'];
-            $is_applying = AgentApplyModel::isApplying($user['user_id']);
+            $agentInfo = (object)[];
+            $is_agent = false;
+            $is_applying = false;
         } else {
             $coupon = 0;
             $cardvoucherNum = 0;
@@ -66,7 +59,7 @@ class Index extends Controller
         }
 
         //分销商基本设置
-        $setting = Setting::getItem('basic');
+        $setting = [];
 
         //是否开启分销功能
         //$agent_open = $setting['is_open'];
@@ -82,30 +75,9 @@ class Index extends Controller
         $balance_open = intval($balance_setting['is_open']);
 
         if ($user && isset($user['mobile']) && $user['mobile']) {
-            // 获取中台用户time
-            $service = new Service();
-            $currentTime = $service->blockchainTimebankUserInfo($user['mobile'], 1);
-            if ($currentTime
-                && isset($currentTime['data'])
-                && isset($currentTime['data']['blockUser'])
-                && isset($currentTime['data']['blockUser']['memberWallet'])
-            ) {
-                $user['time'] = helper::number2($currentTime['data']['blockUser']['memberWallet']['balance'] + $currentTime['data']['blockUser']['memberWallet']['lockBalance']);
-            } else {
-                $user['time'] = '0.00';
-            }
 
-            // 获取中台cfp
-            $currentCfp = $service->blockchainTimebankUserInfo($user['mobile'], 2);
-            if ($currentCfp
-                && isset($currentCfp['data'])
-                && isset($currentCfp['data']['blockUser'])
-                && isset($currentCfp['data']['blockUser']['memberWallet'])
-            ) {
-                $user['cfp'] = helper::number2($currentCfp['data']['blockUser']['memberWallet']['balance']);
-            } else {
-                $user['cfp'] = '0.00';
-            }
+            $user['time'] = '0.00';
+            $user['cfp'] = '0.00';
         }
 
         return $this->renderSuccess('', [

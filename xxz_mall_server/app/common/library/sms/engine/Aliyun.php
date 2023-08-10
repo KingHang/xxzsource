@@ -35,7 +35,7 @@ class Aliyun extends Server
         $params["PhoneNumbers"] = $mobile;
 
         // 必填: 短信签名，应严格按"签名名称"填写，请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/sign
-        $params["SignName"] = $this->config['sign'];
+        $params["SignName"] = $this->config['clockin'];
 
         // 必填: 短信模板Code，应严格按"模板CODE"填写, 请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/template
         $params["TemplateCode"] = $template_code;

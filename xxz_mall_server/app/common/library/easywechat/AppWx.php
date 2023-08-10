@@ -2,7 +2,7 @@
 
 namespace app\common\library\easywechat;
 
-use app\shop\model\settings\Settings as SettingModel;
+use app\mall\model\setting\Setting as SettingModel;
 use EasyWeChat\Factory;
 use app\common\exception\BaseException;
 use app\common\model\app\AppWx as AppWxModel;

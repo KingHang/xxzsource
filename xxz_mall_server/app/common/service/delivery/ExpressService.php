@@ -3,9 +3,9 @@
 namespace app\common\service\delivery;
 
 use app\common\library\helper;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\common\enum\order\OrderTypeEnum;
-use app\common\model\settings\Delivery;
+use app\common\model\setting\Delivery;
 
 /**
  * 快递配送服务类

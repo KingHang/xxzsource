@@ -2,23 +2,18 @@
 
 namespace app\common\model\order;
 
-use app\api\model\supplier\Purveyor as SupplierModel;
 use app\common\model\BaseModel;
 use app\common\model\order\VerifyServerOrder as VerifyServerOrderModel;
 use app\common\model\order\VerifyServerLog as VerifyServerLogModel;
-use app\common\model\order\VerifyProductLog as VerifyProductLogModel;
+use app\common\model\order\VerifyGoodsLog as VerifyProductLogModel;
 use app\common\model\order\Order as OrderModel;
-use app\common\model\store\Store as StoreModel;
-use app\common\model\order\OrderTravelers;
-use app\common\model\order\OrderBenefit;
-
 /**
  * 订单商品模型
  */
 class OrderGoods extends BaseModel
 {
     protected $name = 'order_goods';
-    protected $pk = 'order_product_id';
+    protected $pk = 'order_goods_id';
     /**
      * 追加字段
      * @var string[]
@@ -29,9 +24,21 @@ class OrderGoods extends BaseModel
         'surplus_num',
         'total_verify_num', //
         'time_text',
-        'store_list',
+        'product_id',
+        'order_product_id'
     ];
-
+    public function getProductIdAttr($value,$data)
+    {
+        if (isset($data['goods_id'])) {
+            return $data['goods_id'];
+        }
+    }
+    public function getOrderProductIdAttr($value,$data)
+    {
+        if (isset($data['order_goods_id'])) {
+            return $data['order_goods_id'];
+        }
+    }
     /**
      * 获取核销次数总数
      * @param $value
@@ -42,23 +49,7 @@ class OrderGoods extends BaseModel
     {
         return $data['verify_num'] * $data['total_num'];
     }
-    public function getStoreListAttr($value,$data)
-    {
-        $list = [];
-        if (isset($data['store_ids'])) {
-            if (in_array($data['product_type'],[1,2]) || (in_array($data['product_type'],[3,4]) && $data['store_ids'] == '')) {
-                $where = ['status' => 1 , 'is_delete' => 0 ];
-                // 判断店铺类型  自营店铺获取全部门店  供应商获取供应商门店
-                if (isset($data['shop_supplier_id']) && $data['shop_supplier_id'] > 0 && !(new SupplierModel())->checkSupplierType($data['shop_supplier_id'])) {
-                    $where['shop_supplier_id'] = $data['shop_supplier_id'];
-                }
-                $list = (new StoreModel)->where($where)->select();
-            } else {
-                $list = (new StoreModel)->where('store_id', 'in', $data['store_ids'])->select();
-            }
-        }
-        return $list;
-    }
+
     /**
      * 剩余次数
      * @param $value
@@ -67,11 +58,7 @@ class OrderGoods extends BaseModel
      */
     public function getSurplusNumAttr($value,$data)
     {
-       if ($data['product_type'] == 4) {
-           $surplus_num = isset($data['status']) && $data['status'] == 0 ? 1 : 0;
-       } else {
-           $surplus_num = $data['verify_num'] * $data['total_num'] - $data['already_verify'];
-       }
+        $surplus_num = $data['verify_num'] * $data['total_num'] - $data['already_verify'];
         return $surplus_num;
     }
 
@@ -95,7 +82,7 @@ class OrderGoods extends BaseModel
     {
         $time_verify_text = [];
         // 格式化有效期
-        if (in_array($data['product_type'],[3,4]) || in_array($data['order_source'] , [1,2,3])) {
+        if ($data['product_type'] == 3 || in_array($data['order_source'] , [1,2])) {
             $time_verify_text = [
                 'text' => '永久有效',
                 'status' => 1, // 状态  0:未生效 1：有效期内,2已过期，3，已使用
@@ -108,40 +95,26 @@ class OrderGoods extends BaseModel
                 $time_verify_text['status_text'] = '未生效';
                 return $time_verify_text;
             }
-            // 权益卡重新获取状态
-            if (isset($data['order_source']) && $data['order_source'] == 3) {
-                $numberArr = (new OrderBenefit())->getBenefitNumber($data['order_product_id']);
-                $verify_num = isset($numberArr['verify_num']) ? $numberArr['verify_num'] : 0;
-                $already_verify = isset($numberArr['already_verify']) ? $numberArr['already_verify'] : 0;
-            } else {
-                $verify_num = $data['verify_num'] * $data['total_num'];
-                $already_verify = $data['already_verify'];
-                // 计次商品 不限次数
-                if ($data['product_type'] == 3 && $data['verify_num'] == 0) {
-                    $verify_num = $data['already_verify'] + 1;
-                } elseif ($data['product_type'] == 4){
-                    $verify_num = 1;
-                    $already_verify = isset($data['status']) && $data['status'] == 1 ? 1 : 0;
-                }
+            $verify_num = $data['verify_num'] * $data['total_num'];
+            // 计次商品 不限次数
+            if ($data['product_type'] == 3 && $data['verify_num'] == 0) {
+                $verify_num = $data['already_verify'] + 1;
             }
             if ($data['verify_limit_type'] == 0) {
                 $time_verify_text['text'] = "永久有效";
-                $time_verify_text['status_text'] = $verify_num > $already_verify ?'有效期内' : '已使用';
-                $time_verify_text['status'] = $verify_num > $already_verify ?  1 : 3;
             } elseif ($data['verify_limit_type'] == 1) {
                 $time_verify_text['text'] = date('Y-m-d', $data['verify_enddate']) . '前有效';
-                $time_verify_text['status_text'] = $verify_num > $already_verify ? $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '已使用';
-                $time_verify_text['status'] = $verify_num > $already_verify ? $data['verify_enddate'] < time() ? 2 : 1 : 3;
+                $time_verify_text['status_text'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '已使用';
+                $time_verify_text['status'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] < time() ? 2 : 1 : 3;
             } elseif ($data['verify_limit_type'] == 2) {
-                $time_verify_text['status_text'] = $verify_num > $already_verify ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '有效期内' : '已使用';
-                $time_verify_text['status'] = $verify_num > $already_verify ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? 2 : 1 : 1 : 3;
+                $time_verify_text['status_text'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '有效期内' : '已使用';
+                $time_verify_text['status'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? 2 : 1 : 1 : 3;
                 $time_verify_text['text'] = $data['verify_enddate'] > 0 ? date('Y-m-d', $data['verify_enddate']) . '前有效' : '购买后' . $data['verify_days'] . '天内有效';
             } elseif ($data['verify_limit_type'] == 3) {
-                $time_verify_text['status_text'] = $verify_num > $already_verify ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '有效期内' : '已使用';
-                $time_verify_text['status'] = $verify_num > $already_verify ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? 2 : 1 : 1 : 3;
+                $time_verify_text['status_text'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? '已过期' : '有效期内' : '有效期内' : '已使用';
+                $time_verify_text['status'] = $verify_num > $data['already_verify'] ? $data['verify_enddate'] > 0 ?  $data['verify_enddate'] < time() ? 2 : 1 : 1 : 3;
                 $time_verify_text['text'] = $data['verify_enddate'] > 0 ? date('Y-m-d', $data['verify_enddate']) . '前有效' : '首次使用后' . $data['verify_days'] . '天内有效';
             }
-
         }
         return $time_verify_text;
     }
@@ -166,29 +139,9 @@ class OrderGoods extends BaseModel
      */
     public function express()
     {
-        return $this->belongsTo('app\\common\\model\\settings\\Express', 'express_id', 'express_id');
+        return $this->belongsTo('app\\common\\model\\setting\\Express', 'express_id', 'express_id');
     }
-    /**
-     * 关联物权益卡权益表
-     */
-    public function OrderBenefit()
-    {
-        return $this->hasMany('app\\common\\model\\order\\OrderBenefit', 'order_product_id', 'order_product_id');
-    }
-    /**
-     * 旅游商品出行人
-    */
-    public function OrderTravelers()
-    {
-        return $this->hasMany('app\\common\\model\\order\\OrderTravelers', 'order_product_id', 'order_product_id');
-    }
-    /**
-     * 权益卡兑换旅游商品出行人
-     */
-    public function OrderBenefitTravelers()
-    {
-        return $this->hasMany('app\\common\\model\\order\\OrderTravelers', 'card_order_product_id', 'order_product_id');
-    }
+
     /**
      * 订单商品列表
      * @return \think\model\relation\BelongsTo
@@ -197,16 +150,14 @@ class OrderGoods extends BaseModel
     {
         return $this->belongsTo('app\\common\\model\\file\\UploadFile', 'image_id', 'file_id');
     }
-    public function benefit(){
-        return $this->hasOne('app\\common\\model\\plus\\benefit\\Benefit', 'benefit_id', 'benefit_id');
-    }
+
     /**
      * 关联商品表
      * @return \think\model\relation\BelongsTo
      */
     public function product()
     {
-        return $this->belongsTo('app\\common\\model\\product\\Product');
+        return $this->belongsTo('app\\common\\model\\goods\\Goods');
     }
 
     /**
@@ -215,7 +166,7 @@ class OrderGoods extends BaseModel
      */
     public function sku()
     {
-        return $this->belongsTo('app\\common\\model\\product\\ProductSku', 'spec_sku_id', 'spec_sku_id');
+        return $this->belongsTo('app\\common\\model\\goods\\GoodsSku', 'spec_sku_id', 'spec_sku_id');
     }
 
     /**
@@ -267,10 +218,10 @@ class OrderGoods extends BaseModel
     {
         $model = $this;
         if($shop_supplier_id > 0){
-            $model = $model->where('order.shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('order.purveyor_id', '=', $shop_supplier_id);
         }
         if (!empty($product_id)) {
-            $model = $model->whereIn('order_product.product_id',  $product_id);
+            $model = $model->whereIn('order_goods.goods_id',  $product_id);
         }
         if ($user_id > 0) {
             $model = $model->where('order.user_id',  $user_id);
@@ -372,11 +323,11 @@ class OrderGoods extends BaseModel
 
         $data = [];
         foreach ($order_product as $product) {
-            if (in_array($product['product_type'],[3,4]) && $product['verify_limit_type'] == $verify_limit_type) {
+            if ($product['product_type'] == 3 && $product['verify_limit_type'] == $verify_limit_type) {
                 $data[] = [
                     'data' => ['verify_enddate' => strtotime('+' . $product['verify_days'] . ' day')],
                     'where' => [
-                        'order_product_id' => $product['order_product_id'],
+                        'order_goods_id' => $product['order_goods_id'],
                     ],
                 ];
             }
@@ -406,7 +357,7 @@ class OrderGoods extends BaseModel
      */
     public function getMaxId()
     {
-        return $this->max('order_product_id');
+        return $this->max('order_goods_id');
     }
 
     /**
@@ -425,28 +376,21 @@ class OrderGoods extends BaseModel
             $this->error = '参数错误';
             return false;
         }
-        if (!in_array($type , [1,2,3])) {
+        if (!in_array($type , [1,2])) {
             $this->error = '无效商品类型';
             return false;
         }
-
-        return $this->alias('p')->field("p.*,ot.id,ot.status as t_status")
-            ->with(['order'])
-            ->join('order_travelers ot' , 'ot.order_product_id = p.order_product_id','left')
-            ->where(function ($query) use ($type,$verify_code) {
-                if ($type == 1) {
-                    $query->where('p.verify_code', '=', $verify_code);
-                    $query->where('p.product_type', '=', 3);
-                } elseif ($type == 2) {
-                    $query->where('p.verify_code', '=', $verify_code);
-                    $query->whereIn('p.order_source', [1,2]);
-                } else {
-                    $query->where('ot.verify_code', '=', $verify_code);
-                    $query->where('p.product_type', '=', 4);
-                }
-            })
-            ->order('verify_num * total_num - already_verify desc')->find();
-
+        // 设置筛选条件
+        $where = [];
+        if ($type == 1) {
+            // 计次商品消单
+            $where['product_type'] = 3;
+        } elseif ($type == 2) {
+            // 服务消单
+            $where['order_source'] = [1,2];
+        }
+        $where['verify_code'] = $verify_code;
+        return $this->with('order')->where($where)->order('verify_num * total_num - already_verify desc')->find();
     }
 
     /**
@@ -454,7 +398,7 @@ class OrderGoods extends BaseModel
      * @param $ClerkModel
      * @return bool|mixed
      */
-    public function verificationOrder($ClerkModel,$number = 1,$verify_type = 0)
+    public function verificationOrder($ClerkModel,$number = 1)
     {
         // 验证订单状态
         if (
@@ -464,107 +408,74 @@ class OrderGoods extends BaseModel
             $this->error = '该订单不满足核销条件';
             return false;
         }
-        if ($this['product_type'] == 4) {
-            //验证剩余核销次数
-            if ($this['t_status'] == 1) {
-                $this->error = '该商品已核销';
-                return false;
-            }
-            if ($this['t_status'] == 2) {
-                $this->error = '该商品已失效';
-                return false;
-            }
-        } else {
-            // 验证使用状态
-            if ($this['verify_num'] > 0 && $this['already_verify'] >= $this['total_num'] * $this['verify_num']) {
-                $this->error = '该订单不满足核销条件';
-                return false;
-            }
-            //验证剩余核销次数
-            if ($this['surplus_num'] < $number) {
-                $this->error = '剩余次数不足';
-                return false;
-            }
-            // 判断状态
-            if ($this['time_verify_text']['status'] == 2) {
-                $this->error = '商品已过期';
-                return false;
-            }
-            if ($this['time_verify_text']['status'] == 3) {
-                $this->error = '商品已使用';
-                return false;
-            }
+        // 验证使用状态
+        if ($this['verify_num'] > 0 && $this['already_verify'] >= $this['total_num'] * $this['verify_num']) {
+            $this->error = '该订单不满足核销条件';
+            return false;
+        }
+        //验证剩余核销次数
+        if ($this['surplus_num'] < $number && $this['surplus_num'] > 0) {
+            $this->error = '剩余次数不足';
+            return false;
+        }
+        // 判断状态
+        if ($this['time_verify_text']['status'] == 2) {
+            $this->error = '商品已过期';
+            return false;
+        }
+        if ($this['time_verify_text']['status'] == 3) {
+            $this->error = '商品已使用';
+            return false;
         }
 
-        return $this->transaction(function () use ($ClerkModel,$number,$verify_type) {
-            if ($this['product_type'] == 4) {
-                $status = (new OrderTravelers())->where('id','=',$this['id'])->update([
-                    'status' => 1
-                ]);
+        return $this->transaction(function () use ($ClerkModel,$number) {
+            // 更新商品使用数量
+            $status = $this->save([
+                'already_verify' => $this['already_verify'] + $number
+            ]);
+            // 更新使用次数
+            if ($this['product_type'] == 3) {
                 // 更新计次商品有效期
-                $this['verify_enddate'] == 0 && $this->setTimesProduct([$this],4);
+                $this['verify_enddate'] == 0 && $this->setTimesProduct([$this],3);
                 // 新增订单核销记录
                 (new VerifyProductLogModel())->save([
-                    'order_product_id' => $this['id'],
+                    'order_goods_id' => $this['order_goods_id'],
                     'verify_num' => $number,
                     'verify_date' => time(),
                     'app_id' => self::$app_id,
                     'store_id' => $ClerkModel['store_id'],
                     'clerk_id' => $ClerkModel['clerk_id'],
-                    'type' => 1,
-                    'verify_type' => $verify_type
                 ]);
             } else {
-                // 更新商品使用数量
-                $status = $this->save([
-                    'already_verify' => $this['already_verify'] + $number
-                ]);
-                // 更新使用次数
-                if ($this['product_type'] == 3) {
-                    // 更新计次商品有效期
-                    $this['verify_enddate'] == 0 && $this->setTimesProduct([$this],3);
-                    // 新增订单核销记录
-                    (new VerifyProductLogModel())->save([
-                        'order_product_id' => $this['order_product_id'],
-                        'verify_num' => $number,
-                        'verify_date' => time(),
-                        'app_id' => self::$app_id,
-                        'store_id' => $ClerkModel['store_id'],
-                        'clerk_id' => $ClerkModel['clerk_id'],
-                        'verify_type' => $verify_type
-                    ]);
-                } else {
-                    // 获取核销记录
-                    $verif = (new VerifyServerOrderModel())->getdetailForOrder($this['verify_code'] , $this['order_id']);
-                    // 消单日志
-                    $verif_log = array(
-                        'verify_id' => $verif['id'],
-                        'verify_num'    => $number, // 核销次数
-                        'verify_date' => time(),
-                        'app_id' => self::$app_id,
-                        'store_id' => $ClerkModel['store_id'], //门店id
-                        'clerk_id' => $ClerkModel['clerk_id'],
-                        'verify_type' => $verify_type
-                    );
-                    // 更新服务剩余次数和使用次数
-                    $verif_data = array(
-                        'verify_num' => $verif['verify_num']-$number,
-                        'used_num' => $verif['used_num']+$number,
-                    );
-                    // 如果是首次使用N天后失效更新失效时间
-                    $limt_time = array();
-                    if ($verif['verify_limit_type'] === 3 && $verif['end_time'] === 0) {
-                        $limt_time['start_time'] = time();
-                        $limt_time['end_time'] = strtotime('+' . $verif['verify_days'] . ' day');
-                    }
-                    // 更新服务使用次数
-                    $verif->where('id','=',$verif['id'])->update($verif_data);
-                    // 更新消单记录
-                    (new VerifyServerLogModel())->save($verif_log);
-                    // 更新卡项使用时间
-                    if (!empty($limt_time)) {
-                        $this->where(array('card_id' => $verif['card_id'] , 'exchange_order_id' => $verif['exchange_order_id']))->update($limt_time);
-                    }
+                // 获取核销记录
+                $verif = (new VerifyServerOrderModel())->getdetailForOrder($this['verify_code'] , $this['order_id']);
+                // 消单日志
+                $verif_log = array(
+                    'verify_id' => $verif['id'],
+                    'verify_num'    => $number, // 核销次数
+                    'verify_date' => time(),
+                    'app_id' => self::$app_id,
+                    'store_id' => $ClerkModel['store_id'], //门店id
+                    'clerk_id' => $ClerkModel['clerk_id'],
+                );
+                // 更新服务剩余次数和使用次数
+                $verif_data = array(
+                    'verify_num' => $verif['verify_num']-$number,
+                    'used_num' => $verif['used_num']+$number,
+                );
+                // 如果是首次使用N天后失效更新失效时间
+                $limt_time = array();
+                if ($verif['verify_limit_type'] === 3 && $verif['end_time'] === 0) {
+                    $limt_time['start_time'] = time();
+                    $limt_time['end_time'] = strtotime('+' . $verif['verify_days'] . ' day');
+                }
+                // 更新服务使用次数
+                $verif->where('id','=',$verif['id'])->update($verif_data);
+                // 更新消单记录
+                (new VerifyServerLogModel())->save($verif_log);
+                // 更新卡项使用时间
+                if (!empty($limt_time)) {
+                    $this->where(array('card_id' => $verif['card_id'] , 'exchange_order_id' => $verif['exchange_order_id']))->update($limt_time);
                 }
             }
             return $status;

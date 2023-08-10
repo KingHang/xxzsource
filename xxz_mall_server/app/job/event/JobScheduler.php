@@ -22,12 +22,6 @@ class JobScheduler
         foreach ($appList as $app){
             // 订单任务
             event('Order', $app['app_id']);
-            // 分销佣金结算
-            event('AgentOrderMonth', $app['app_id']);
-            // 分销佣金结算
-            event('AgentSetting', $app['app_id']);
-            // 积分年结
-            event('AgentOrderPoints', $app['app_id']);
             // 活动订单
             event('Activity', $app['app_id']);
         }
@@ -36,9 +30,7 @@ class JobScheduler
         // 砍价任务
         event('BargainTask');
         // 用户优惠券
-        event('UserCoupon');
-        // 分销商订单
-        event('AgentOrder');
+        event('UserVoucher');
         // 直播间管理
         event('LiveRoom');
         return true;

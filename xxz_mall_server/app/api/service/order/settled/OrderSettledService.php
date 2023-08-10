@@ -5,11 +5,11 @@ namespace app\api\service\order\settled;
 use app\api\model\order\Order as OrderModel;
 use app\api\model\order\OrderGoods;
 use app\api\model\order\OrderAddress as OrderAddress;
-use app\api\model\plus\coupon\UserVoucher as UserCouponModel;
+use app\api\model\plugin\voucher\UserCoupon as UserCouponModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\order\OrderSourceEnum;
 use app\common\enum\order\OrderTypeEnum;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\api\service\points\PointsDeductService;
 use app\api\service\coupon\ProductDeductService;
 use app\common\model\store\Store as StoreModel;
@@ -20,19 +20,8 @@ use app\common\model\user\UserAddress;
 use app\common\service\delivery\ExpressService;
 use app\common\service\BaseService;
 use app\common\service\product\factory\ProductFactory;
-use app\api\model\shop\FullReduce as FullReduceModel;
+use app\api\model\mall\FullReduce as FullReduceModel;
 use app\api\service\fullreduce\FullDeductService;
-use app\api\model\plus\agent\User as AgentUserModel;
-use app\api\model\order\Cart as CartModel;
-use app\common\model\plugin\agent\UserCoupon as AgentUserCouponModel;
-use app\common\model\order\OrderTrade as OrderTradeModel;
-use app\common\service\order\OrderService;
-use app\common\model\plugin\giftcert\Product as GiftcertProductModel;
-use app\common\model\plugin\giftcert\ProductSku as GiftcertProductSkuModel;
-use app\timebank\model\Timebank_basicsetup;
-use app\timebank\ztservice\Service;
-use app\common\model\order\OrderTravelers;
-use app\common\model\order\OrderBenefit;
 
 /**
  * 订单结算服务基类
@@ -51,7 +40,6 @@ abstract class OrderSettledService extends BaseService
     protected $supplierData = [];
 
     protected $params;
-    protected $cardDeductionNumber = 0;
     /**
      * 订单结算的规则
      * 主商品默认规则
@@ -62,7 +50,7 @@ abstract class OrderSettledService extends BaseService
         'is_use_deduct' => true,        // 是否使用通证抵扣
         'force_points' => false,     // 强制使用积分，积分兑换
         'is_user_grade' => true,     // 会员等级折扣
-        'is_agent' => true,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
+        'is_agent' => false,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
         'is_reduce' => true, //是否满减
     ];
 
@@ -80,14 +68,9 @@ abstract class OrderSettledService extends BaseService
     protected $orderSource;
 
     /**
-     * 访问来源
-     */
-    protected $agentUser = [];
-
-    /**
      * 构造函数
      */
-    public function __construct($user, $supplierData, $params,$agent_user=[])
+    public function __construct($user, $supplierData, $params)
     {
         $this->model = new OrderModel;
         $this->app_id = OrderModel::$app_id;
@@ -97,7 +80,6 @@ abstract class OrderSettledService extends BaseService
             $params['visit_source'] = '';
         }
         $this->params = $params;
-        $this->agentUser = $agent_user;
     }
 
     /**
@@ -117,8 +99,8 @@ abstract class OrderSettledService extends BaseService
         $totalDeductMoney = 0;
         $totalDeductNum = 0;
         $orderGradeTotalPrice = 0;
-        $benefit_card_money = 0;
         $this->commonOrderData = $this->getCommonOrderData();
+
         // 供应商
         foreach ($this->supplierData as &$supplier) {
             // 整理订单数据
@@ -133,25 +115,16 @@ abstract class OrderSettledService extends BaseService
             $this->setOrderTotalPv($supplier['productList']);
             $orderTotalPv += $this->orderData['order_total_pv'];
             $orderGradeTotalPrice += $this->orderData['order_grade_total_price'];
-            // 获取旅游商品数量
-            $this->setBenefitNum($supplier['productList']);
-            // 设置权益卡抵扣
-            if(!empty($this->params['benefit'])){
-                $this->setOrderBenefitCard($supplier['productList']);
-            }
-            $order_total_price = $this->orderData['order_total_price'];
-            $order_total_price -= $this->orderData['benefit_card_money'];
-            $benefit_card_money += $this->orderData['benefit_card_money'];
             // 先计算满减、自动满减，查找店铺满减
             if($this->settledRule['is_reduce']){
-                $reduce = FullReduceModel::getReductList($order_total_price, $orderTotalNum, $supplier['shop_supplier_id']);
+                $reduce = FullReduceModel::getReductList($this->orderData['order_total_price'], $orderTotalNum, $supplier['shop_supplier_id']);
                 // 设置满减
                 $this->orderData['reduce'] = $reduce;
                 $reduce && $this->setOrderFullreduceMoney($reduce, $supplier['productList']);
             }
             if($this->settledRule['is_coupon']) {
                 // 当前用户可用的优惠券列表
-                $couponList = $order_total_price > 0 ?$this->getUserCouponList($order_total_price, $supplier['shop_supplier_id']) : [];
+                $couponList = $this->getUserCouponList($this->orderData['order_total_price'], $supplier['shop_supplier_id']);
                 foreach ($couponList as $i => $coupon){
                     if(!$this->checkCouponCanUse($coupon, $supplier['productList'])){
                         unset($couponList[$i]);
@@ -193,7 +166,6 @@ abstract class OrderSettledService extends BaseService
                 $this->orderData['delivery'] = $this->params['supplier'][$supplier['shop_supplier_id']]['delivery'];
                 $this->orderData['store_id'] = $this->params['supplier'][$supplier['shop_supplier_id']]['store_id'];
             }
-
             // 处理配送方式
             if ($this->orderData['delivery'] == DeliveryTypeEnum::EXPRESS) {
                 $this->setOrderExpress($supplier['productList']);
@@ -221,22 +193,10 @@ abstract class OrderSettledService extends BaseService
         }else if($this->params['coupon_id'] == -1){
             // 传-1取最高的抵扣
             if(count($couponList) > 0){
-                $coupon_id = current($couponList)['user_coupon_id'];
+                $coupon_id = current($couponList)['user_voucher_id'];
             }
         }
         $this->setOrderSysCouponMoney($coupon_id, $couponList);
-
-        //分销商优惠券
-        $agentCouponList = [];
-        $agent_coupon_id = 0;
-        if ($this->params['visit_source'] == 'agent') {
-            $agentCouponList = (new UserCouponModel())->getAgentCoupon($this->agentUser, $orderPayPrice, 0);
-            // 计算优惠券抵扣,如果没有选择，则默认为第一个，折扣最多的
-            if ($this->params['agent_coupon_id'] > 0) {
-                $agent_coupon_id = $this->params['agent_coupon_id'];
-            }
-        }
-        $this->setOrderAgentCouponMoney($agent_coupon_id, $agentCouponList);
 
         //最终价格
         $orderPayPrice = $this->setOrderFinalPrice();
@@ -261,11 +221,6 @@ abstract class OrderSettledService extends BaseService
             // 房间id
             'room_id' => isset($this->params['room_id']) && $this->params['room_id'] > 0 ? $this->params['room_id'] : 0,
             'order_grade_total_price' => helper::number2($orderGradeTotalPrice),//会员折扣
-            'agentCouponList' => $agentCouponList,
-            'coupon_id_agent' => $agent_coupon_id,
-            'coupon_money_agent' => 0,
-            'benefit_card_money' => $benefit_card_money,
-            'benefit' => isset($this->params['benefit']) ? $this->params['benefit'] : []
         ], $this->commonOrderData, $this->settledRule);
         // 返回订单数据
         return [
@@ -281,21 +236,14 @@ abstract class OrderSettledService extends BaseService
     {
         // 积分设置
         $pointsSetting = SettingModel::getItem('exchangepurch');
-        // 通证设置
-        $tokenSetting = (new Timebank_basicsetup())->basicsetupDesc(1);
-        if (UserAddress::where(['user_id'=>$this->user['user_id']])->find() || $this->params['visit_source'] == 'agent'){
+        if (UserAddress::where(['user_id'=>$this->user['user_id']])->find()){
             $address_status = true;
         }else{
             $address_status = false;
         }
-        if ($this->params['visit_source'] == 'agent') {
-            $orderType = (new CartModel($this->user))->getAgentOrderTypeList($this->params['product_list']);
-            $this->params['address_id'] = 0;
-            $address = $this->params['address'];
-        } else {
-            $address_id = $this->params['address_id'];
-            $address = UserAddress::where(['address_id'=>$address_id])->find();
-        }
+
+        $address_id = $this->params['address_id'];
+        $address = UserAddress::where(['address_id'=>$address_id])->find();
         $data = [
             // 默认地址
             'address' => $address,
@@ -315,27 +263,10 @@ abstract class OrderSettledService extends BaseService
             // 系统设置
             'setting' => [
                 'points_name' => $pointsSetting['points_name'],      // 积分名称
-                'token_name' => $tokenSetting['token_name'],         // 通证名称
+                'token_name' => '通证',         // 通证名称
             ],
-            'benefit_num' => 0,
-            'notBenefitNum' => 0,
-            'benefit_card_list' => [],
-            'travelers' => isset($this->params['travelers']) ? $this->params['travelers'] : [], // 出行人信息
-            'card_info' => isset($this->params['card_info']) ? $this->params['card_info'] : [], // 兑换权益卡信息
-            'order_benefit_card_id' => 0,
         ];
-        if ($this->params['visit_source'] == 'agent') {
-            $data = array_merge($data, [
-                'store_id' => $this->params['store_id'],
-                'distance' => isset($this->params['distance']) ? $this->params['distance'] : 0,
-                'real_product' => $orderType && in_array('1', $orderType) ? 1 : 0,
-                'time_product' => $orderType && in_array('3', $orderType) ? 1 : 0,
-                'contact' => isset($this->params['contact']) ? $this->params['contact'] : '',
-                'extract_store' => StoreModel::detail($this->params['store_id']),
-                'deliver' => $this->params['delivery'],
-                'remark' => isset($this->params['remark']) ? $this->params['remark'] : '',
-            ]);
-        }
+
         return $data;
     }
 
@@ -375,7 +306,7 @@ abstract class OrderSettledService extends BaseService
                     $this->model = new OrderModel;
                     $this->model->transaction(function () use ($order, $supplier,$product_type) {
                         // 创建订单事件
-                        $this->createOrderEvent($order['orderData'], $supplier[$product_type],$product_type);
+                        $this->createOrderEvent($order['orderData'], $supplier[$product_type]);
                         if ($order['orderData']['pay_type'] == OrderPayTypeEnum::BALANCE) {
                             $this->model->onPaymentByBalance($this->model['order_no']);
                         }
@@ -384,24 +315,7 @@ abstract class OrderSettledService extends BaseService
                 }
             }
         }
-        if ($this->params['visit_source'] == 'agent') {
-            if (count($order_arr) > 1) {
-                $orderNo = OrderService::createOrderNo();
-                foreach ($order_arr as $order) {
-                    $trade_model = new OrderTradeModel;
-                    $trade_list = [];
-                    $trade_list[] = [
-                        'out_trade_no' => $orderNo,
-                        'order_id' => $order['order_id'],
-                        'app_id' => $order['app_id']
-                    ];
-                    $trade_model->saveAll($trade_list);
-                }
-            } else {
-                $orderNo = $order_arr[0]['order_no'];
-            }
-            return $orderNo;
-        }
+
         return $order_arr;
     }
 
@@ -413,8 +327,6 @@ abstract class OrderSettledService extends BaseService
         // 订单商品的总金额(不含优惠券折扣)
         $this->orderData['order_total_price'] = helper::number2(helper::getArrayColumnSum($productList, 'total_price'));
         $this->orderData['order_grade_total_price'] = helper::number2(helper::getArrayColumnSum($productList, 'grade_total_money'));
-
-        $this->orderData['benefit_card_money'] = helper::number2(helper::getArrayColumnSum($productList, 'benefit_card_money'));
     }
 
     /**
@@ -504,8 +416,6 @@ abstract class OrderSettledService extends BaseService
             if($this->settledRule['is_reduce'] && $this->orderData['reduce']){
                 $value = helper::bcsub($value, $product['fullreduce_money']);
             }
-            $value = helper::bcsub($value, $product['benefit_card_money']);
-
             $product['Split_total_pay_price'] = $product['total_pay_price'] = helper::number2($value);
         }
         return true;
@@ -520,8 +430,6 @@ abstract class OrderSettledService extends BaseService
         $deliveryType = SettingModel::getItem('store')['delivery_type'];
         // 积分设置
         $pointsSetting = SettingModel::getItem('exchangepurch');
-        // 通证设置
-        $tokenSetting = (new Timebank_basicsetup())->basicsetupDesc(1);
         if(isset($this->params['supplier'])){
             $delivery = $this->params['supplier'][$shop_supplier_id]['delivery'];
         }else{
@@ -561,7 +469,7 @@ abstract class OrderSettledService extends BaseService
             'setting' => [
                 'delivery' => $deliveryType,     // 支持的配送方式
                 'points_name' => $pointsSetting['points_name'],      // 积分名称
-                'token_name' => $tokenSetting['token_name'],         // 通证名称
+                'token_name' => '通证',         // 通证名称
             ],
             // 记忆的自提联系方式
             //'last_extract' => UserService::getLastExtract($this->user['user_id']),
@@ -571,8 +479,7 @@ abstract class OrderSettledService extends BaseService
             //优惠券id
             'coupon_id' => 0,
             //优惠金额
-            'coupon_money'=>0,
-            'benefit_card_money' => 0
+            'coupon_money'=>0
         ];
     }
 
@@ -646,7 +553,7 @@ abstract class OrderSettledService extends BaseService
         }
         //如果是积分兑换，判断用户积分是否足够
         if ($this->settledRule['force_points']) {
-            if ($this->user['exchangepurch'] < $order['orderData']['points_num']) {
+            if ($this->user['points'] < $order['orderData']['points_num']) {
                 $this->error = '用户积分不足，无法使用积分兑换';
                 return false;
             }
@@ -657,38 +564,25 @@ abstract class OrderSettledService extends BaseService
     /**
      * 创建订单事件
      */
-    private function createOrderEvent($commomOrder, $supplier,$product_type)
+    private function createOrderEvent($commomOrder, $supplier)
     {
         // 新增订单记录
         $status = $this->add($commomOrder, $supplier);
-        if ($product_type != 4) {
-            if ($supplier['orderData']['delivery'] == DeliveryTypeEnum::EXPRESS) {
-                // 记录收货地址
-                $this->saveOrderAddress($commomOrder['address'], $status);
-            } else {
-                // 记录自提信息
-                if ($this->params['visit_source'] == 'agent') {
-                    $this->saveOrderExtract($commomOrder['contact']['name'], $commomOrder['contact']['phone']);
-                } else {
-                    $this->saveOrderExtract($commomOrder['address']['name'], $commomOrder['address']['phone']);
-                }
-            }
+
+        if ($supplier['orderData']['delivery'] == DeliveryTypeEnum::EXPRESS) {
+            // 记录收货地址
+            $this->saveOrderAddress($commomOrder['address'], $status);
+        } else {
+            // 记录自提信息
+            $this->saveOrderExtract($commomOrder['address']['name'], $commomOrder['address']['phone']);
         }
 
         // 保存订单商品信息
         $this->saveOrderProduct($supplier, $status);
-        // 保存出行人信息
-        $this->saveOrderTravelers($commomOrder,$status);
         // 更新商品库存 (针对下单减库存的商品)
         ProductFactory::getFactory($this->orderSource['source'])->updateProductStock($supplier['productList']);
-
         // 设置优惠券使用状态
         UserCouponModel::setIsUse($this->params['coupon_id']);
-
-        // 设置分销商优惠券使用状态
-        if ($this->params['visit_source'] == 'agent') {
-            AgentUserCouponModel::setIsUse($this->params['agent_coupon_id'], $this->agentUser);
-        }
 
         // 积分兑换扣除用户积分
         if ($commomOrder['force_points']) {
@@ -715,8 +609,6 @@ abstract class OrderSettledService extends BaseService
     private function add($commomOrder, $supplier)
     {
         $order = $supplier['orderData'];
-        // 获取团长id
-        $team_id = (new AgentUserModel())->getTeamUserId($this->user);
         // 订单数据
         $data = [
             'user_id' => $this->user['user_id'],
@@ -740,21 +632,16 @@ abstract class OrderSettledService extends BaseService
             'order_source' => $this->orderSource['source'],
             'points_bonus' => $supplier['orderData']['points_bonus'],
             'growth_value_bonus' => $supplier['orderData']['growth_value_bonus'],
-            'is_agent' => $this->settledRule['is_agent']? 1:0,
-            'shop_supplier_id' => $supplier['shop_supplier_id'],
+            'is_agent' => 0,
+            'purveyor_id' => $supplier['shop_supplier_id'],
             'supplier_money' => $order['supplier_money'],
             'sys_money' => $order['sys_money'],
             'app_id' => $this->app_id,
             'room_id' => $commomOrder['room_id'],
             'virtual_auto' => $order['productType'] == 1 ? $supplier['productList'][0]['virtual_auto'] : 1,
             'share_id' => isset($this->params['share_id']) && $this->params['share_id'] ? $this->params['share_id'] : 0,
-            'team_id' => $team_id,
-            'agent_id' => isset($this->agentUser['user_id']) ? $this->agentUser['user_id'] : 0,
-            'coupon_id_agent' => isset($order['coupon_id_agent']) ? $order['coupon_id_agent'] : 0,
-            'coupon_money_agent' => isset($supplier['orderData']['coupon_money_agent']) ? $supplier['orderData']['coupon_money_agent'] : 0,
-            'pay_method' => 1,
-            'benefit_card_money' => $order['benefit_card_money'],
-            'benefit_card_id' => $order['benefit_card_id'],
+            'team_id' => 0,
+            'pay_method' => 1
         ];
 
         if ($supplier['orderData']['delivery'] == DeliveryTypeEnum::EXPRESS) {
@@ -766,7 +653,7 @@ abstract class OrderSettledService extends BaseService
         // 结束支付时间
         if($this->orderSource['source'] == OrderSourceEnum::SECKILL){
             //如果是秒杀
-            $config = SettingModel::getItem('seckill');
+            $config = SettingModel::getItem('flashsell');
             $closeMinters = $config['order_close'];
             $data['pay_end_time'] = time() + ((int)$closeMinters * 60);
         }else{
@@ -832,19 +719,21 @@ abstract class OrderSettledService extends BaseService
         // 订单商品列表
         $productList = [];
         $i = 0;
-        $benefit_num = 0;
         foreach ($supplier['productList'] as $product) {
+//            if (isset($goods['gift_status']) && $goods['gift_status']==1){//如果该商品为赠品，则他的购买数量为赠送数量
+//                $goods['total_num'] = $goods['gift_num'];
+//            }
             $item = [
                 'order_id' => $status,
                 'user_id' => $this->user['user_id'],
                 'app_id' => $this->app_id,
-                'product_id' => $product['product_id'],
+                'goods_id' => $product['product_id'],
                 'product_name' => $product['product_name'],
                 'image_id' => $product['image'][0]['image_id'],
                 'deduct_stock_type' => $product['deduct_stock_type'],
                 'spec_type' => $product['spec_type'],
                 'spec_sku_id' => $product['product_sku']['spec_sku_id'],
-                'product_sku_id' => $product['product_sku']['product_sku_id'],
+                'goods_sku_id' => $product['product_sku']['goods_sku_id'],
                 'product_attr' =>  isset($product['product_sku']['product_attr'])?$product['product_sku']['product_attr']:'',
                 'content' => $product['content'],
                 'product_no' => $product['product_sku']['product_no'],
@@ -868,9 +757,6 @@ abstract class OrderSettledService extends BaseService
                 'total_pv' => $product['total_pv'],
                 'total_pay_price' => $product['total_pay_price'],
                 'supplier_money' => $product['supplier_money'],
-                'is_agent' => $product['is_agent'],
-                'is_ind_agent' => $product['is_ind_agent'],
-                'agent_money_type' => $product['agent_money_type'],
                 'first_money' => $product['first_money'],
                 'second_money' => $product['second_money'],
                 'third_money' => $product['third_money'],
@@ -883,33 +769,11 @@ abstract class OrderSettledService extends BaseService
                 'verify_days' => $product['verify_days'],
                 'store_ids' => $product['store_ids'],
                 'is_gift_product' => isset($product['gift_status'])?$product['gift_status']:0,
-                'benefit_id' => $product['benefit_id'],
-                'benefit_card_money' => $product['benefit_card_money'] ? $product['benefit_card_money'] : 0.00,
-                'card_order_product_id' => isset($this->params['benefit']['order_product_id']) ? $this->params['benefit']['order_product_id'] : 0,
-                'benefit_card_id' => isset($this->params['benefit']['card_id']) ? $this->params['benefit']['card_id'] : 0,
             ];
-
-            // 计算是否赠送CFP等等
-            $giftcertProduct = (new GiftcertProductModel)->where('product_id', '=', $product['product_id'])->find();
-
-            if ($giftcertProduct && $giftcertProduct['enable'] == 1) {
-                // 获取规格数据
-                $giftcertProductSku = (new GiftcertProductSkuModel)->where('product_id', '=', $product['product_id'])
-                    ->where('product_sku_id', '=', $product['product_sku']['product_sku_id'])
-                    ->find();
-
-                if ($giftcertProductSku) {
-                    $item['is_gift'] = 1;
-                    $item['gift_stages'] = $giftcertProductSku['stages_number'];
-                    $item['gift_amount'] = $giftcertProductSku['amount'];
-                }
-            }
 
             // 计次商品插入核销码
             if ($product['product_type'] == 3) {
                 $item['verify_code'] = $this->model->getVerifyCode($i++);
-            } elseif ($product['product_type'] == 4) {
-                $benefit_num ++;
             }
             // 记录订单商品来源id
             $item['product_source_id'] = isset($product['product_source_id']) ? $product['product_source_id'] : 0;
@@ -919,44 +783,11 @@ abstract class OrderSettledService extends BaseService
             $item['bill_source_id'] = isset($product['bill_source_id']) ? $product['bill_source_id'] : 0;
             $productList[] = $item;
         }
-        //扣除权益卡使用次数
-        if ($benefit_num > 0 && isset($this->params['benefit']['id']) && !empty($this->params['benefit']) && $this->params['benefit']['id'] != -1) {
-            (new OrderBenefit())->setBenefitCardNum($product['benefit_id'],$this->params['benefit']['order_product_id'],$this->cardDeductionNumber);
-        }
+
         $model = new OrderGoods();
         return $model->saveAll($productList);
     }
-    /**
-     * 插入出行人
-    */
-    private function saveOrderTravelers($commomOrder,$order_id)
-    {
-        $product_info = (new OrderGoods())->getOrderBenefitProduct($order_id);
-        if (!$product_info) {
-            return false;
-        }
 
-        foreach ($commomOrder['travelers'] as $key=>$traveler) {
-            $commomOrder['travelers'][$key]['verify_code'] = $this->model->getVerifyCode($key);
-        }
-        // 设置默认数据
-        helper::setDataAttribute($commomOrder['travelers'], [
-            'order_id' => $order_id,
-            'order_product_id' => $product_info['order_product_id'],
-            'app_id' => $this->app_id,
-            'card_order_product_id' => isset($this->params['benefit']['order_product_id']) ? $this->params['benefit']['order_product_id'] : 0
-        ], true);
-        $t_count = count($commomOrder['travelers']);
-        // 出行人数大于可使用次数
-        if ($t_count > $this->cardDeductionNumber) {
-            for($i=$this->cardDeductionNumber;$i<$t_count;$i++){
-                isset($commomOrder['travelers'][$i]['card_order_product_id']) && $commomOrder['travelers'][$i]['card_order_product_id'] = 0;
-            }
-        }
-        // 保存出行人信息(循环新增出行人，循环次数为购买旅游商品数量)
-        (new OrderTravelers())->saveAll($commomOrder['travelers']);
-        return true;
-    }
     /**
      * 计算订单可用积分抵扣
      */
@@ -975,7 +806,7 @@ abstract class OrderSettledService extends BaseService
             $this->orderData['points_num'] = $productList[0]['points_num'];
             // 允许积分抵扣
             $this->orderData['is_allow_points'] = true;
-            if ($this->user['exchangepurch'] < $productList[0]['points_num']) {
+            if ($this->user['points'] < $productList[0]['points_num']) {
                 $this->error = '积分不足，去多赚点积分吧！';
                 return false;
             }
@@ -996,7 +827,8 @@ abstract class OrderSettledService extends BaseService
         // 订单最多可抵扣的积分总数量
         $maxPointsNumCount = helper::getArrayColumnSum($productList, 'max_points_num');
         // 实际可抵扣的积分数量
-        $actualPointsNum = min($maxPointsNumCount, $this->user['exchangepurch']);
+        $actualPointsNum = min($maxPointsNumCount, $this->user['points']);
+
         if ($actualPointsNum < 1) {
             $this->orderData['points_money'] = 0;
             // 积分抵扣总数量
@@ -1077,9 +909,7 @@ abstract class OrderSettledService extends BaseService
         $this->setOrderProductMaxDeductNum($productList);
         // 订单最多可抵扣的通证总数量
         $maxDeductNumCount = helper::getArrayColumnSum($productList, 'max_deduct_num');
-        // 获取用户通证账户
-        $ztService = new Service();
-        $blockBalance = $ztService->blockchainTimebankBalance($this->user['mobile']);
+        $blockBalance = 0;
         $blockBalance = is_numeric($blockBalance) ? $blockBalance : 0;
         // 实际可抵扣的通证数量
         $actualDeductNum = min($maxDeductNumCount, $blockBalance);
@@ -1104,52 +934,7 @@ abstract class OrderSettledService extends BaseService
         $this->orderData['is_allow_deduct'] = true;
         return true;
     }
-    /**
-     * 设置权益卡抵扣金额
-    */
-    public function setOrderBenefitCard($productList)
-    {
-        $benefit = $this->params['benefit']; // 选中权益卡信息
-        if (!isset($benefit['id']) || $benefit['id'] == 0 || $benefit['id'] == -1) {
-            return false;
-        }
-        foreach ($productList as &$product) {
-            $product['benefit_card_money'] = 0;
-            if ($product['product_type'] == '4') {
-                // 根据剩余可抵扣次数计算抵扣金额
-                $benefitCheck = [];
-                if (isset($this->commonOrderData['benefit_card_list']) && !empty($this->commonOrderData['benefit_card_list'])) {
-                    foreach ($this->commonOrderData['benefit_card_list'] as $benefit_card_list) {
-                        if ($benefit_card_list['order_product_id'] = $benefit['order_product_id']) {
-                            foreach ($benefit_card_list['OrderBenefit'] as $OrderBenefit) {
-                                if ($OrderBenefit['benefit_id'] == $product['benefit_id']) {
-                                    $benefitCheck = $OrderBenefit;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!empty($benefitCheck)) {
 
-                    if ($benefitCheck['surplus_number'] >= $product['total_num']) {
-                        $this->cardDeductionNumber = $product['total_num'];
-                        // 剩余数量大于出行人数量 全部抵扣
-                        $product['benefit_card_money'] = $product['total_price'];
-                        $this->orderData['benefit_card_money'] += $product['total_price'];
-                    } else {
-                        $this->cardDeductionNumber = $benefitCheck['surplus_number'];
-                        // 剩余数量小于出行人数量  部分抵扣
-                        $benefit_card_money = $product['total_price']/$product['total_num']*$benefitCheck['surplus_number'];
-                        $product['benefit_card_money'] = $benefit_card_money;
-                        $this->orderData['benefit_card_money'] += $benefit_card_money;
-                    }
-
-                }
-
-            }
-        }
-        $this->commonOrderData['order_benefit_card_id']= $benefit['id']; // 选中权益卡id
-    }
     /**
      * 计算订单商品最多可抵扣的通证数量
      * @param $productList
@@ -1347,7 +1132,6 @@ abstract class OrderSettledService extends BaseService
         ], false);
         $productList = [];
         foreach ($this->supplierData as &$supplier){
-
             foreach ($supplier['productList'] as $product){
                 array_push($productList, $product);
             }
@@ -1380,17 +1164,17 @@ abstract class OrderSettledService extends BaseService
         // 分配订单商品优惠券抵扣金额
         foreach ($productList as $key => &$product) {
             if (isset($completed[$key]['coupon_money_sys'])) {
-                $product['coupon_money_sys'] = $completed[$key]['coupon_money_sys'] / 100 > 0 ? $completed[$key]['coupon_money_sys'] / 100 : 0;
+                $product['coupon_money_sys'] = $completed[$key]['coupon_money_sys'] / 100;
             }
         }
         // 统计供应商的分配额度
         foreach ($this->supplierData as &$supplier){
             $supplier['orderData']['coupon_id_sys'] = $couponId;
-            $supplier['orderData']['coupon_money_sys'] = helper::getArrayColumnSum($supplier['productList'], 'coupon_money_sys') > 0 ? helper::getArrayColumnSum($supplier['productList'], 'coupon_money_sys') : 0;
+            $supplier['orderData']['coupon_money_sys'] = helper::getArrayColumnSum($supplier['productList'], 'coupon_money_sys');
         }
         // 记录订单优惠券信息
         $this->commonOrderData['coupon_id_sys'] = $couponId;
-        $this->commonOrderData['coupon_money_sys'] = helper::number2($CouponMoney->getActualReducedMoney() / 100) ? helper::number2($CouponMoney->getActualReducedMoney() / 100) : 0;
+        $this->commonOrderData['coupon_money_sys'] = helper::number2($CouponMoney->getActualReducedMoney() / 100);
         return true;
     }
 
@@ -1404,9 +1188,6 @@ abstract class OrderSettledService extends BaseService
         foreach ($this->supplierData as &$supplier){
             $coupon_money_sys = helper::getArrayColumnSum($supplier['productList'], 'coupon_money_sys');
             $supplier['orderData']['order_pay_price'] -= $coupon_money_sys;
-            $coupon_money_agent = helper::getArrayColumnSum($supplier['productList'], 'coupon_money_agent');
-            $supplier['orderData']['order_pay_price'] -= $coupon_money_agent;
-
             // 供应商结算金额，包括运费
             $supplier['orderData']['supplier_money'] = helper::number2($supplier['orderData']['order_price'] * $supplier_percent/100 + $supplier['orderData']['express_price']);
             // 平台分佣金额
@@ -1415,7 +1196,6 @@ abstract class OrderSettledService extends BaseService
             // 结算金额不包括运费
             foreach ($supplier['productList'] as &$product){
                 $product['total_pay_price'] -= $product['coupon_money_sys'];
-                $product['total_pay_price'] -= $product['coupon_money_agent'];
                 $product['supplier_money'] = helper::number2($product['total_pay_price'] * $supplier_percent/100);
                 $product['sys_money'] = helper::number2($product['total_pay_price'] * $sys_percent/100);
             }
@@ -1533,8 +1313,6 @@ abstract class OrderSettledService extends BaseService
                 $SplitOrderData['order_total_price'] = 0;
                 $SplitOrderData['order_price'] = 0;
                 $SplitOrderData['order_grade_money'] = 0;
-                $SplitOrderData['benefit_card_id'] = 0;
-                $SplitOrderData['benefit_card_money'] = 0;
                 $SplitOrderData['reduce'] = [
                     'fullreduce_id' => isset($supplier['orderData']['reduce']['fullreduce_id']) ? $supplier['orderData']['reduce']['fullreduce_id'] : 0,
                     'active_name' => isset($supplier['orderData']['reduce']['active_name']) ? $supplier['orderData']['reduce']['active_name'] : '',
@@ -1562,15 +1340,9 @@ abstract class OrderSettledService extends BaseService
                         $SplitOrderData['fullreduce_money'] += $product['fullreduce_money'];
                         $SplitOrderData['order_total_price'] += $product['total_price'];
                         $SplitOrderData['order_grade_money'] += $product['grade_total_money'];
-                        $SplitOrderData['benefit_card_money'] += $product['benefit_card_money'];
                         $SplitOrderData['reduce']['reduced_price'] = isset($product['fullreduce_money']) ? $product['fullreduce_money'] : 0;
                         $SplitOrderData['order_price'] += $product['Split_total_pay_price'];
-                        if (isset($this->params['benefit']) && !empty($this->params['benefit']) && $product_type == 4) {
-                            // 旅游商品记录抵扣权益卡id
-                            $SplitOrderData['benefit_card_id'] = $this->params['benefit']['id'];
-                        }
                     }
-
                 }
 
                 $supplier[$product_type]['orderData'] = $SplitOrderData;
@@ -1590,96 +1362,4 @@ abstract class OrderSettledService extends BaseService
         return $SplitOrderData;
     }
 
-    /**
-     * 系统优惠券抵扣
-     */
-    private function setOrderAgentCouponMoney($couponId, $couponList)
-    {
-        // 设置默认数据：订单信息
-        helper::setDataAttribute($this->commonOrderData, [
-            'coupon_id_agent' => 0,       // 用户优惠券id
-            'coupon_money_agent' => 0,    // 优惠券抵扣金额
-        ], false);
-        $productList = [];
-        foreach ($this->supplierData as &$supplier) {
-            foreach ($supplier['productList'] as $product) {
-                array_push($productList, $product);
-            }
-            $supplier['orderData']['coupon_id_agent'] = 0;
-            $supplier['orderData']['coupon_money_agent'] = 0;
-        }
-        // 设置默认数据：订单商品列表
-        helper::setDataAttribute($productList, [
-            'coupon_money_agent' => 0,    // 优惠券抵扣金额
-        ], true);
-        // 是否开启优惠券折扣
-        if (!$this->settledRule['is_coupon']) {
-            return false;
-        }
-        // 如果没有可用的优惠券，直接返回
-        if ($couponId <= 0 || empty($couponList)) {
-            return true;
-        }
-        // 获取优惠券信息
-        $couponInfo = helper::getArrayItemByColumn($couponList, 'coupon_id', $couponId);
-        if ($couponInfo == false) {
-            $this->error = '未找到优惠券信息';
-            return false;
-        }
-
-        // 计算订单商品优惠券抵扣金额
-        $productListTemp = helper::getArrayColumns($productList, ['total_pay_price']);
-        $CouponMoney = new ProductDeductService('coupon_money_agent', 'total_pay_price');
-        $completed = $CouponMoney->setProductCouponMoney($productListTemp, $couponInfo['reduced_price']);
-        // 分配订单商品优惠券抵扣金额
-        foreach ($productList as $key => &$product) {
-            $product['coupon_money_agent'] = $completed[$key]['coupon_money_agent'] / 100;
-        }
-        // 统计供应商的分配额度
-        foreach ($this->supplierData as &$supplier) {
-            $supplier['orderData']['coupon_id_agent'] = $couponId;
-            $supplier['orderData']['coupon_money_agent'] = helper::getArrayColumnSum($supplier['productList'], 'coupon_money_agent');
-        }
-        // 记录订单优惠券信息
-        $this->commonOrderData['coupon_id_agent'] = $couponId;
-        $this->commonOrderData['coupon_money_agent'] = helper::number2($CouponMoney->getActualReducedMoney() / 100);
-        return true;
-    }
-
-    // 设置旅游商品数量
-    public function setBenefitNum($productList)
-    {
-        $benefit_id = 0; // 商品权益集合
-        $number = 0;
-        $travelers_num = 0; // 出行人数量
-        foreach ($productList as $product) {
-            if ($product['product_type'] == 4) {
-                $this->commonOrderData['benefit_num'] ++;
-                $benefit_id = $product['benefit_id'];
-                $number = $product['total_num'];
-            } else {
-                $this->commonOrderData['notBenefitNum'] ++;
-            }
-        }
-        $number = $number == 0 ? 1 : $number;
-        if ($this->commonOrderData['benefit_num'] > 1) {
-            $this->error = '每单只支持一个旅游商品下单';
-            return false;
-        }
-        // 获取支持兑换的权益卡
-        if ($benefit_id > 0 &&  $this->commonOrderData['benefit_num'] == 1) {
-            $this->commonOrderData['benefit_card_list'] = (new OrderGoods())->getBenefitCardList($benefit_id,$number,$this->user['user_id']);
-            // 设置默认选中权益卡
-            if (isset($this->params['benefit']['id']) && $this->params['benefit']['id'] == '-1') {
-                return true;
-            }
-            if (!empty($this->commonOrderData['benefit_card_list']) && (!isset($this->params['benefit']) || empty($this->params['benefit']))) {
-                $this->params['benefit']['id'] = $this->commonOrderData['benefit_card_list'][0]['product_id'];
-                $this->params['benefit']['order_id'] = $this->commonOrderData['benefit_card_list'][0]['order_id'];
-                $this->params['benefit']['order_product_id'] = $this->commonOrderData['benefit_card_list'][0]['order_product_id'];
-                $this->params['benefit']['product_name'] = $this->commonOrderData['benefit_card_list'][0]['product_name'];
-            }
-        }
-        return true;
-    }
 }

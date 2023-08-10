@@ -3,11 +3,9 @@
 namespace app\common\service\product;
 
 use app\common\model\plugin\groupsell\Goods as AssembleProductModel;
-use app\common\model\plugin\pricedown\Product as BargainProductModel;
-use app\common\model\plugin\brand\SignLog as BrandProductModel;
-use app\common\model\plugin\exchangepurch\Product as PointsProductModel;
-use app\common\model\plugin\flashsell\Product as SeckillProductModel;
-use app\common\model\plugin\giftcert\Product as GiftcertProductModel;
+use app\common\model\plugin\pricedown\Goods as BargainProductModel;
+use app\common\model\plugin\exchangepurch\Goods as PointsProductModel;
+use app\common\model\plugin\flashsell\Goods as SeckillProductModel;
 
 /**
  * 商品服务类,公共处理方法
@@ -41,10 +39,6 @@ class BaseProductService
         if ($service->checkBargainProduct($model['product_id'])) return true;
         // 秒杀
         if ($service->checkSeckillProduct($model['product_id'])) return true;
-        //品牌
-        if ($service->checkBrandProduct($model['product_id'])) return true;
-        //赠送通证
-        if ($service->checkGiftcertProduct($model['product_id'])) return true;
         return false;
     }
 
@@ -78,21 +72,6 @@ class BaseProductService
     private function checkSeckillProduct($productId)
     {
         return SeckillProductModel::isExistProductId($productId);
-    }
-
-    /**
-     * 验证商品是否参与了品牌商品
-     */
-    private function checkBrandProduct($productId)
-    {
-        return BrandProductModel::isExistProductId($productId);
-    }
-    /**
-     * 验证商品是否参与了赠送通证商品
-     */
-    private function checkGiftcertProduct($productId)
-    {
-        return GiftcertProductModel::isExistProductId($productId);
     }
 
 }

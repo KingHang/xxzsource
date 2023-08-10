@@ -4,7 +4,7 @@ declare (strict_types = 1);
 namespace app\api\controller\user;
 
 use app\api\controller\Controller;
-use app\api\model\product\Goods;
+use app\api\model\goods\Goods;
 use app\XxzController;
 use think\Request;
 
@@ -31,7 +31,7 @@ class Cardvoucher extends Controller
      */
     public function list()
     {
-        $list = $this->model->getList($this->postData(),$this->user['user_id']);
+        $list = $this->model->getList($this->getData(),$this->user['user_id']);
         return $this->renderSuccess('', $list);
     }
 

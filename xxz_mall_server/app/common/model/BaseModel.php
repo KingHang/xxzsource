@@ -39,7 +39,7 @@ class BaseModel extends Model
     private static function bindAppId()
     {
         if ($app = app('http')->getName()) {
-            if($app != 'admin' && $app != 'job' && $app != 'timebank' && $app != 'currency'){
+            if($app != 'super' && $app != 'job' && $app != 'timebank' && $app != 'currency'){
                 $callfunc = 'set' . ucfirst($app) . 'AppId';
                 self::$callfunc();
             }
@@ -49,7 +49,7 @@ class BaseModel extends Model
     /**
      * 设置app_id (shop模块)
      */
-    protected static function setShopAppId()
+    protected static function setMallAppId()
     {
         $session = session('xxzmall_store');
         if($session == null){
@@ -69,9 +69,9 @@ class BaseModel extends Model
     /**
      * 设置app_id (supplier模块)
      */
-    protected static function setSupplierAppId()
+    protected static function setPurveyorAppId()
     {
-        $session = session('xxzmall_supplier');
+        $session = session('xxzmall_purveyor');
         self::$app_id = $session['app']['app_id'];
     }
     /**

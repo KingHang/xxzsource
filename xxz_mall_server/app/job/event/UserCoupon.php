@@ -3,7 +3,7 @@
 namespace app\job\event;
 
 use think\facade\Cache;
-use app\job\model\plus\fans\UserVoucher as UserCouponModel;
+use app\job\model\plus\fans\UserCoupon as UserCouponModel;
 
 /**
  * 优惠券事件管理
@@ -27,8 +27,8 @@ class UserCoupon
                 Cache::set($cacheKey, time(), 60);
             }
         } catch (\Throwable $e) {
-            echo 'ERROR UserCoupon: ' . $e->getMessage() . PHP_EOL;
-            log_write('UserCoupon TASK : ' . '__ ' . $e->getMessage(), 'task');
+            echo 'ERROR UserVoucher: ' . $e->getMessage() . PHP_EOL;
+            log_write('UserVoucher TASK : ' . '__ ' . $e->getMessage(), 'task');
         }
         return true;
     }
@@ -53,7 +53,7 @@ class UserCoupon
      */
     private function dologs($method, $params = [])
     {
-        $value = 'UserCoupon --' . $method;
+        $value = 'UserVoucher --' . $method;
         foreach ($params as $key => $val)
             $value .= ' --' . $key . ' ' . $val;
         return log_write($value, 'task');

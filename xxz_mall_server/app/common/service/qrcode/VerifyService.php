@@ -20,7 +20,7 @@ class VerifyService extends Base
 
     private $product_type;
 
-    private $type; // 类型  0：自提核销 1：计次商品 2：服务,计次商品,4，旅游商品
+    private $type; // 类型  0：自提核销 1：计次商品 2：服务
 
     /**
      * 构造方法

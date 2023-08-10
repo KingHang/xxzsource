@@ -40,7 +40,7 @@ class AssembleBill
     {
         // 获取到期未拼团成功的订单
         $billList = $this->model->getCloseIds(0);
-        $billIds = helper::getArrayColumn($billList, 'assemble_bill_id');
+        $billIds = helper::getArrayColumn($billList, 'groupsell_bill_id');
         if (!empty($billIds)) {
             //关闭订单
             $this->model->close($billIds);
@@ -52,7 +52,7 @@ class AssembleBill
         ]);
         // 获取到期未拼团成功的订单
         $billList = $this->model->getCloseIds(1);
-        $billIds = helper::getArrayColumn($billList, 'assemble_bill_id');
+        $billIds = helper::getArrayColumn($billList, 'groupsell_bill_id');
         if (!empty($billIds)) {
             //关闭订单
             $this->model->success($billIds);

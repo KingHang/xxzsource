@@ -3,7 +3,7 @@
 namespace app\api\service\points;
 
 use app\common\library\helper;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 
 /**
  * 积分抵扣类

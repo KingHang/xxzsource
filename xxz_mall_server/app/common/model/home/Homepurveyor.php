@@ -7,12 +7,12 @@ use app\common\model\BaseModel;
 /**
  * app分类页模板模型
  */
-class Homepurveyor extends BaseModel
+class HomePurveyor extends BaseModel
 {
     //表名
     protected $name = 'home_purveyor';
     //主键字段名
-    protected $pk = 'page_id';
+    protected $pk = 'home_id';
 
     /**
      * 页面标题栏默认数据
@@ -23,7 +23,7 @@ class Homepurveyor extends BaseModel
         static $defaultPage = [];
         if (!empty($defaultPage)) return $defaultPage;
         return [
-            'type' => 'home',
+            'type' => 'page',
             'name' => '页面设置',
             'params' => [
                 'name' => '页面名称',
@@ -48,7 +48,7 @@ class Homepurveyor extends BaseModel
             'search' => [
                 'name' => '搜索框',
                 'type' => 'search',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => ['placeholder' => '请输入商品名称'],
                 'style' => [
                     'textAlign' => '3',
@@ -230,7 +230,7 @@ class Homepurveyor extends BaseModel
             'product' => [
                 'name' => '商品组',
                 'type' => 'product',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'auto' => [
@@ -255,7 +255,7 @@ class Homepurveyor extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -263,7 +263,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -271,7 +271,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -279,7 +279,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -290,7 +290,7 @@ class Homepurveyor extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -299,7 +299,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -311,7 +311,7 @@ class Homepurveyor extends BaseModel
             'category' => [
                 'name' => '商品分类组',
                 'type' => 'category',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'all', // part; all
                     'productSort' => 'all', // all; sales; price
@@ -345,7 +345,7 @@ class Homepurveyor extends BaseModel
                 'list' => [
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -353,7 +353,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处显示商品名称',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'product_price' => '99.00',
                         'line_price' => '139.00',
                         'selling_point' => '此款商品美观大方 不容错过',
@@ -361,10 +361,10 @@ class Homepurveyor extends BaseModel
                     ]
                 ]
             ],
-            'coupon' => [
+            'voucher' => [
                 'name' => '优惠券组',
-                'type' => 'coupon',
-                'group' => 'shop',
+                'type' => 'voucher',
+                'group' => 'mall',
                 'style' => [
                     'paddingTop' => 10,
                     'background' => '#ffffff'
@@ -388,7 +388,7 @@ class Homepurveyor extends BaseModel
             'assembleProduct' => [
                 'name' => '拼团商品组',
                 'type' => 'assembleProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'showNum' => 6,
@@ -412,28 +412,28 @@ class Homepurveyor extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -443,7 +443,7 @@ class Homepurveyor extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -451,7 +451,7 @@ class Homepurveyor extends BaseModel
                     ],
                     [
                         'product_name' => '此处是拼团商品',
-                        'image' => self::$base_url . 'image/diy/product/01.png',
+                        'image' => self::$base_url . 'image/diy/goods/01.png',
                         'selling_point' => '此款商品美观大方 性价比较高 不容错过',
                         'assemble_price' => '99.00',
                         'line_price' => '139.00',
@@ -462,7 +462,7 @@ class Homepurveyor extends BaseModel
             'bargainProduct' => [
                 'name' => '砍价商品组',
                 'type' => 'bargainProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'source' => 'auto', // choice; auto
                     'showNum' => 6,
@@ -494,13 +494,13 @@ class Homepurveyor extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
@@ -509,13 +509,13 @@ class Homepurveyor extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是砍价商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'floor_price' => '0.01',
                         'original_price' => '139.00',
                     ],
@@ -524,7 +524,7 @@ class Homepurveyor extends BaseModel
             'seckillProduct' => [
                 'name' => '秒杀商品组',
                 'type' => 'seckillProduct',
-                'group' => 'shop',
+                'group' => 'mall',
                 'params' => [
                     'showNum' => 6
                 ],
@@ -543,13 +543,13 @@ class Homepurveyor extends BaseModel
                 'defaultData' => [
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
@@ -558,19 +558,19 @@ class Homepurveyor extends BaseModel
                 'data' => [
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
                     [
                         'product_name' => '此处是秒杀商品',
-                        'product_image' => self::$base_url . 'image/diy/product/01.png',
+                        'product_image' => self::$base_url . 'image/diy/goods/01.png',
                         'seckill_price' => '69.00',
                         'original_price' => '139.00',
                     ],
@@ -608,7 +608,7 @@ class Homepurveyor extends BaseModel
     public static function detail($page_id,$shop_supplier_id)
     {
         return (new static())
-            ->where('shop_supplier_id' , '=' , $shop_supplier_id)
+            ->where('purveyor_id' , '=' , $shop_supplier_id)
             ->where('page_id' , '=' , $page_id)->find();
     }
 
@@ -617,7 +617,7 @@ class Homepurveyor extends BaseModel
      */
     public static function getHomePage($shop_supplier_id)
     {
-        return (new static())->where('shop_supplier_id' , '=' , $shop_supplier_id)->where('page_type', '10')->find();
+        return (new static())->where('purveyor_id' , '=' , $shop_supplier_id)->where('page_type', '10')->find();
     }
 
     /**
@@ -628,19 +628,19 @@ class Homepurveyor extends BaseModel
         if ($json) {
             $array = json_decode($json, true);
             $items = $array['items'];
-            if (isset($items['home'])) {
-                unset($items['home']);
+            if (isset($items['page'])) {
+                unset($items['page']);
             }
             foreach ($items as &$item) {
                 isset($item['data']) && $item['data'] = array_values($item['data']);
             }
             return [
-                'home' => isset($array['home']) ? $array['home'] : $array['items']['home'],
+                'page' => isset($array['page']) ? $array['page'] : $array['items']['page'],
                 'items' => array_values(array_filter($items))
             ];
         } else {
             return [
-                'home' => $this->getDefaultPage(),
+                'page' => $this->getDefaultPage(),
                 'items' => []
             ];
         }
@@ -651,7 +651,7 @@ class Homepurveyor extends BaseModel
      */
     private function _mergeDefaultData($array)
     {
-        $array['home'] = array_merge_multiple($this->getDefaultPage(), $array['home']);
+        $array['page'] = array_merge_multiple($this->getDefaultPage(), $array['page']);
         $defaultItems = $this->getDefaultItems();
         foreach ($array['items'] as &$item) {
             if (isset($defaultItems[$item['type']])) {

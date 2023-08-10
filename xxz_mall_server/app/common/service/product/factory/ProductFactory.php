@@ -27,17 +27,11 @@ class ProductFactory
             case OrderSourceEnum::ASSEMBLE:
                 return new AssembleProductService();
                 break;
-            case OrderSourceEnum::AGENT:
-                return new MasterProductService();
-                break;
             case OrderSourceEnum::SERVER:
                 return new ServerProductService();
                 break;
             case OrderSourceEnum::CARD:
                 return new CardProductService();
-                break;
-            case OrderSourceEnum::BENEFIT:
-                return new BenefitProductService();
                 break;
         }
     }

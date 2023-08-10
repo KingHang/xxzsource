@@ -5,7 +5,7 @@ namespace app\api\service\order\settled;
 use app\api\model\order\Order as OrderModel;
 use app\api\model\order\OrderGoods;
 use app\common\enum\order\OrderPayTypeEnum;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\common\model\store\Store as StoreModel;
 use app\api\service\user\UserService;
 use app\common\library\helper;
@@ -32,7 +32,6 @@ abstract class OrderServerSettledService extends BaseService
 
     protected $params;
 
-    protected $agentUser;
     /**
      * 订单结算的规则
      * 主商品默认规则
@@ -42,7 +41,7 @@ abstract class OrderServerSettledService extends BaseService
         'is_use_points' => true,        // 是否使用积分抵扣
         'force_points' => false,     // 强制使用积分，积分兑换
         'is_user_grade' => true,     // 会员等级折扣
-        'is_agent' => true,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
+        'is_agent' => false,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
         'is_reduce' => true, //是否满减
     ];
 
@@ -62,14 +61,13 @@ abstract class OrderServerSettledService extends BaseService
     /**
      * 构造函数
      */
-    public function __construct($user, $supplierData, $params, $agentUser)
+    public function __construct($user, $supplierData, $params)
     {
         $this->model = new OrderModel;
         $this->app_id = OrderModel::$app_id;
         $this->user = $user;
         $this->supplierData = $supplierData;
         $this->params = $params;
-        $this->agentUser = $agentUser;
     }
 
     /**
@@ -287,7 +285,7 @@ abstract class OrderServerSettledService extends BaseService
         // 保存订单商品信息
         $this->saveOrderProduct($supplier, $status);
         // 新增服务商品消单记录
-//        $this->saveVerifyServer($supplier,$status);
+//        $this->saveVerifyServer($purveyor,$status);
         return $status;
     }
 
@@ -309,12 +307,11 @@ abstract class OrderServerSettledService extends BaseService
             'pay_source' => $commomOrder['pay_source'],
             'buyer_remark' => $commomOrder['remark'],
             'order_source' => $this->orderSource['source'],
-            'is_agent' => $this->settledRule['is_agent'] ? 1 : 0,
-            'shop_supplier_id' => $supplier['shop_supplier_id'],
+            'is_agent' => 0,
+            'purveyor_id' => $supplier['shop_supplier_id'],
             'supplier_money' => $order['supplier_money'],
             'sys_money' => $order['sys_money'],
             'app_id' => $this->app_id,
-            'agent_id' => $this->agentUser['user_id'],
             'virtual_auto' => 1,
             'total_pv' => $order['order_pay_price'],
             'team_id' => isset($this->params['team_id']) ? $this->params['team_id'] : 0
@@ -363,7 +360,7 @@ abstract class OrderServerSettledService extends BaseService
                 'product_id' => $server['server_id'],
                 'product_name' => $server['server_name'],
                 'image_id' => isset($server['server_sku']['image']['file_id']) ? $server['server_sku']['image']['file_id']: $server['image'][0]['image_id'], // 图片id
-                'is_agent' => 1,
+                'is_agent' => 0,
                 'spec_type' => $server['spec_type'], // 产品规格(10单规格 20多规格)
                 'spec_sku_id' => $server['server_sku']['spec_sku_id'], // sku标识
                 'product_sku_id' => $server['server_sku']['server_sku_id'], // 商品规格id
@@ -377,7 +374,7 @@ abstract class OrderServerSettledService extends BaseService
                 'total_price' => $server['total_price'], // 商品总价(数量×单价)
                 'total_pay_price' => $server['total_pay_price'], // 实际付款价(折扣和优惠后)
                 'supplier_money' => $server['supplier_money'], // 供应商金额
-                'order_source' => 1, // 标记商品表信息来源表 0：product,1:server
+                'order_source' => 1, // 标记商品表信息来源表 0：goods,1:server
                 'category_id' => $server['category_id'],
                 'server_min' => $server['server_min'],
                 'verify_code' => $verifycode, // 核销码

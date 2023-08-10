@@ -39,7 +39,7 @@ class BargainTask
     {
         // 获取已过期但未结束的砍价任务
         $list = $this->model->getEndList();
-        $taskIds = helper::getArrayColumn($list, 'bargain_task_id');
+        $taskIds = helper::getArrayColumn($list, 'pricedown_task_id');
         // 将砍价任务标记为已结束(批量)
         !empty($taskIds) && $this->model->setIsEnd($taskIds);
         // 记录日志

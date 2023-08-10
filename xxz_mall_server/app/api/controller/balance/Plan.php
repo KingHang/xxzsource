@@ -3,7 +3,7 @@
 namespace app\api\controller\balance;
 
 use app\api\controller\Controller;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\api\model\user\BalancePlan as BalancePlanModel;
 use app\api\model\user\BalanceOrder as BalanceOrderModel;
 use app\api\service\pay\PayService;

@@ -19,7 +19,7 @@ class ProductRankingService
     {
         $model = new OrderProductModel();
         if($shop_supplier_id > 0){
-            $model = $model->where('order.shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('order.purveyor_id', '=', $shop_supplier_id);
         }
         if (!empty($search_time)) {
             $start_time = array_shift($search_time);
@@ -37,7 +37,7 @@ class ProductRankingService
             ->join('order', 'order.order_id = o_product.order_id')
             ->where('order.pay_status', '=', OrderPayStatusEnum::SUCCESS)
             ->where('order.order_status', '<>', OrderStatusEnum::CANCELLED)
-            ->group('o_product.product_id')
+            ->group('o_product.goods_id')
             ->having('total_sales_num>0')
             ->order(['total_sales_num' => 'DESC'])
             ->limit(10)
@@ -51,7 +51,7 @@ class ProductRankingService
     {
         $model = new ProductModel();
         if($shop_supplier_id > 0){
-            $model = $model->where('shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('purveyor_id', '=', $shop_supplier_id);
         }
         return $model->with(['image.file'])
             ->hidden(['content'])
@@ -68,16 +68,16 @@ class ProductRankingService
     {
         $model = new OrderRefundModel();
         if($shop_supplier_id > 0){
-            $model = $model->where('shop_supplier_id', '=', $shop_supplier_id);
+            $model = $model->where('purveyor_id', '=', $shop_supplier_id);
         }
         return $model->alias('order_refund')
             ->with(['orderproduct.image'])
             ->field([
                 '*',
-                'count(product_id) AS refund_count',
+                'count(goods_id) AS refund_count',
             ])->hidden(['content'])
-            ->join('order_product', 'order_product.order_product_id = order_refund.order_product_id')
-            ->group('order_product.product_id')
+            ->join('order_goods', 'order_goods.order_goods_id = order_refund.order_goods_id')
+            ->group('order_goods.goods_id')
             ->having('refund_count>0')
             ->order(['refund_count' => 'DESC'])
             ->limit(10)

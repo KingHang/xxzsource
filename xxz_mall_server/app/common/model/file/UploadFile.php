@@ -86,7 +86,7 @@ class UploadFile extends BaseModel
         // 查询列表数据
         return $model->with(['upload_group'])
             ->where(['is_user' => 0, 'is_delete' => 0])
-            ->where('shop_supplier_id', '=', $shop_supplier_id)
+            ->where('purveyor_id', '=', $shop_supplier_id)
             ->order(['file_id' => 'desc'])
             ->paginate($pageSize);
     }

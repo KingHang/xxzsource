@@ -2,7 +2,6 @@
 
 namespace app\api\model\user;
 
-use app\api\model\plus\agent\Referee as RefereeModel;
 use think\facade\Cache;
 use app\common\exception\BaseException;
 use app\common\model\user\User as UserModel;
@@ -104,8 +103,6 @@ class UserOpen extends UserModel
                 throw new BaseException(['msg' => '用户注册失败']);
             }
             if (!$user && $referee_id > 0) {
-                // 记录推荐人关系，
-                RefereeModel::createRelation($model['user_id'], $referee_id);
                 //更新用户邀请数量
                 (new UserModel())->where('user_id', '=', $referee_id)->inc('total_invite')->update();
                 // 注册后事件
@@ -218,8 +215,6 @@ class UserOpen extends UserModel
                 'password' => md5($data['password'])
             ]);
             if($data['referee_id'] > 0){
-                // 记录推荐人关系，
-                RefereeModel::createRelation($this['user_id'], $data['referee_id']);
                 //更新用户邀请数量
                 (new UserModel())->where('user_id', '=', $data['referee_id'])->inc('total_invite')->update();
                 // 注册后事件

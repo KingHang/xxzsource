@@ -46,7 +46,7 @@ class PointsCheckPayService extends CheckPayService
                 return false;
             }
             // 付款减库存
-            if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT && $product['total_num'] > $pointProductSku['stock']) {
+            if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT && $product['total_num'] > $pointProductSku['point_stock']) {
                 $this->error = "很抱歉，商品 [{$product['product_name']}] 库存不足";
                 return false;
             }

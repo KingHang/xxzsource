@@ -2,8 +2,8 @@
 
 namespace app\common\service\order;
 
-use app\common\model\settings\Settings as SettingModel;
-use app\common\model\settings\Printer as PrinterModel;
+use app\common\model\setting\Setting as SettingModel;
+use app\common\model\setting\Printer as PrinterModel;
 use app\common\enum\settings\DeliveryTypeEnum;
 use app\common\library\printer\Driver as PrinterDriver;
 use app\common\enum\order\OrderSourceEnum;
@@ -20,7 +20,7 @@ class OrderPrinterService
     public function printTicket($order, $scene = 20)
     {
         // 打印机设置
-        $printerConfig = SettingModel::getSupplierItem('printer', $order['shop_supplier_id'], $order['app_id']);
+        $printerConfig = SettingModel::getSupplierItem('printer', $order['purveyor_id'], $order['app_id']);
         // 判断是否开启打印设置
         if (!$printerConfig['is_open']
             || !$printerConfig['printer_id']

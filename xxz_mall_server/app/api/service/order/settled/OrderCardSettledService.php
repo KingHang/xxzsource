@@ -5,7 +5,7 @@ namespace app\api\service\order\settled;
 use app\api\model\order\Order as OrderModel;
 use app\api\model\order\OrderGoods;
 use app\common\enum\order\OrderPayTypeEnum;
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use app\api\service\user\UserService;
 use app\common\library\helper;
 use app\common\service\BaseService;
@@ -32,13 +32,12 @@ abstract class OrderCardSettledService extends BaseService
 
     protected $params;
 
-    protected $agentUser;
     /**
      * 订单结算的规则
      * 主商品默认规则
      */
     protected $settledRule = [
-        'is_agent' => true,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
+        'is_agent' => false,     // 商品是否开启分销,最终还是支付成功后判断分销活动是否开启
     ];
 
     /**
@@ -57,14 +56,13 @@ abstract class OrderCardSettledService extends BaseService
     /**
      * 构造函数
      */
-    public function __construct($user, $supplierData, $params, $agentUser)
+    public function __construct($user, $supplierData, $params)
     {
         $this->model = new OrderModel;
         $this->app_id = OrderModel::$app_id;
         $this->user = $user;
         $this->supplierData = $supplierData;
         $this->params = $params;
-        $this->agentUser = $agentUser;
     }
 
     /**
@@ -249,12 +247,10 @@ abstract class OrderCardSettledService extends BaseService
             'pay_source' => $commomOrder['pay_source'],
             'buyer_remark' => $this->params['remark'],
             'order_source' => $this->orderSource['source'],
-            'is_agent' => $this->settledRule['is_agent'] ? 1 : 0,
             'shop_supplier_id' => $supplier['shop_supplier_id'],
             'supplier_money' => $order['supplier_money'],
             'sys_money' => $order['sys_money'],
             'app_id' => $this->app_id,
-            'agent_id' => $this->agentUser['user_id'],
             'virtual_auto' => 1,
             'team_id' => isset($this->params['team_id']) ? $this->params['team_id'] : 0
         ];
@@ -358,9 +354,8 @@ abstract class OrderCardSettledService extends BaseService
                     'total_price' => $server['total_price']*$card['total_num'], // 商品总价(数量×单价)
                     'total_pay_price' => $server['total_price']*$card['total_num'], // 实际付款价(折扣和优惠后)
                     'supplier_money' => 0, // 供应商金额
-                    'order_source' => 2, // 标记商品表信息来源表 0：product,1:server，2卡项
+                    'order_source' => 2, // 标记商品表信息来源表 0：goods,1:server，2卡项
                     'card_id' => $card['id'],
-                    'is_agent' => 1,
                     'server_min' => $server['server_min'],
                     'verify_num' => 1,
                     'store_ids' => $card['store_ids'],

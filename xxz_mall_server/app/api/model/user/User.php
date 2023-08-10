@@ -2,24 +2,15 @@
 
 namespace app\api\model\user;
 
-use app\api\model\plus\agent\Setting as AgentSettingModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 use app\common\model\app\AppByte as AppByteModel;
-use app\common\model\app\AppMp as AppMpModel;
-use app\common\model\store\Clerk as ClerkModel;
 use app\common\model\home\CenterMenu as CenterMenuModel;
-use app\common\service\ztservice\ZtService;
-use app\timebank\ztservice\Service;
-use think\Exception;
 use think\facade\Cache;
 use app\common\exception\BaseException;
 use app\common\model\user\User as UserModel;
-use app\api\model\plus\agent\Referee as RefereeModel;
 use app\common\library\easywechat\AppWx;
 use app\common\model\user\Grade as GradeModel;
 use app\common\library\wechat\WxBizDataCrypt;
-use app\api\model\plus\activity\ActivityHostRember;
-use app\api\model\plus\agent\User as AgentUserModel;
 
 /**
  * 用户模型类
@@ -43,14 +34,10 @@ class User extends UserModel
      * @var string[]
      */
     protected $append = [
-        'is_host_user', // 是否是活动主办方程序
         'format_birthday',
     ];
 
-    public function getIsHostUserAttr($value,$data)
-    {
-        return !!(new ActivityHostRember())->checkUserAuth($data['user_id']);
-    }
+
     public function getFormatBirthdayAttr($value,$data)
     {
         return isset($data['birthday']) && $data['birthday'] > 0 ? date('Y-m-d',$data['birthday']) : '';
@@ -63,7 +50,6 @@ class User extends UserModel
         $field = $field == '' ? '*' : $field;
         $with = $with == '' ? ['address', 'addressDefault', 'grade', 'supplierUser'] : $with;
         $userId = Cache::get($token);
-//        $userId = 24639;
         return (new static())->field($field)->where(['user_id' => $userId])->with($with)->find();
     }
 
@@ -72,7 +58,7 @@ class User extends UserModel
      */
     public function login($post)
     {
-        //判断来源
+//        //判断来源
         if ($post['source'] == 'kdd') {
             // 微信登录 获取session_key
             $app = AppWx::getKddApp();
@@ -194,8 +180,7 @@ class User extends UserModel
                 'weixin' => $post['weixin']
             ]);
         } else {
-            
-			$userData = [];
+           $userData = [];
 			if (isset($post['nickName'])) {
 				$userData['nickName'] = $post['nickName'];
 			}
@@ -273,20 +258,8 @@ class User extends UserModel
             $model = $this;
             $data['referee_id'] = $refereeId;
             $data['reg_source'] = $reg_source;
-            $data['avatarUrl'] = $data['avatarUrl'];
             //默认等级
             $data['grade_id'] = GradeModel::getDefaultGradeId();
-
-            // 接入中台create接口
-            if (isset($data['mobile']) && !empty($data['mobile'])) {
-                $access_token = (new Service())->getZtAccessToken('access_token');
-                $ztInfo['mobile'] = $data['mobile'];
-                $ztInfo['username'] = isset($data['nickName']) ? $data['nickName'] : '';
-                $ztInfo['avatar'] = isset($data['avatarUrl']) ? $data['avatarUrl'] : '';
-                $ztInfo['gender'] = isset($data['gender']) ? $data['gender'] : 2;
-                $ztInfo['access_token'] = $access_token;
-                (new ZtService())->blockchainTimebankCreate($ztInfo, 2);
-            }
         }
         if ($reg_source == 'wx') {
             $data['shopopen_id'] = $open_id;
@@ -309,8 +282,6 @@ class User extends UserModel
                 throw new BaseException(['msg' => '用户注册失败']);
             }
             if (!$user && $refereeId > 0) {
-                // 记录推荐人关系
-                RefereeModel::createRelation($model['user_id'], $refereeId);
                 // 更新用户邀请数量
                 (new UserModel())->setIncInvite($refereeId);
                 // 推荐人送成长值
@@ -368,7 +339,7 @@ class User extends UserModel
             // 新增成长值变动明细
             $this->setIncGrowthValue($grow, '用户签到：签到日期' . $sign_date, 1, 1);
         }
-        return ['exchangepurch' => $rank, 'grow' => $grow];
+        return ['points' => $rank, 'grow' => $grow];
     }
 
     /**
@@ -405,7 +376,7 @@ class User extends UserModel
             array_push($noShow, 'my_shop', 'app_shop');
         } else if ($user['user_type'] == 2) {
             // 申请中或者已入驻成功
-            array_push($noShow, 'shop');
+            array_push($noShow, 'mall');
             // 入驻成功
             if (UserModel::isSupplier($user['user_id'])) {
                 array_push($noShow, 'app_shop');
@@ -427,16 +398,4 @@ class User extends UserModel
         return $menus_arr;
     }
 
-    //获取分销商客户
-    public function getAgentUserList($user, $data)
-    {
-        $userIds = (new AgentUserModel())->getLowerDirectUserIds($user);
-        $model = $this->withJoin('agent','left');
-        $model = $model->where('user.user_id', 'in', $userIds);
-        $data['search'] && $model = $model->where('user.nickName|user.mobile|agent.real_name|user.realname', 'like', '%' . $data['search'] . '%');
-        $list = $model
-            ->where('user.is_delete', '=', 0)
-            ->paginate($data);
-        return $list;
-    }
 }

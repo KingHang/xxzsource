@@ -26,7 +26,7 @@ class OrderSettled extends BaseModel
      */
     public function supplier()
     {
-        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'shop_supplier_id', 'shop_supplier_id')->field(['shop_supplier_id', 'name']);
+        return $this->belongsTo('app\\common\\model\\purveyor\\Purveyor', 'purveyor_id', 'purveyor_id')->field(['purveyor_id', 'name']);
     }
     /**
      * 详情

@@ -3,7 +3,7 @@
 namespace app\api\service\order\paysuccess\type;
 
 use app\api\model\user\User as UserModel;
-use app\api\model\plus\live\PlanOrder as OrderModel;
+use app\api\model\plugin\live\PlanOrder as OrderModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\user\balanceLog\BalanceLogSceneEnum;
 use app\common\model\user\BalanceLog as BalanceLogModel;

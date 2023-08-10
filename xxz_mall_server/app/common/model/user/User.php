@@ -2,27 +2,15 @@
 
 namespace app\common\model\user;
 
-use app\api\model\plus\agent\Referee as RefereeModel;
-use app\api\model\settings\Settings as SettingModel;
-use app\common\library\helper;
 use app\common\model\BaseModel;
-use app\common\model\plugin\agent\Grade;
-use app\common\model\plugin\agent\Month as AgentMonthModel;
-use app\common\model\shop\LoginLog as LoginLogModel;
 use app\common\model\user\PointsLog as PointsLogModel;
 use app\common\model\user\GrowthLog as GrowthLogModel;
 use app\common\model\purveyor\User as SupplierUserModel;
-use app\common\model\plugin\agent\Setting as AgentSettingModel;
-use app\common\model\plugin\agent\User as AgentUserModel;
 use app\common\model\user\LoginLog as UserLoginLogModel;
 use app\timebank\model\Timelog;
-use app\timebank\ztservice\Service;
 use Exception;
 use think\facade\Cache;
-use think\facade\Env;
 use think\Validate;
-use app\common\enum\order\OrderSourceEnum;
-use app\api\model\plus\agent\Order as agentOrderModel;
 
 /**
  * 用户模型
@@ -41,7 +29,7 @@ class User extends BaseModel
      */
     public function agent()
     {
-        return $this->belongsTo('app\\common\\model\\plus\\agent\\User','user_id','user_id')->where('is_delete', '=', 0);
+        return [];
     }
     /**
      * 关联会员等级表
@@ -141,7 +129,6 @@ class User extends BaseModel
     public function incExpendMoney($order)
     {
         $this->where(['user_id' => $order['user_id']])->inc('expend_money', $order['pay_price'])->update();
-        AgentMonthModel::saveByMonth($order['user_id'], 'buy', $order['pay_price'],0,0,$order['app_id'],0,$order);
         event('UserGrade', $order['user_id']);
     }
 
@@ -153,7 +140,7 @@ class User extends BaseModel
     public function onBatchIncPoints($data)
     {
         foreach ($data as $userId => $expendPoints) {
-            $this->where(['user_id' => $userId])->inc('exchangepurch', $expendPoints)->update();
+            $this->where(['user_id' => $userId])->inc('points', $expendPoints)->update();
             event('UserGrade', $userId);
         }
         return true;
@@ -215,11 +202,11 @@ class User extends BaseModel
         ]);
 
         // 更新用户可用积分
-        $data['exchangepurch'] = ($this['exchangepurch'] + $points <= 0) ? 0 : $this['exchangepurch'] + $points;
+        $data['points'] = ($this['points'] + $points <= 0) ? 0 : $this['points'] + $points;
 
         // 刷新用户，避免同事务幻读
         if ($isRefresh) {
-            $this['exchangepurch'] = $data['exchangepurch'];
+            $this['points'] = $data['points'];
         }
 
         // 用户总积分
@@ -297,7 +284,7 @@ class User extends BaseModel
 
         if ($userInfo) {
             // 更新用户可用积分
-            $data['exchangepurch'] = ($userInfo['exchangepurch'] + $points <= 0) ? 0 : $userInfo['exchangepurch'] + $points;
+            $data['points'] = ($userInfo['points'] + $points <= 0) ? 0 : $userInfo['points'] + $points;
 
             // 用户总积分
             if ($points > 0) {
@@ -360,53 +347,6 @@ class User extends BaseModel
      */
     private function growthValueToken($mobile, $growthValue, $user_id, $app_id = 0)
     {
-        // 判断自动兑换通证是否开启
-        if ($app_id) {
-            $conf = SettingModel::getItem('grow', $app_id);
-        } else {
-            $conf = SettingModel::getItem('grow');
-        }
-
-        if ($mobile && isset($conf['is_auto_token']) && $conf['is_auto_token']) {
-            $token_ratio = isset($conf['token_ratio']) && $conf['token_ratio'] > 0 ? $conf['token_ratio'] : 0;
-
-            if ($token_ratio) {
-                $ztService = new Service();
-
-                // 判断是增加还是减少
-                $tradeType = $growthValue >= 0 ? 0 : 1;//0-增加，1-减少
-                $growthValue = abs($growthValue);
-                $exchangeAmount = round($growthValue / $token_ratio, 4);
-                $orderNo = helper::randomBillNo('CFP');
-
-                if ($tradeType) {
-                    $ztResult = $ztService->blockchainTimebankDeduct($mobile, $exchangeAmount, $orderNo);
-                } else {
-                    $ztResult = $ztService->blockchainTimebankIncrease($mobile, $exchangeAmount, $orderNo);
-                }
-
-                $ztResult = json_decode($ztResult, true);
-
-                if ($ztResult['ret'] == 200) {
-                    (new Timelog())->save([
-                        'show_mobile'   => $mobile,
-                        'user_id'       => $user_id,
-                        'amount'        => $exchangeAmount,
-                        'orderNo'       => $orderNo,
-                        'server_type'   => $tradeType ? 2 : 1,
-                        'serial_number' => $ztResult['data']['info']['billNo'],
-                        'project_title' => $tradeType ? 'CFP/HXL(转出)' : 'HXL/CFP(转入)',
-                        'is_inform'     => 0,
-                        'show_name'     => $ztResult['data']['toUserInfo']['username'],
-                        'cfp_balance'   => $ztResult['data']['toUserInfo']['balance'],
-                        'cfp_address'   => $ztResult['data']['toUserInfo']['address'],
-                        'trade_type'    => $tradeType ? 9 : 10,
-                        'remark'        => ''
-                    ]);
-                }
-            }
-        }
-
         return true;
     }
 
@@ -420,41 +360,7 @@ class User extends BaseModel
      */
     public function giftcertAmountToken($mobile, $amount, $user_id, $remark = '')
     {
-        if (!$mobile || !$amount) return false;
-
-        $ztService = new Service();
-
-        // 判断是增加还是减少
-        $tradeType = $amount >= 0 ? 0 : 1;//0-增加，1-减少
-        $finalAmount = abs($amount);
-
-        $orderNo = helper::randomBillNo('CFP');
-
-        if ($tradeType) {
-            $ztResult = $ztService->blockchainTimebankDeduct($mobile, $finalAmount, $orderNo);
-        } else {
-            $ztResult = $ztService->blockchainTimebankIncrease($mobile, $finalAmount, $orderNo);
-        }
-
-        $ztResult = json_decode($ztResult, true);
-
-        if ($ztResult['ret'] != 200) return false;
-
-        return (new Timelog())->save([
-            'show_mobile'   => $mobile,
-            'user_id'       => $user_id,
-            'amount'        => $finalAmount,
-            'orderNo'       => $orderNo,
-            'server_type'   => $tradeType ? 2 : 1,
-            'serial_number' => $ztResult['data']['info']['billNo'],
-            'project_title' => $tradeType ? '商品CFP抵扣' : ($remark != '' ? $remark : '商品CFP赠送'),
-            'is_inform'     => 0,
-            'show_name'     => $ztResult['data']['toUserInfo']['username'],
-            'cfp_balance'   => $ztResult['data']['toUserInfo']['balance'],
-            'cfp_address'   => $ztResult['data']['toUserInfo']['address'],
-            'trade_type'    => $tradeType ? 11 : ($remark != '' ? 12 : 13),
-            'remark'        => ''
-        ]);
+       return true;
     }
 
     //更新用户类型
@@ -484,27 +390,22 @@ class User extends BaseModel
     {
         $this->where('user_id', '=', $user_id)->inc('total_invite')->update();
         event('UserGrade', $user_id);
-        event('AgentUserGrade', $user_id);
+//        event('AgentUserGrade', $user_id);
     }
 
     public function afterReg($user){
         // 注册之后是否成为分销商
-        $condition = AgentSettingModel::getItem('condition');
-        if($condition['become'] == 0){
-            // 新增分销商用户
-            AgentUserModel::add($user['user_id'], [
-                'real_name' => $user['nickName'],
-                'referee_id' => $user['referee_id'],
-                'mobile' => isset($user['mobile'])?$user['mobile']:'',
-            ]);
-            $user = AgentUserModel::detail($user['user_id']);
-            $grade = (new Grade())::detail((new Grade())::getDefaultGradeId());
-//            (new \app\common\model\plugin\agent\User())->getQrcode($user,$grade);
-            // 记录推荐人关系
-            if ($user['referee_id'] > 0) {
-                RefereeModel::createRelation($user['user_id'], $user['referee_id']);
-            }
-        }
+//        $condition = AgentSettingModel::getItem('condition');
+//        if($condition['become'] == 0){
+//            // 新增分销商用户
+//            AgentUserModel::add($user['user_id'], [
+//                'real_name' => $user['nickName'],
+//                'referee_id' => $user['referee_id'],
+//                'mobile' => isset($user['mobile'])?$user['mobile']:'',
+//            ]);
+//            $user = AgentUserModel::detail($user['user_id']);
+//            $grade = (new Grade())::detail((new Grade())::getDefaultGradeId());
+//        }
     }
 
     /**

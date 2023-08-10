@@ -2,7 +2,7 @@
 
 namespace app\common\service\qrcode;
 
-use app\common\model\settings\Settings as SettingModel;
+use app\common\model\setting\Setting as SettingModel;
 use Grafika\Color;
 use Grafika\Grafika;
 use Endroid\QrCode\QrCode;
@@ -23,12 +23,12 @@ class ProductService extends Base
 
     // 小程序码链接
     private $pages = [
-        10 => 'pages/product/detail/detail',
+        10 => 'pages/goods/detail/detail',
         20 => 'pagesBrand/brand/detail',
-//        20 => 'pages/product/detail/detail',
-        30 => 'pages/plugin/seckill/detail/detail',
-//        30 => 'pages/product/detail/detail',
-        40 => 'pages/plugin/assemble/detail/detail ',
+//        20 => 'pages/goods/detail/detail',
+        30 => 'pages/plugin/flashsell/detail/detail',
+//        30 => 'pages/goods/detail/detail',
+        40 => 'pages/plugin/groupsell/detail/detail ',
         50 => 'pages/plugin/pricedown/detail/detail',
     ];
 
@@ -85,7 +85,7 @@ class ProductService extends Base
             $qrcode = $this->saveQrcode($appId, $scene, $this->pages[$this->productType]);
         }else if($this->source == 'mp' || $this->source == 'h5'){
             $scene = "gid:{$this->product['product_id']},uid:" . ($this->user_id ?: '');
-            $qrcode = new QrCode(base_url().'h5/pages/product/detail/detail?product_id='.$this->product['product_id'].'&app_id='.$appId.'&referee_id='.$this->user_id ?: '');
+            $qrcode = new QrCode(base_url().'h5/pages/goods/detail/detail?product_id='.$this->product['product_id'].'&app_id='.$appId.'&referee_id='.$this->user_id ?: '');
             $qrcode = $this->saveMpQrcode($qrcode, $appId, $scene, 'image_mp');
         }
         // 拼接海报图

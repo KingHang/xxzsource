@@ -3,7 +3,6 @@
 namespace app\api\controller;
 
 use app\api\model\user\User as UserModel;
-use app\api\model\plus\agent\User as AgentUserModel;
 use app\api\model\App as AppModel;
 use app\common\exception\BaseException;
 use app\common\library\easywechat\AppMp;
@@ -141,30 +140,6 @@ class Controller extends XxzController
                 throw new BaseException(['msg' => '没有找到用户信息', 'code' => -1]);
             }
             return true;
-        }
-        if ($user['is_delete'] == 1) {
-            throw new BaseException(['msg' => '没有找到用户信息', 'code' => -2]);
-            Cache::delete($token);
-        }
-        return $user;
-    }
-
-    /**
-     * 获取当前分销商信息
-     */
-    protected function getAgentUser($is_force = true)
-    {
-        if (!$token = $this->request->param('token')) {
-            if ($is_force) {
-                throw new BaseException(['msg' => '缺少必要的参数：token', 'code' => -1]);
-            }
-            return false;
-        }
-        if (!$user = AgentUserModel::getUser($token)) {
-            if ($is_force) {
-                throw new BaseException(['msg' => '没有找到用户信息', 'code' => -1]);
-            }
-            return false;
         }
         if ($user['is_delete'] == 1) {
             throw new BaseException(['msg' => '没有找到用户信息', 'code' => -2]);

@@ -9,7 +9,7 @@
 namespace app\gateway;
 
 use \GatewayWorker\Lib\Gateway;
-use app\api\model\plus\chat\Chat as ChatModel;
+use app\api\model\plugin\chat\Chat as ChatModel;
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 use think\worker\Application;

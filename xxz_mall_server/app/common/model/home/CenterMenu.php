@@ -55,16 +55,16 @@ class CenterMenu extends BaseModel
                 'link_url' => '/pages/user/address/address',
                 'image_url' => 'image/menu/address.png'
             ],
-            'coupon' => [
-                'sys_tag' => 'coupon',
+            'voucher' => [
+                'sys_tag' => 'voucher',
                 'title' => '领券中心',
-                'link_url' => '/pages/coupon/coupon',
-                'image_url' => 'image/menu/coupon.png'
+                'link_url' => '/pages/voucher/voucher',
+                'image_url' => 'image/menu/voucher.png'
             ],
             'my_coupon' => [
                 'sys_tag' => 'my_coupon',
                 'title' => '我的优惠券',
-                'link_url' => '/pages/user/my-coupon/my-coupon',
+                'link_url' => '/pages/user/my-voucher/my-voucher',
                 'image_url' => 'image/menu/my_coupon.png'
             ],
             'agent' => [
@@ -79,22 +79,22 @@ class CenterMenu extends BaseModel
                 'link_url' => '/pages/user/my-pricedown/my-pricedown',
                 'image_url' => 'image/menu/pricedown.png'
             ],
-            'shop' => [
-                'sys_tag' => 'shop',
+            'mall' => [
+                'sys_tag' => 'mall',
                 'title' => '入驻店铺',
-                'link_url' => '/pages/shop/register',
-                'image_url' => 'image/menu/shop.png'
+                'link_url' => '/pages/mall/register',
+                'image_url' => 'image/menu/mall.png'
             ],
             'my_shop' => [
                 'sys_tag' => 'my_shop',
                 'title' => '我的店铺',
-                'link_url' => '/pages/shop/register',
+                'link_url' => '/pages/mall/register',
                 'image_url' => 'image/menu/my_shop.png'
             ],
             'app_shop' => [
                 'sys_tag' => 'app_shop',
                 'title' => '我的店铺',
-                'link_url' => '/pages/shop/register',
+                'link_url' => '/pages/mall/register',
                 'image_url' => 'image/menu/app_shop.png'
             ],
             'my_attention' => [
@@ -115,11 +115,11 @@ class CenterMenu extends BaseModel
                 'link_url' => '/pages/plugin/signin/signin',
                 'image_url' => 'image/menu/signin.png'
             ],
-            'lottery' => [
-                'sys_tag' => 'lottery',
+            'raffle' => [
+                'sys_tag' => 'raffle',
                 'title' => '我的抽奖',
-                'link_url' => '/pages/plugin/lottery/lottery',
-                'image_url' => 'image/menu/lottery.png'
+                'link_url' => '/pages/plugin/raffle/raffle',
+                'image_url' => 'image/menu/raffle.png'
             ],
             'setting' => [
                 'sys_tag' => 'setting',

@@ -25,13 +25,13 @@ class MasterProductService extends ProductService
                 $productData[] = [
                     'data' => ['product_stock' => ['dec', $product['total_num']]],
                     'where' => [
-                        'product_id' => $product['product_id'],
+                        'goods_id' => $product['product_id'],
                     ],
                 ];
                 $productSkuData[] = [
                     'data' => ['stock_num' => ['dec', $product['total_num']]],
                     'where' => [
-                        'product_id' => $product['product_id'],
+                        'goods_id' => $product['product_id'],
                         'spec_sku_id' => $product['spec_sku_id'],
                     ],
                 ];
@@ -60,7 +60,7 @@ class MasterProductService extends ProductService
             $product_data = [
                 'data' => ['sales_actual' => ['inc', $product['total_num']]],
                 'where' => [
-                    'product_id' => $product['product_id']
+                    'goods_id' => $product['goods_id']
                 ],
             ];
             // 付款减库存
@@ -71,7 +71,7 @@ class MasterProductService extends ProductService
                 $productSkuData[] = [
                     'data' => ['stock_num' => ['dec', $product['total_num']]],
                     'where' => [
-                        'product_id' => $product['product_id'],
+                        'goods_id' => $product['goods_id'],
                         'spec_sku_id' => $product['spec_sku_id'],
                     ],
                 ];
@@ -99,13 +99,13 @@ class MasterProductService extends ProductService
         foreach ($productList as $product) {
             $product_item = [
                 'where' => [
-                    'product_id' => $product['product_id'],
+                    'goods_id' => $product['goods_id'],
                 ],
                 'data' => ['product_stock' => ['inc', $product['total_num']]],
             ];
             $sku_item = [
                 'where' => [
-                    'product_id' => $product['product_id'],
+                    'goods_id' => $product['goods_id'],
                     'spec_sku_id' => $product['spec_sku_id'],
                 ],
                 'data' => ['stock_num' => ['inc', $product['total_num']]],

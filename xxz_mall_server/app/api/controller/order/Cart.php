@@ -4,7 +4,7 @@ namespace app\api\controller\order;
 
 use app\api\controller\Controller;
 use app\api\model\order\Cart as CartModel;
-use app\api\model\settings\Settings as SettingModel;
+use app\api\model\setting\Setting as SettingModel;
 
 /**
  * 购物车控制器

@@ -2,14 +2,14 @@
 
 namespace app\api\service\order\paysuccess\type;
 
-use app\api\model\plus\giftpackage\Order as OrderModel;
+use app\api\model\plugin\giftpackage\Order as OrderModel;
 use app\api\model\user\User as UserModel;
 use app\common\enum\order\OrderPayTypeEnum;
 use app\common\enum\user\balanceLog\BalanceLogSceneEnum;
 use app\common\model\user\BalanceLog as BalanceLogModel;
 use app\common\service\BaseService;
 use app\common\model\plugin\giftpackage\GiftPackage;
-use app\api\model\plus\coupon\UserVoucher;
+use app\api\model\plugin\voucher\UserCoupon;
 
 /**
  * 礼包购订单支付成功后的回调
@@ -82,7 +82,7 @@ class GiftPaySuccessService extends BaseService
             return false;
         }
         if ($gift['is_coupon'] == 1) {
-            $user_coupon = new UserVoucher();
+            $user_coupon = new UserCoupon();
             $user_coupon->addUserCoupon($gift['coupon_ids'], $this->model['user_id']);
         }
         if ($gift['is_point'] == 1) {

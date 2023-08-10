@@ -3,8 +3,6 @@
 namespace app\api\service\order\paysuccess\source;
 
 use app\common\enum\settings\DeliveryTypeEnum;
-use app\common\library\helper;
-use app\api\model\plus\agent\Apply as AgentApplyModel;
 use app\common\service\order\OrderCompleteService;
 use app\common\enum\order\OrderTypeEnum;
 use app\common\model\order\OrderGoods;
@@ -18,8 +16,6 @@ class MasterPaySuccessService
      */
     public function onPaySuccess($order)
     {
-        // 购买指定商品成为分销商
-        $this->becomeAgentUser($order);
         // 计次商品 设置有效期
         (new OrderGoods())->setTimesProduct($order['product'],2);
         // 如果是虚拟商品，则标记为已完成，无需发货
@@ -37,17 +33,6 @@ class MasterPaySuccessService
             $OrderCompleteService->complete([$order], $order['app_id']);
         }
         return true;
-    }
-
-    /**
-     * 购买指定商品成为分销商
-     */
-    private function becomeAgentUser($order)
-    {
-        // 整理商品id集
-        $productIds = helper::getArrayColumn($order['product'], 'product_id');
-        $model = new AgentApplyModel;
-        return $model->becomeAgentUser($order['user_id'], $productIds, $order['app_id']);
     }
 
 }

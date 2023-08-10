@@ -19,7 +19,7 @@ class Bill extends BillModel
      */
     public function getCloseIds($fail_type = 0){
         return $this->alias('bill')
-            ->join('assemble_activity activity', 'bill.assemble_activity_id = activity.assemble_activity_id','left')
+            ->join('groupsell_activity activity', 'bill.groupsell_activity_id = activity.groupsell_activity_id','left')
             ->where('bill.status', '=', 10)
             ->where('activity.fail_type', '=', $fail_type)
             ->whereTime('bill.end_time', '<=', time())
@@ -35,11 +35,11 @@ class Bill extends BillModel
         $this->startTrans();
         try {
             //修改拼团状态
-            $this->where('assemble_bill_id', 'in', $billIds)->save(['status' => 30]);
+            $this->where('groupsell_bill_id', 'in', $billIds)->save(['status' => 30]);
             //修改订单状态，并退款
             $bill_user_model = new BillUserModel();
             $orderList = $bill_user_model->field(['order_id'])
-                ->where('assemble_bill_id', 'in', $billIds)
+                ->where('groupsell_bill_id', 'in', $billIds)
                 ->select();
             $orderIds = helper::getArrayColumn($orderList, 'order_id');
             //修改订单状态，拼团状态
@@ -93,10 +93,10 @@ class Bill extends BillModel
         $this->startTrans();
         try {
             //修改拼团状态
-            $this->where('assemble_bill_id', 'in', $billIds)->save(['status' => 20]);
+            $this->where('groupsell_bill_id', 'in', $billIds)->save(['status' => 20]);
             $order_list = (new BillUserModel)
                 ->field(['order_id'])
-                ->where('assemble_bill_id', 'in', $billIds)
+                ->where('groupsell_bill_id', 'in', $billIds)
                 ->select();
             $orderIds = helper::getArrayColumn($order_list, 'order_id');
             //更新主订单表拼团状态

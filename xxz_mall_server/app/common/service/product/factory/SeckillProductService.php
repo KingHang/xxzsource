@@ -4,7 +4,7 @@ namespace app\common\service\product\factory;
 
 use app\common\enum\product\DeductStockTypeEnum;
 use app\common\model\plugin\flashsell\FlashsellSku as ProductSkuModel;
-use app\common\model\plugin\flashsell\Product as ProductModel;
+use app\common\model\plugin\flashsell\Goods as ProductModel;
 
 /**
  * 商品来源-普通商品扩展类
@@ -20,15 +20,15 @@ class SeckillProductService extends ProductService
             // 下单减库存
             $sku = ProductSkuModel::detail($product['sku_source_id']);
             // 参与人数
-            (new ProductModel)->where('seckill_product_id', '=', $sku['seckill_product_id'])->inc('join_num')->update();
+            (new ProductModel)->where('flashsell_goods_id', '=', $sku['flashsell_goods_id'])->inc('join_num')->update();
             if ($product['deduct_stock_type'] == DeductStockTypeEnum::CREATE) {
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('seckill_product_id', '=', $sku['seckill_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('flashsell_goods_id', '=', $sku['flashsell_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 下单减库存
-                    (new ProductSkuModel)->where('seckill_product_sku_id', '=', $sku['seckill_product_sku_id'])->dec('seckill_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('flashsell_goods_sku_id', '=', $sku['flashsell_goods_sku_id'])->dec('seckill_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
-                    log_write('seckill updateProductStock'. $e->getMessage());
+                    log_write('flashsell updateProductStock'. $e->getMessage());
                 }
             }
         }
@@ -39,16 +39,16 @@ class SeckillProductService extends ProductService
         foreach ($productList as $product) {
             $sku = ProductSkuModel::detail($product['sku_source_id']);
             // 记录商品的销量
-            (new ProductModel)->where('seckill_product_id', '=', $sku['seckill_product_id'])->inc('total_sales', $product['total_num'])->update();
+            (new ProductModel)->where('flashsell_goods_id', '=', $sku['flashsell_goods_id'])->inc('total_sales', $product['total_num'])->update();
             // 付款减库存
             if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT) {
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('seckill_product_id', '=', $sku['seckill_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('flashsell_goods_id', '=', $sku['flashsell_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 下单减库存
-                    (new ProductSkuModel)->where('seckill_product_sku_id', '=', $sku['seckill_product_sku_id'])->dec('seckill_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('flashsell_goods_sku_id', '=', $sku['flashsell_goods_sku_id'])->dec('seckill_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
-                    log_write('seckill updateStockSales'. $e->getMessage());
+                    log_write('flashsell updateStockSales'. $e->getMessage());
                 }
             }
         }
@@ -65,9 +65,9 @@ class SeckillProductService extends ProductService
             ) {
                 $sku = ProductSkuModel::detail($product['sku_source_id']);
                 // 回退主库存
-                (new ProductModel)->where('seckill_product_id', '=', $sku['seckill_product_id'])->inc('stock', $product['total_num'])->update();
+                (new ProductModel)->where('flashsell_goods_id', '=', $sku['flashsell_goods_id'])->inc('stock', $product['total_num'])->update();
                 // 回退sku库存
-                (new ProductSkuModel)->where('seckill_product_sku_id', '=', $sku['seckill_product_sku_id'])->inc('seckill_stock', $product['total_num'])->update();
+                (new ProductSkuModel)->where('flashsell_goods_sku_id', '=', $sku['flashsell_goods_sku_id'])->inc('seckill_stock', $product['total_num'])->update();
             }
         }
     }

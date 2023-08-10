@@ -3,8 +3,8 @@
 namespace app\api\controller\user;
 
 use app\api\controller\Controller;
-use app\api\model\plus\invitationgift\Partake;
-use app\api\model\plus\invitationgift\InvitationReward;
+use app\api\model\plugin\invitationgift\Partake;
+use app\api\model\plugin\invitationgift\InvitationReward;
 use app\api\model\user\User;
 
 /**

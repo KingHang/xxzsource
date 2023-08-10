@@ -6,7 +6,7 @@ use app\common\model\BaseModel;
 
 class PointsLog extends BaseModel
 {
-    protected $name = 'user_points_log';
+    protected $name = 'user_exchangepurch_log';
 
     protected $pk = 'log_id';
 
@@ -52,9 +52,6 @@ class PointsLog extends BaseModel
                 break;
             case 11:
                 $valueData['text'] = '投稿奖励';
-                break;
-            case 12:
-                $valueData['text'] = '活动报名奖励';
                 break;
         }
 

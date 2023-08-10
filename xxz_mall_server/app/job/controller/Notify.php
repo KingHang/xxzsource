@@ -3,11 +3,8 @@
 namespace app\job\controller;
 
 
-use app\api\model\order\Order as OrderModel;
 use app\common\library\alipay\AliPay;
 use app\common\library\easywechat\WxPay;
-use app\common\model\plugin\agent\OrderDetail;
-use app\job\model\plus\agent\Month as AgentMonthModel;
 /**
  * 微信支付回调
  */
@@ -44,18 +41,5 @@ class Notify
         $AliPay->notify();
     }
 
-    /**
-     * 测试结算
-     */
-    public function settled()
-    {
-        $detail = OrderModel::getUserOrderDetail(1, 24622);
-//        OrderDetail::addBouns($detail);
-        // 获取一个未结算的用户
-        $model = new AgentMonthModel();
-        $detail = $model->getNoBounsSettled(10001);
-//        var_dump($detail);die;
-        if (empty($detail)) return;
-        $detail->settledMoney(10001);
-    }
+
 }

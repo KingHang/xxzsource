@@ -8,7 +8,6 @@ use app\common\service\message\MessageService;
 use app\common\service\order\OrderPrinterService;
 use app\api\model\order\Order;
 use app\api\service\order\paysuccess\source\PaySourceSuccessFactory;
-use app\api\model\product\Goods as ProductModel;
 use app\common\model\user\User as UserModel;
 
 class PaySuccess
@@ -39,8 +38,6 @@ class PaySuccess
         (new MessageService)->payment($this->order, $this->orderType);
         // 小票打印
         (new OrderPrinterService)->printTicket($this->order);
-        // 更新供应商销量
-        (new ProductModel)->reSupplierTotalSales($this->order['shop_supplier_id']);
         // 累计用户消费金额
         (new UserModel())->incExpendMoney($this->order);
     }

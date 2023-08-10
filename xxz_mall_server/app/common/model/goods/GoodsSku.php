@@ -17,7 +17,19 @@ class GoodsSku extends BaseModel
     protected $name = 'goods_sku';
 
     protected $pk = 'goods_sku_id';
-
+    protected $append = ['goods_id','goods_sku_id'];
+    public function getProductIdAttr($value,$data)
+    {
+        if (isset($data['goods_id'])) {
+            return $data['goods_id'];
+        }
+    }
+    public function getProductSkuIdAttr($value,$data)
+    {
+        if (isset($data['goods_sku_id'])) {
+            return $data['goods_sku_id'];
+        }
+    }
     /**
      * 规格图片
      */
@@ -27,7 +39,7 @@ class GoodsSku extends BaseModel
     }
     public function productgift()
     {
-        return $this->hasMany('app\\common\\model\\goods\\GoodsGift');
+        return $this->hasMany('app\\common\\model\\goods\\GoodsGift','goods_sku_id','goods_sku_id');
     }
 
     /**

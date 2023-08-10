@@ -27,12 +27,6 @@ class CheckPayFactory
             case OrderSourceEnum::BARGAIN:
                 return new BargainCheckPayService();
                 break;
-            case OrderSourceEnum::AGENT:
-                return new MasterCheckPayService();
-                break;
-            case OrderSourceEnum::BENEFIT:
-                return new CardCheckPayService();
-                break;
         }
     }
 }

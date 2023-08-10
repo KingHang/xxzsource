@@ -3,7 +3,7 @@
 namespace app\common\service\product\factory;
 
 use app\common\enum\product\DeductStockTypeEnum;
-use app\common\model\plugin\groupsell\GroupsellSku as ProductSkuModel;
+use app\common\model\plugin\groupsell\AssembleSku as ProductSkuModel;
 use app\common\model\plugin\groupsell\Goods as ProductModel;
 use app\common\model\plugin\groupsell\Bill as BillModel;
 /**
@@ -17,18 +17,19 @@ class AssembleProductService extends ProductService
     public function updateProductStock($productList)
     {
         foreach ($productList as $product) {
+
             // 下单减库存
             $sku = ProductSkuModel::detail($product['sku_source_id']);
             //增加参与人数
-            (new ProductModel)->where('groupsell_goods_id', '=', $sku['assemble_product_id'])->inc('join_num')->update();
+            (new ProductModel)->where('groupsell_goods_id', '=', $sku['groupsell_goods_id'])->inc('join_num')->update();
             if ($product['deduct_stock_type'] == DeductStockTypeEnum::CREATE) {
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('groupsell_goods_id', '=', $sku['assemble_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('groupsell_goods_id', '=', $sku['groupsell_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 下单减库存
-                    (new ProductSkuModel)->where('assemble_product_sku_id', '=', $sku['assemble_product_sku_id'])->dec('assemble_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('groupsell_goods_sku_id', '=', $sku['groupsell_goods_sku_id'])->dec('assemble_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
-                    log_write('assemble updateProductStock'. $e->getMessage());
+                    log_write('groupsell updateProductStock'. $e->getMessage());
                 }
             }
         }
@@ -42,16 +43,16 @@ class AssembleProductService extends ProductService
         foreach ($productList as $product) {
             $sku = ProductSkuModel::detail($product['sku_source_id']);
             // 记录商品的销量
-            (new ProductModel)->where('groupsell_goods_id', '=', $sku['assemble_product_id'])->inc('total_sales', $product['total_num'])->update();
+            (new ProductModel)->where('groupsell_goods_id', '=', $sku['groupsell_goods_id'])->inc('total_sales', $product['total_num'])->update();
             // 付款减库存
             if ($product['deduct_stock_type'] == DeductStockTypeEnum::PAYMENT) {
                 try{
                     // 主库存减少
-                    (new ProductModel)->where('groupsell_goods_id', '=', $sku['assemble_product_id'])->dec('stock', $product['total_num'])->update();
+                    (new ProductModel)->where('groupsell_goods_id', '=', $sku['groupsell_goods_id'])->dec('stock', $product['total_num'])->update();
                     // 下单减库存
-                    (new ProductSkuModel)->where('assemble_product_sku_id', '=', $sku['assemble_product_sku_id'])->dec('assemble_stock', $product['total_num'])->update();
+                    (new ProductSkuModel)->where('groupsell_goods_sku_id', '=', $sku['groupsell_goods_sku_id'])->dec('assemble_stock', $product['total_num'])->update();
                 }catch (\Exception $e){
-                    log_write('assemble updateStockSales'. $e->getMessage());
+                    log_write('groupsell updateStockSales'. $e->getMessage());
                 }
             }
             //插入或更新拼团信息
@@ -75,11 +76,11 @@ class AssembleProductService extends ProductService
         foreach ($productList as $product) {
             // 未付款订单并且创建时减库存，回退库存
             if (!$isPayOrder && $product['deduct_stock_type'] == DeductStockTypeEnum::CREATE) {
-                $point_sku = ProductSkuModel::detail($product['product_source_id']);
+                $point_sku = ProductSkuModel::detail($product['goods_source_id']);
                 // 回退主库存
-                (new ProductModel)->where('groupsell_goods_id', '=', $point_sku['assemble_product_id'])->inc('stock')->update();
+                (new ProductModel)->where('groupsell_goods_id', '=', $point_sku['groupsell_goods_id'])->inc('stock')->update();
                 // 回退sku库存
-                (new ProductSkuModel)->where('assemble_product_sku_id', '=', $point_sku['assemble_product_sku_id'])->inc('assemble_stock')->update();
+                (new ProductSkuModel)->where('groupsell_goods_sku_id', '=', $point_sku['groupsell_goods_sku_id'])->inc('assemble_stock')->update();
             }
         }
     }
