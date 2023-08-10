@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       /* 左边长度 */
-      formLabelWidth: '120px',
+      formLabelWidth: '140px',
       /* 是否显示 */
       loading: false,
       /* 是否显示 */

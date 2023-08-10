@@ -1,28 +1,46 @@
 <template>
   <div v-if="!loading" class="home">
-    <div class="operation-wrap" style="background-color: #FFFFFF;">
+    <div class="operation-wrap-home" style="background-color: #FFFFFF;">
       <el-row>
         <el-col :span="6" class="d-c-c">
-          <div class="grid-content yellow">
+          <div class="grid-content user">
             <div class="info">
               <h3>{{ top_data.user_total }}</h3>
               <p>用户总量</p>
             </div>
-          </div>
-        </el-col>
-        <el-col :span="6" class="d-c-c">
-          <div class="grid-content purple">
-            <div class="info">
-              <h3>{{ top_data.product_total }}</h3>
-              <p>商品总量</p>
+            <div class="show-icon">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-gongzuotai_yonghu" />
+              </svg>
+              <div class="user-bg" />
             </div>
           </div>
         </el-col>
         <el-col :span="6" class="d-c-c">
-          <div class="grid-content orderred">
+          <div class="grid-content goods">
+            <div class="info">
+              <h3>{{ top_data.product_total }}</h3>
+              <p>商品总量</p>
+            </div>
+            <div class="show-icon">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-gongzuotai_shangpin" />
+              </svg>
+              <div class="goods-bg" />
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6" class="d-c-c">
+          <div class="grid-content order">
             <div class="info ">
               <h3>{{ top_data.order_total }}</h3>
               <p>订单总量</p>
+            </div>
+            <div class="show-icon">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-gongzuotai_dingdan" />
+              </svg>
+              <div class="order-bg" />
             </div>
           </div>
         </el-col>
@@ -158,79 +176,106 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .operation-wrap {
+  .operation-wrap-home {
     width: 100%;
     height: 164px;
     border-radius: 8px;
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    padding: 0 20px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
     overflow: hidden;
     background-size: 100% 100%;
-    color: #ffffff;
   }
 
-  .operation-wrap .grid-content h3 {
-    font-size: 36px;
-    line-height: 40px;
-  }
-
-  .operation-wrap .grid-content .info {
-    text-align: center;
-    margin-left: 10px;
-  }
-
-  .home .operation-wrap .grid-content {
+  .operation-wrap-home .grid-content {
     width: 90%;
     height: 150px;
-    justify-content: flex-start;
-    align-items: center;
-    padding-left: 23px;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    border-radius: 5px;
+    opacity: 1;
+    padding-top: 25px;
   }
 
-  .operation-wrap .grid-content.blue {
-    background: url(../../assets/img/total_shop.png) no-repeat;
-    background-size: 100% 100%;
+  .operation-wrap-home .grid-content.store {
+    background: #FFFFFF linear-gradient(316deg, #FFF1E5 0%, rgba(255,241,229,0.3) 100%);
   }
 
-  .operation-wrap .grid-content.yellow {
-    background: url(../../assets/img/total_user.png) no-repeat;
-    background-size: 100% 100%;
+  .operation-wrap-home .grid-content.user {
+    background: #FFFFFF linear-gradient(316deg, #E6EDFD 0%, rgba(230,237,253,0.3) 100%);
   }
 
-  .operation-wrap .grid-content.purple {
-    background: url(../../assets/img/total_volume.png) no-repeat;
-    background-size: 100% 100%;
+  .operation-wrap-home .grid-content.goods {
+    background: #FFFFFF linear-gradient(316deg, #FFE5E7 0%, rgba(255,229,231,0.3) 100%);
   }
 
-  .operation-wrap .grid-content.orderred {
-    background: url(../../assets/img/total_order.png) no-repeat;
-    background-size: 100% 100%;
+  .operation-wrap-home .grid-content.order {
+    background: #FFFFFF linear-gradient(316deg, #E7FCF5 0%, rgba(231,252,245,0.3) 100%);
   }
 
-  .operation-wrap .grid-content .info h3 {
-    font-size: 40px;
-    line-height: 40px;
-    color: #FFFFFF;
-    text-align: left;
-    margin-bottom: 20px;
-  }
-
-  .operation-wrap .grid-content .info {
-    margin-left: 10px;
-    text-align: center;
+  .operation-wrap-home .grid-content .info {
+    min-width: 56px;
+    height: 100px;
+    margin-left: 25px;
     font-size: 14px;
-    color: #FFFFFF;
+    color: #828282;
   }
 
-  .operation-wrap .grid-content .svg-icon {
-    color: rgba(255, 255, 255, .3);
-    font-size: 300%;
+  .operation-wrap-home .grid-content .info h3 {
+    font-size: 32px;
+    line-height: 32px;
+    color: #333333;
+    margin-bottom: 50px;
+  }
+
+  .operation-wrap-home .grid-content .show-icon {
+    text-align: right;
+  }
+
+  .operation-wrap-home .grid-content svg {
+    width: 26px;
+    height: 24px;
+    margin-right: 25px;
+  }
+
+  .operation-wrap-home .grid-content.store .store-bg {
+    width: 106px;
+    height: 96px;
+    background: url(../../assets/img/home_store.png) no-repeat;
+    background-size: 100% 100%;
+    border-radius: 0 0 5px 0;
+  }
+
+  .operation-wrap-home .grid-content.user .user-bg {
+    width: 106px;
+    height: 96px;
+    background: url(../../assets/img/home_user.png) no-repeat;
+    background-size: 100% 100%;
+    border-radius: 0 0 5px 0;
+  }
+
+  .operation-wrap-home .grid-content.goods .goods-bg {
+    width: 106px;
+    height: 96px;
+    background: url(../../assets/img/home_goods.png) no-repeat;
+    background-size: 100% 100%;
+    border-radius: 0 0 5px 0;
+  }
+
+  .operation-wrap-home .grid-content.order .order-bg {
+    width: 106px;
+    height: 96px;
+    background: url(../../assets/img/home_order.png) no-repeat;
+    background-size: 100% 100%;
+    border-radius: 0 0 5px 0;
   }
 
   .home-index {
@@ -252,8 +297,7 @@ export default {
     margin: 20px;
   }
 
-  .main-index .grid-content,
-  .operation-wrap .grid-content {
+  .main-index .grid-content {
     display: -ms-flexbox;
     display: flex;
     // -webkit-box-direction: row;

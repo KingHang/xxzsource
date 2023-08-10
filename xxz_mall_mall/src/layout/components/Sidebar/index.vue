@@ -59,10 +59,12 @@ export default {
       /* 菜单数据 */
       menuList: [],
       /* 插件传的值 */
+      tabList: [],
       activeValue: 0,
       tab_type: '',
       tab_name: '',
       firstMenu: [],
+      activeMenu: '',
       subMenu: [],
       /* 插件菜单 */
       pluginMenu: []
@@ -72,15 +74,6 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
-    activeMenu() {
-      const route = this.$route
-      const { meta, path } = route
-      // if set path, the sidebar will highlight the path you set
-      if (meta.activeMenu) {
-        return meta.activeMenu
-      }
-      return path
-    },
     showLogo() {
       return this.$store.state.settings.sidebarLogo
     },
@@ -177,6 +170,7 @@ export default {
     /** 菜单 **/
     selectMenu(to) {
       this.menu_name = '首页'
+      this.activeMenu = ''
       const menupath = to.path.toLowerCase()
       let active = null
       for (let i = 0; i < this.menuList.length; i++) {
@@ -184,6 +178,9 @@ export default {
         /* 判断主菜单选择 */
         if (menupath === this.slantingBar(item['path']) || menupath === this.slantingBar(item['redirect_name'])) {
           this.menu_name = item['name']
+          if (item['children'] && item['children'].length > 0) {
+            this.activeMenu = item['children'][0]['path']
+          }
           active = i
           break
         } else {
@@ -199,6 +196,7 @@ export default {
               if (menupath === this.slantingBar(child['path'])) {
                 active = i
                 this.menu_name = child['name']
+                this.activeMenu = child['path']
                 break
               } else {
                 if (child['children']) {
@@ -206,6 +204,7 @@ export default {
                   if (name != null) {
                     active = i
                     this.menu_name = name
+                    this.activeMenu = child['path']
                     break
                   }
                 }
@@ -215,7 +214,9 @@ export default {
         }
       }
       this.active_menu = active
-      this.subMenu = this.menuList[active]['children']
+      if (active != null) {
+        this.subMenu = this.menuList[active]['children']
+      }
       this.$emit('selectMenu', active)
     },
     /** 判断子菜单有没有 **/

@@ -83,6 +83,7 @@ export default {
     github: '项目地址',
     logOut: '退出登录',
     profile: '个人中心',
+    updatePassword: '修改密码',
     theme: '换肤',
     size: '布局大小'
   },

@@ -32,12 +32,21 @@
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">{{ $t('navbar.logOut') }}</span>
+          <el-dropdown-item @click.native="passwordFunc">
+            <span style="display:block;">{{ $t('navbar.updatePassword') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+
+      <div class="login-out" @click="login_out">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-tuichudenglu" />
+        </svg>
+      </div>
     </div>
+
+    <!--修改密码-->
+    <UpdatePassword v-if="is_password" @close="closeFunc" />
   </div>
 </template>
 
@@ -49,6 +58,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import UpdatePassword from './Part/UpdatePassword.vue'
 
 export default {
   components: {
@@ -57,7 +67,13 @@ export default {
     ErrorLog,
     Screenfull,
     SizeSelect,
-    Search
+    Search,
+    UpdatePassword
+  },
+  data() {
+    return {
+      is_password: false
+    }
   },
   inject: ['baseInfo'],
   computed: {
@@ -69,8 +85,27 @@ export default {
     ])
   },
   methods: {
+    /** 修改密码 **/
+    passwordFunc() {
+      this.is_password = true
+    },
+    /** 关闭修改密码 **/
+    closeFunc() {
+      this.is_password = false
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
+    },
+    /** 退出登录 **/
+    login_out() {
+      this.$confirm('此操作将退出登录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.logout()
+      }).catch(() => {
+      })
     },
     async logout() {
       await this.$store.dispatch('user/logout')
@@ -154,6 +189,7 @@ export default {
       display: inline-block;
       vertical-align: text-bottom;
       margin: 0 10px;
+      font-size: 16px;
     }
 
     .avatar-container {
@@ -177,6 +213,23 @@ export default {
           top: 25px;
           font-size: 12px;
         }
+      }
+    }
+
+    .login-out {
+      display: inline-block;
+      cursor: pointer;
+      height: 100%;
+      vertical-align: text-bottom;
+      border-left: solid 1px #F1F1F1;
+      width: 60px;
+      text-align: center;
+
+      .icon {
+        width: 30px;
+        height: 30px;
+        fill: #EB5757;
+        margin-top: 10px;
       }
     }
   }

@@ -263,7 +263,7 @@ export default {
         type: 'warning'
       }).then(() => {
         GoodsApi.delProduct({
-          goods_id: row.goods_id
+          product_id: row.goods_id
         }).then(data => {
           self.$message({
             message: '删除成功',
@@ -289,7 +289,7 @@ export default {
         type: 'warning'
       }).then(() => {
         GoodsApi.handleProduct({
-          goods_id: dataObj.arr.join(','),
+          product_id: dataObj.arr.join(','),
           type: type
         }).then(data => {
           self.$message({
@@ -331,7 +331,7 @@ export default {
     promoteClick(row) {
       this.scene = 'poster'
       GoodsApi.getPromoteImage({
-        goods_id: row.goods_id,
+        product_id: row.goods_id,
         app_id: 10001
       }).then(data => {
         this.scene_url = data.data.url
