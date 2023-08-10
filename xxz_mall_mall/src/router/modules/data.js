@@ -22,12 +22,6 @@ const dataRouter = {
       meta: { title: 'dataUser' }
     },
     {
-      path: 'data/purveyor/index',
-      component: () => import('@/views/data/purveyor/index'),
-      name: 'DataPurveyor',
-      meta: { title: 'dataPurveyor' }
-    },
-    {
       path: 'data/access/index',
       component: () => import('@/views/data/access/index'),
       name: 'DataAccess',

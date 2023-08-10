@@ -78,13 +78,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/industry',
-    component: () => import('@/views/dashboard/industry'),
-    name: 'Industry',
-    meta: { title: '选择行业' },
-    hidden: true
-  },
-  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
