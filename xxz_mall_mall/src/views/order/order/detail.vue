@@ -89,19 +89,6 @@
         </el-row>
       </div>
 
-      <!--商户信息-->
-      <div class="common-form mt16">商户信息</div>
-      <div class="table-wrap">
-        <el-row>
-          <el-col :span="5">
-            <div class="pb16">
-              <span class="gray9">商户名称：</span>
-              {{ detail.supplier.name }}
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-
       <!--商品信息-->
       <div class="common-form mt16">商品信息</div>
       <div class="table-wrap">

@@ -17,40 +17,6 @@
         </div>
       </div>
     </div>
-
-    <div class="cash cash_t_common cash_t_brief">
-      <div class="cash-header">
-        <div>
-          <span class="cash_t_title">店铺概况</span>
-        </div>
-      </div>
-      <div class="cash-body">
-        <div class="content">
-          <p class="title">店铺结算总金额(元)</p>
-          <p class="money">{{ supplier_data.total_money }}</p>
-        </div>
-        <div class="content">
-          <p class="title">店铺待结算费用(元)</p>
-          <p class="money">{{ supplier_data.nosettled_money }}</p>
-        </div>
-        <div class="content">
-          <p class="title">店铺总保证金(元)</p>
-          <p class="money">{{ supplier_data.deposit_money }}</p>
-        </div>
-        <div class="content">
-          <p class="title">已提现金额(元)</p>
-          <p class="money">{{ supplier_data.cash_money }}</p>
-        </div>
-        <div class="content">
-          <p class="title">提现中金额(元)</p>
-          <p class="money">{{ supplier_data.freeze_money }}</p>
-        </div>
-        <div class="content">
-          <p class="title">剩余可提现(元)</p>
-          <p class="money">{{ supplier_data.money }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 

@@ -9,7 +9,7 @@
     <div class="product-content">
       <div class="table-wrap">
         <el-table v-loading="loading" size="small" :data="tableData" border style="width: 100%">
-          <el-table-column prop="page_id" label="页面ID" width="80" />
+          <el-table-column prop="home_id" label="页面ID" width="80" />
 
           <el-table-column prop="page_name" label="页面名称">
             <template slot-scope="scope">
@@ -31,8 +31,8 @@
 
           <el-table-column fixed="right" label="操作" width="90">
             <template slot-scope="scope">
-              <el-button v-auth="'/home/edit'" type="text" size="small" @click="editClick(scope.row.page_id)">编辑</el-button>
-              <el-button v-if="scope.row.page_type === 20" v-auth="'/home/delete'" type="text" size="small" @click="deleteClick(scope.row.page_id)">删除</el-button>
+              <el-button v-auth="'/home/edit'" type="text" size="small" @click="editClick(scope.row.home_id)">编辑</el-button>
+              <el-button v-if="scope.row.page_type === 20" v-auth="'/home/delete'" type="text" size="small" @click="deleteClick(scope.row.home_id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -135,7 +135,7 @@ export default {
       this.$router.push('/home/add')
     },
     /** 设为首页 **/
-    setHomeClick(page_id) {
+    setHomeClick(home_id) {
       const self = this
       self.$confirm('确定要将此页面设置为默认首页吗?', '提示', {
         confirmButtonText: '确定',
@@ -144,7 +144,7 @@ export default {
       }).then(() => {
         self.loading = true
         HomeApi.setHome({
-          page_id: page_id
+          page_id: home_id
         }, true).then(data => {
           self.loading = false
           if (data.code === 1) {
@@ -163,12 +163,12 @@ export default {
       })
     },
     /** 编辑 **/
-    editClick(page_id) {
+    editClick(home_id) {
       const self = this
       self.$router.push({
         path: '/home/edit',
         query: {
-          page_id: page_id
+          page_id: home_id
         }
       })
     }
