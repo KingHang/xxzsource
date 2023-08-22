@@ -16,7 +16,7 @@
 
 小程序端：uniapp
 
-部署环境建议：Linux + Nginx + PHP7.1 + MySQL5.6，或者直接用宝塔集成环境。
+部署环境建议：Linux + Nginx + PHP7.1～7.3 + MySQL5.6，或者直接用宝塔集成环境。
 
  **技术特点** 
 
@@ -85,7 +85,7 @@ https://www.pighack.com
 
 thinkphp:https://www.thinkphp.cn
 
-element-ui:https://element.eleme.cn
+vue-element-admin:https://gitee.com/panjiachen/vue-element-admin
 
 vue:https://cn.vuejs.org/
 
