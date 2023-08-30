@@ -19,9 +19,6 @@ class Index extends Controller
     {
         // 页面元素
         $data = AppPage::getPageData($this->getUser(false), $page_id);
-        //消息条数
-        $Chat = new ChatModel;
-        $data['msgNum'] = $Chat->mCount($this->getUser(false));
         $data['setting'] = array(
             'collection' => SettingModel::getItem('collection'),
             'officia' => SettingModel::getItem('officia'),
