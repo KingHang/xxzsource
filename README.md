@@ -80,6 +80,8 @@ vue-element-admin (github最受欢迎前端开源管理后台框架，方便快�
 
 官网介绍
 https://www.pighack.com
+部署教程
+https://docs.pighack.com/web/#/5/546
 
 ## 特别鸣谢
 
