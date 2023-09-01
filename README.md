@@ -90,3 +90,150 @@ vue-element-admin:https://gitee.com/panjiachen/vue-element-admin
 vue:https://cn.vuejs.org/
 
 easywechat:https://www.easywechat.com/
+
+## mall目录结构
+
+```bash
+├── build                       构建相关
+├── dist                        构建完成后的文件目录
+├── mock                        项目mock模拟数据
+├── node_modules                依赖类库
+├── plop-templates              模板文件
+├── public                      静态资源
+│   ├── favicon.ico             favicon图标
+│   └── index.html              html模板
+├── src                         开发目录
+│   ├── api                     所有请求
+│   ├── assets                  主题、字体、图片等静态资源
+│   ├── components              全局公用组件
+│   ├── directive               全局指令
+│   ├── filters                 全局filter
+│   ├── icons                   项目所有svg、icons
+│   ├── lang                    国际化language
+│   ├── layout                  全局layout
+│   ├── router                  路由
+│   ├── store                   全局store管理
+│   ├── styles                  全局样式
+│   ├── utils                   全局公用方法
+│   ├── vendor                  公用vendor
+│   ├── views                   views所有页面
+│   │   ├── app                 应用
+│   │   ├── authority           权限
+│   │   ├── dashboard           主页
+│   │   ├── data                统计
+│   │   ├── error-page          错误页
+│   │   ├── finance             财务
+│   │   ├── goods               商品
+│   │   ├── home                店铺
+│   │   ├── login               登录
+│   │   ├── order               订单
+│   │   ├── profile             个人信息
+│   │   ├── redirect            跳转
+│   │   ├── setting             设置
+│   │   └── user                会员
+│   ├── App.vue                 入口页面
+│   ├── main.js                 入口文件、加载组件、初始化等
+│   ├── permission.js           权限管理
+│   └── settings.js             配置文件
+├── tests                       测试目录
+├── .editorconfig               editor编辑器配置
+├── .env.development            开发环境变量配置
+├── .env.production             生产环境变量配置
+├── .env.staging                测试环境变量配置
+├── .eslintignore               eslint忽略文件
+├── .eslintrc.js                eslint配置项
+├── .gitignore                  git忽略文件
+├── .travis.yml                 自动化CI配置
+├── babel.config.js             babel-loader配置
+├── jest.config.js              测试配置
+├── jsconfig.json               js配置
+├── LICENSE                     许可
+├── package.json                package.json
+├── package-lock.json           package-lock.json
+├── plopfile.js                 自动创建项目文件
+├── postcss.config.js           postcss配置
+├── README.md                   使用手册
+└── vue.config.js               vue-cli配置
+```
+
+## server目录结构
+
+```bash
+├── app                         应用目录
+│   ├── api                     前端接口目录
+│   │   ├── controller          控制器目录
+│   │   ├── event               事件类目录
+│   │   ├── model               数据模型目录
+│   │   ├── service             逻辑处理层目录
+│   │   └── common.php          公共函数文件
+│   ├── common                  公共目录
+│   │   ├── enum                枚举类目录
+│   │   ├── event               事件类目录
+│   │   ├── exception           异常类目录
+│   │   ├── library             工具类目录
+│   │   ├── model               数据模型目录
+│   │   └── service             逻辑处理层目录
+│   ├── gateway                 Workerman目录
+│   │   └── Events.php          事件触发
+│   ├── job                     任务目录
+│   │   ├── command             命令类目录
+│   │   ├── controller          控制器目录
+│   │   ├── event               事件类目录
+│   │   ├── model               数据模型目录
+│   │   └── service             逻辑处理层目录
+│   ├── mall                    后台目录
+│   │   ├── controller          控制器目录
+│   │   ├── model               数据模型目录
+│   │   ├── service             逻辑处理层目录
+│   │   ├── validate            验证类目录
+│   │   └── common.php          公共函数文件
+│   ├── middleware              中间件目录
+│   │   └── Visit.php           记录访问信息
+│   ├── swoole                  Swoole目录
+│   ├── BaseController.php      控制器基础类
+│   ├── common.php              公共函数文件
+│   ├── event.php               事件定义文件
+│   ├── ExceptionHandle.php     应用异常处理类
+│   ├── middleware.php          全局中间件定义文件
+│   ├── provider.php            容器Provider定义文件
+│   ├── Request.php             应用请求对象类
+│   └── XxzController.php       控制器中间类
+├── config                      配置目录
+│   ├── annotation.php          注解配置
+│   ├── app.php                 应用配置
+│   ├── cache.php               缓存配置
+│   ├── console.php             控制台配置
+│   ├── cookie.php              Cookie设置
+│   ├── database.php            数据库配置
+│   ├── filesystem.php          文件磁盘配置
+│   ├── gateway_worker.php      Workerman中gateway指令配置
+│   ├── lang.php                多语言配置
+│   ├── log.php                 日志配置
+│   ├── middleware.php          中间件配置
+│   ├── route.php               URL和路由配置
+│   ├── session.php             Session配置
+│   ├── swoole.php              Swoole配置
+│   ├── trace.php               Trace配置
+│   ├── view.php                视图配置
+│   ├── worker.php              Workerman配置
+│   └── worker_server.php       Workerman中server指令配置
+├── db                          mysql存放目录
+├── extend                      扩展类库目录
+├── public                      WEB目录（对外访问目录）
+│   ├── favicon.ico             favicon图标
+│   ├── index.php               入口文件
+│   ├── robots.txt              Robots配置文件
+│   └── router.php              快速测试文件
+├── route                       路由定义目录
+│   └── app.php                 路由定义文件
+├── vendor                      Composer类库目录
+├── .env                        配置文件
+├── .gitignore                  git忽略文件
+├── .travis.yml                 自动化CI配置
+├── composer.json               composer定义文件
+├── composer.lock               composer锁定文件
+├── LICENSE.txt                 授权说明文件
+├── README.md                   使用手册
+├── think                       命令行入口文件
+└── version.json                版本号
+```

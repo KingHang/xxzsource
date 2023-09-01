@@ -66,10 +66,6 @@ composer update topthink/framework
 │   │   └── common.php          公共函数文件
 │   ├── middleware              中间件目录
 │   │   └── Visit.php           记录访问信息
-│   ├── super                   超级后台目录
-│   │   ├── controller          控制器目录
-│   │   ├── model               数据模型目录
-│   │   └── common.php          公共函数文件
 │   ├── swoole                  Swoole目录
 │   ├── BaseController.php      控制器基础类
 │   ├── common.php              公共函数文件
