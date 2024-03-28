@@ -1,11 +1,5 @@
 <template>
 	<view>
-		<!--<view class="top-tabbar">
-			<view :class="state_active == 0 ? 'tab-item active' : 'tab-item'" @click="stateFunc(0)">未使用</view>
-			<view :class="state_active == 1 ? 'tab-item active' : 'tab-item'" @click="stateFunc(1)">已使用</view>
-			<view :class="state_active == 2 ? 'tab-item active' : 'tab-item'" @click="stateFunc(2)">已过期</view>
-		</view>-->
-
         <view class="top-tabbar" style="background-color: white">
             <view style="display: flex;justify-content: space-between;width: 90%;margin: auto;padding: 30rpx" >
                 <view @click="stateFunc(0)"  :class="state_active == 0?'actred':'nred'" style="position: relative">
